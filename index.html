@@ -5,9 +5,27 @@
     <link rel="icon" type="image/svg+xml" href="/visualise/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>visualise</title>
+
+    <script>
+      
+      (function () {
+        var l = window.location;
+        if (l.search.startsWith("?/")) {
+          var route = l.search.slice(2);
+          var newUrl =
+            l.origin +
+            l.pathname.replace(/\/$/, "") +
+            "/" +
+            route +
+            l.hash;
+          window.history.replaceState(null, "", newUrl);
+        }
+      })();
+    </script>
     <script type="module" crossorigin src="/visualise/assets/index-D5wZ4KMB.js"></script>
     <link rel="stylesheet" crossorigin href="/visualise/assets/index-BZqb1gSC.css">
   </head>
+
   <body>
     <div id="root"></div>
   </body>
