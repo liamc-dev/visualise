@@ -3,22 +3,17 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import AppShell from "./layout/AppShell";
 import VisualiserPage from "./pages/VisualiserPage";
 import AboutPage from "./pages/AboutPage";
+import ThemeApplier from "./theme/ThemeApplier";
 
 function App() {
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
+      <ThemeApplier />
       <AppShell>
         <Routes>
-          {/* Default route -> choose a default algorithm */}
           <Route path="/" element={<Navigate to="/visualiser/merge-sort" replace />} />
-
-          {/* Algorithm routes */}
           <Route path="/visualiser/:algorithm" element={<VisualiserPage />} />
-
-          {/* About */}
           <Route path="/about" element={<AboutPage />} />
-
-          {/* Optional: catch-all */}
           <Route path="*" element={<Navigate to="/visualiser/merge-sort" replace />} />
         </Routes>
       </AppShell>

@@ -1,95 +1,48 @@
-// src/pages/VisualiserPage.tsx
 import { useParams, Navigate } from "react-router-dom";
-import type { ReactNode } from "react";
 import Visualiser from "../components/visualizers/Visualiser";
 import AlgoInfoPanel from "../components/AlgoInfoPanel";
-
-import MergeSortLogo from "../assets/mergesort-palm.png";
-import QuickSortLogo from "../assets/mergesort-palm.png";
-
-type AlgoParam = "merge-sort" | "quick-sort" | "bubble-sort";
-type AlgoKey = "merge" | "quick" | "bubble";
-
-const algoConfig: Record<
-  AlgoParam,
-  {
-    key: AlgoKey;
-    title: string;
-    logo: string;
-    description: ReactNode;
-  }
-> = {
-  "merge-sort": {
-    key: "merge",
-    title: "Merge Sort",
-    logo: MergeSortLogo,
-    description: (
-      <>
-        Merge Sort recursively splits the array into halves, sorts each half,
-        then merges them back together in order. It guarantees{" "}
-        <strong>O(n log n)</strong> time complexity and is stable.
-      </>
-    ),
-  },
-
-  "quick-sort": {
-    key: "quick",
-    title: "Quick Sort",
-    logo: QuickSortLogo,
-    description: (
-      <>
-        Quick Sort selects a pivot and partitions the array so that elements
-        smaller than the pivot come before it and larger ones after. It is
-        extremely fast in practice but not stable.
-      </>
-    ),
-  },
-
-  "bubble-sort": {
-    key: "bubble",
-    title: "Bubble Sort",
-    logo: MergeSortLogo, // placeholder
-    description: (
-      <>
-        Bubble Sort repeatedly swaps adjacent elements if they are in the wrong
-        order. It is simple but inefficient, with{" "}
-        <strong>O(n²)</strong> time complexity.
-      </>
-    ),
-  },
-};
+import { ALGORITHMS, type Algorithm } from "../algorithms/registry";
+import { useThemeStore } from "../stores/useThemeStore";
 
 export default function VisualiserPage() {
-  const { algorithm } = useParams<{ algorithm: AlgoParam }>();
+  const { algorithm } = useParams<{ algorithm: string }>();
+  const theme = useThemeStore((s) => s.theme);
 
-  if (!algorithm || !(algorithm in algoConfig)) {
+  if (!algorithm || !(algorithm in ALGORITHMS)) {
     return <Navigate to="/visualiser/merge-sort" replace />;
   }
 
-  const algo = algoConfig[algorithm];
+  const algoKey = algorithm as Algorithm;
+  const def = ALGORITHMS[algoKey];
+
+  const logoSrc =
+    def.logos?.[theme] ??
+    def.logos?.dark ??
+    def.logos?.light;
 
   return (
     <div className="px-0 py-0 text-tn-text">
-      <div
-        className="
-          grid gap-6 
-          lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]
-        "
-      >
-        {/* Visualiser */}
-        <Visualiser algorithm={algo.key} />
+      <div className="
+  grid
+  gap-y-8
+  gap-x-14
+  2xl:grid-cols-[minmax(0,1fr)_minmax(320px,360px)]
+  items-start
+">
+        <Visualiser algorithm={algoKey} />
 
-        {/* Algo info */}
         <AlgoInfoPanel
-          logoSrc={algo.logo}
-          logoAlt={`${algo.title} Hero Artwork`}
-          title={algo.title}
-          description={algo.description}
-          bullets={[
-            "Step-by-step execution with playback controls",
-            "Depth-aware visual overlays",
-            "Designed for performance and clarity",
-          ]}
+          logoSrc={logoSrc}
+          logoAlt={`${def.label} Artwork`}
+          title={def.label}
+          description={
+            def.description ?? (
+              <>
+                No description yet for <strong>{def.label}</strong>.
+              </>
+            )
+          }
+          bullets={def.bullets}
         />
       </div>
     </div>

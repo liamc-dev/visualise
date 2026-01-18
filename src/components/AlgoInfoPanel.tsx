@@ -19,13 +19,15 @@ const AlgoInfoPanel = ({
   return (
     <aside
       className="
-        rounded-2xl 
-        border border-tn-border 
-        bg-tn-surfaceSoft/80 backdrop-blur-sm 
-        p-4 md:p-5 
+        rounded-2xl
+        border border-tn-border
+        bg-tn-surfaceSoft/85 backdrop-blur-sm
+        p-4 md:p-5
         flex flex-col gap-4
-        shadow-[0_0_30px_rgba(122,162,247,0.18)]
+        shadow-[0_12px_30px_rgba(0,0,0,0.10)]
+        dark:shadow-[0_18px_45px_rgba(0,0,0,0.45)]
       "
+      style={{ boxShadow: "var(--panel-glow)" }}
     >
       <div className="space-y-3">
         {/* Logo */}
@@ -33,31 +35,32 @@ const AlgoInfoPanel = ({
           src={logoSrc}
           alt={logoAlt}
           className="
-            h-28 w-auto
+            h-24 w-auto
             mx-auto
             select-none pointer-events-none
-            drop-shadow-[0_0_10px_rgba(122,162,247,0.25)]
+            drop-shadow-[0_6px_18px_rgba(0,0,0,0.10)]
+            dark:drop-shadow-[0_10px_26px_rgba(0,0,0,0.45)]
           "
         />
 
-        {/* Title
-        <h3 className="text-xs font-semibold tracking-[0.18em] uppercase text-tn-text text-center">
+        {/* Title */}
+        <h3 className="text-[11px] font-semibold tracking-[0.22em] uppercase text-tn-subtle text-center">
           {title}
-        </h3> */}
+        </h3>
 
-        {/* Description (can contain inline code, links, etc.) */}
-        <div className="text-xs text-tn-muted leading-relaxed">
+        {/* Description */}
+        <div className="text-sm text-tn-muted leading-relaxed">
           {description}
         </div>
       </div>
 
       {bullets.length > 0 && (
-        <div className="border-t border-tn-border pt-3">
-          <h4 className="text-xs font-semibold mb-1 text-tn-text">
+        <div className="border-t border-tn-border/80 pt-3">
+          <h4 className="text-[11px] font-semibold tracking-[0.16em] uppercase text-tn-subtle mb-2">
             Next ideas
           </h4>
 
-          <ul className="text-xs text-tn-muted space-y-1 list-disc list-inside">
+          <ul className="text-sm text-tn-muted space-y-1.5 list-disc list-inside">
             {bullets.map((item) => (
               <li key={item}>{item}</li>
             ))}

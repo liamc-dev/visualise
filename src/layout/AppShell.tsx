@@ -2,18 +2,23 @@
 import { useState, useEffect } from "react";
 import { useSettingsStore } from "../stores/useSettingsStore";
 import Sidebar from "../components/Sidebar";
+import ThemeSelect from "../components/control/ThemeSelect";
 
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    setIsSidebarOpen(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsSidebarOpen(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+useEffect(() => {
+  const mq = window.matchMedia("(min-width: 1024px)");
+
+  const apply = () => setIsSidebarOpen(mq.matches);
+  apply();
+
+  const handler = () => setIsSidebarOpen(mq.matches);
+  mq.addEventListener("change", handler);
+
+  return () => mq.removeEventListener("change", handler);
+}, []);
 
   const glowEnabled = useSettingsStore((s) => s.glowEnabled);
   useEffect(() => {
@@ -40,8 +45,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             bg-tn-surface/80 backdrop-blur-sm
             flex items-center gap-4
             px-4
-            shadow-[0_8px_24px_rgba(0,0,0,0.45)]
           "
+          style={{ boxShadow: "var(--card-shadow)" }}
         >
           {/* Hamburger (mobile only) */}
           <button
@@ -52,7 +57,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               hover:bg-tn-surfaceSoft/80
               focus:outline-none focus:ring-2 focus:ring-tn-accent/60
               transition-colors
-              md:hidden
+              lg:hidden
             "
           >
             <span className="sr-only">Toggle navigation</span>
@@ -63,11 +68,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </button>
 
-          
+        
+          {/* spacer pushes stuff to the right */}
+          <div className="flex-1" />
+
+          {/* Theme selector (top-right) */}
+          <ThemeSelect />
         </header>
 
         <main className="flex-1 px-4 py-4 overflow-auto">
-          <div className="w-full max-w-6xl mx-auto">{children}</div>
+          <div className="w-full max-w-7xl mx-auto">{children}</div>
         </main>
       </div>
     </div>

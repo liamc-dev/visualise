@@ -1,24 +1,18 @@
 // utils/styleUtil.ts
 
-// -----------------------------
-// 🎨 TOKYO NIGHT COLOR PALETTE (viz-specific)
-// -----------------------------
-const BASE_STALE = "#16161e";       // tn-surface, older / background nodes
-const NEUTRAL = "#3b4261";          // tn-accentSoft, neutral active node
-const MID_COLOR = "#7dcfff";        // tn-cyan, pivot/mid
-const ACTIVE_BLUE = "#7aa2f7";      // tn-accent, active range (current work)
-const COMPLETED_GREEN = "#9ece6a";  // tn-success, subtle for completed segments
+const STALE = "var(--color-tn-surface)";       // older/completed nodes
+const NEUTRAL = "var(--color-tn-accentSoft)";  // neutral active node
+const MID = "var(--color-tn-cyan)";            // pivot/mid
+const ACTIVE = "var(--color-tn-accent)";       // active range
+const COMPLETED = "var(--color-tn-success)";   // completed segments
+const HIGHLIGHT = "var(--color-tn-cyan)";      // highlight
+const TRAIL = "var(--color-tn-muted)";         // trail
+const WRITEBACK = "var(--color-tn-magenta)";   // writeback tint
 
-// Highlight base colors (RGB for RGBA math)
-const HIGHLIGHT_BASE = { r: 125, g: 207, b: 255 };   // tn-cyan
-const TRAIL_BASE = { r: 169, g: 177, b: 214 };       // tn-muted (#a9b1d6)
-const WRITEBACK_BASE = { r: 187, g: 154, b: 247 };   // tn-magenta (pink)
-
-// Shadows
-const MID_SHADOW = "0 0 14px rgba(125, 207, 255, 0.25)";      // cyan glow
-const ACTIVE_SHADOW = "0 0 14px rgba(122, 162, 247, 0.26)";   // blue glow
-const WRITEBACK_SHADOW = "0 0 16px rgba(187, 154, 247, 0.25)"; // pink glow
-
+function mix(color: string, pct: number) {
+  // pct = 0..100, more pct = more color, less = more transparent
+  return `color-mix(in srgb, ${color} ${pct}%, transparent)`;
+}
 
 // -----------------------------
 // 🌊 DEPTH SCALING
@@ -27,26 +21,15 @@ export function getDepthHighlightStrength(depth: number): number {
   const min = 0.22;
   const max = 1.0;
   const clampedDepth = Math.max(0, Math.min(depth, 5));
-
   const t = clampedDepth / 5;             // 0 at root, 1 deeper
-  const value = max * (1 - t) + min * t;  // lerp(max → min)
-  return value;
-}
-
-// -----------------------------
-// 🔹 HELPERS — dynamic RGBA
-// -----------------------------
-function rgba(base: { r: number; g: number; b: number }, alpha: number): string {
-  return `rgba(${base.r}, ${base.g}, ${base.b}, ${alpha})`;
+  return max * (1 - t) + min * t;         // lerp(max → min)
 }
 
 // -----------------------------
 // 🔥 OPACITY
 // -----------------------------
 export function getOpacity(isLatest: boolean, isActiveRange: boolean): number {
-  if (isLatest) {
-    return isActiveRange ? 1 : 0.85;
-  }
+  if (isLatest) return isActiveRange ? 1 : 0.85;
   return 0.55;
 }
 
@@ -62,39 +45,34 @@ export function getBackgroundColor(
   isWriteStep: boolean,
   depth: number,
 ): string {
-  // Highlighted cells (primary action)
+  const s = getDepthHighlightStrength(depth);
+
   if (isHighlight) {
-    const s = getDepthHighlightStrength(depth);
-    return rgba(HIGHLIGHT_BASE, 0.65 * s); // bright cyan scaled by depth
+    // was rgba cyan; now theme cyan w/ depth-scaled strength
+    return mix(HIGHLIGHT, Math.round(65 * s));
   }
 
-  // Trail from previous highlighted frame
   if (isTrail) {
-    const s = getDepthHighlightStrength(depth);
-    return rgba(TRAIL_BASE, 0.28 * s); // muted periwinkle fade
+    return mix(TRAIL, Math.round(28 * s));
   }
 
-  // Write-back step overall tint (subtle magenta wash on current frame)
   if (isWriteStep) {
-    const s = getDepthHighlightStrength(depth);
-    return rgba(WRITEBACK_BASE, 0.4 * s); // visible pink but not nuclear
+    return mix(WRITEBACK, Math.round(40 * s));
   }
 
-  // Non-latest nodes = "completed" segments
   if (!isLatest) {
-    return COMPLETED_GREEN + "33"; // hex with ~0.2 alpha (#9ece6a33)
+    // completed segments subtle tint
+    return mix(COMPLETED, 20);
   }
 
-  // Current frame nodes
-  if (isMid) return MID_COLOR;           // cyan pivot
-  if (isActiveRange) return ACTIVE_BLUE; // blue active range band
+  if (isMid) return MID;
+  if (isActiveRange) return ACTIVE;
 
-  // Neutral current nodes
   return NEUTRAL;
 }
 
 // -----------------------------
-// 🔥 SCALE (DEPTH-AWARE ONLY FOR HIGHLIGHT)
+// 🔥 SCALE
 // -----------------------------
 export function getScale(
   isLatest: boolean,
@@ -106,18 +84,16 @@ export function getScale(
 ): number {
   if (isHighlight) {
     const s = getDepthHighlightStrength(depth);
-    return 0.95 + s * 0.05; // small pop near root, smaller deeper
+    return 0.95 + s * 0.05;
   }
-
   if (isTrail) return 0.92;
   if (isMid) return 1.0;
   if (isActiveRange) return 1.0;
-
   return isLatest ? 1.0 : 0.95;
 }
 
 // -----------------------------
-// 🌟 BOX SHADOW (DEPTH-AWARE HIGHLIGHT)
+// 🌟 BOX SHADOW (theme-dynamic)
 // -----------------------------
 export function getBoxShadow(
   isHighlight: boolean,
@@ -127,28 +103,26 @@ export function getBoxShadow(
   isWriteStep: boolean,
   depth: number,
 ): string {
+  const s = getDepthHighlightStrength(depth);
+
   if (isHighlight) {
-    const s = getDepthHighlightStrength(depth);
     const glow = 10 + s * 16;
-    return `0 0 ${glow}px rgba(125, 207, 255, ${0.28 * s})`;
+    // use theme cyan + alpha via color-mix
+    return `0 0 ${glow}px ${mix(HIGHLIGHT, Math.round(28 * s * 100) / 100)}`;
   }
 
   if (isTrail) {
-    const s = getDepthHighlightStrength(depth);
-    return `0 0 ${8 + 8 * s}px rgba(169,177,214, ${0.2 * s})`;
+    const glow = 8 + 8 * s;
+    return `0 0 ${glow}px ${mix(TRAIL, Math.round(20 * s))}`;
   }
 
-  if (isMid) return MID_SHADOW;
-  if (isActiveRange) return ACTIVE_SHADOW;
+  if (isMid) return `0 0 14px ${mix(MID, 25)}`;
+  if (isActiveRange) return `0 0 14px ${mix(ACTIVE, 26)}`;
 
-  if (isWriteStep) {
-    return WRITEBACK_SHADOW; // pink aura during write-back frames
-  }
+  if (isWriteStep) return `0 0 16px ${mix(WRITEBACK, 25)}`;
 
-  // Completed segments: subtle green aura
-  return "0 0 10px rgba(158, 206, 106, 0.18)";
+  return `0 0 10px ${mix(COMPLETED, 18)}`;
 }
-
 
 
 export function lerpColor(c1: string, c2: string, t: number) {

@@ -1,24 +1,19 @@
-// src/components/visualizers/Visualiser.tsx
 import Grid from "../GridCanvas";
+import { useThemeStore } from "../../stores/useThemeStore";
 import PlayerControls from "../control/PlayerControls";
-import { MergeSortOverlay } from "./MergeSortOverlay";
-import { QuickSortOverlay } from "./QuickSortOverlay";
-import { MergeSortVisualState, QuickSortVisualState } from "../../utils/types";
+import PlayerControlsSynth from "../control/PlayerControlsSynth";
 import { useVisualizer } from "../../hooks/useVisualizer";
-import CrtFxToggle from "../control/CrtFxToggle";
+import { ALGORITHMS, type Algorithm } from "../../algorithms/registry";
 
 const INITIAL_ARRAY = [
   14, 3, 2, 13, 5, 1, 15, 12, 4, 8, 7, 9, 6, 11, 10, 20, 16, 19, 17, 18,
 ];
 
-type AlgoKey = "merge" | "quick" | "bubble";
-
-export default function Visualiser({ algorithm }: { algorithm: AlgoKey }) {
+export default function Visualiser({ algorithm }: { algorithm: Algorithm }) {
   const {
-    steps,
     state,
-    description,
     highlight,
+    description,
     prevHighlight,
     isWriteStep,
     prevIsWriteStep,
@@ -28,8 +23,10 @@ export default function Visualiser({ algorithm }: { algorithm: AlgoKey }) {
 
   const { gridHeight, gridWidth, cellSize, width, height, colOffset } = layout;
 
-  const isMergeSort = algorithm === "merge";
-  const isQuickSort = algorithm === "quick";
+  const theme = useThemeStore((s) => s.theme);
+  const isControlSynth = theme === "tokyo-night";
+
+  const Overlay = ALGORITHMS[algorithm].Overlay;
 
   return (
     <section
@@ -38,19 +35,12 @@ export default function Visualiser({ algorithm }: { algorithm: AlgoKey }) {
         border border-tn-border
         bg-tn-card/80 backdrop-blur-sm
         p-3 sm:p-4 md:p-5
-        shadow-[0_0_30px_rgba(0,0,0,0.55)]
       "
-      style={{ width: "min-content" }}
+      style={{ width: "min-content", boxShadow: "var(--card-shadow)" }}
     >
-      <div className="flex justify-end mb-4">
-        <CrtFxToggle />
-      </div>
-
-      <PlayerControls />
+      {isControlSynth ? <PlayerControlsSynth description={description} /> : <PlayerControls description={description} />}
 
       <div className="relative" style={{ width }}>
-        {/* <DescriptionBar text={description} /> */}
-
         <div className="relative flex-shrink-0" style={{ height }}>
           <Grid
             height={gridHeight}
@@ -59,9 +49,9 @@ export default function Visualiser({ algorithm }: { algorithm: AlgoKey }) {
             sweepSpeed={speedMs}
           />
 
-          {isMergeSort && (
-            <MergeSortOverlay
-              state={state as MergeSortVisualState}
+          {Overlay && (
+            <Overlay
+              state={state}
               highlight={highlight}
               prevHighlight={prevHighlight}
               isWriteStep={isWriteStep}
@@ -70,20 +60,6 @@ export default function Visualiser({ algorithm }: { algorithm: AlgoKey }) {
               cellSize={cellSize}
             />
           )}
-
-          {isQuickSort && (
-            <QuickSortOverlay
-              state={state as QuickSortVisualState}
-              highlight={highlight}
-              prevHighlight={prevHighlight}
-              isWriteStep={isWriteStep}
-              prevIsWriteStep={prevIsWriteStep}
-              colOffset={colOffset}
-              cellSize={cellSize}
-            />
-          )}
-
-          {/* bubble later */}
         </div>
       </div>
     </section>

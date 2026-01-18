@@ -1,8 +1,14 @@
 import { usePlayerStore } from "../../stores/usePlayerStore";
+import type { ReactNode } from "react";
 import { useHoldRepeat } from "../../hooks/useHoldRepeat";
-import { SpeedKnob } from "./SpeedKnob";
+import { SpeedSlider } from "./SpeedSlider";
+import { SkipBack, SkipForward, Play, Pause, Square } from "lucide-react";
 
-export default function PlayerControls() {
+type PlayerControlsProps = {
+  description?: ReactNode;
+};
+
+export default function PlayerControls({ description }: PlayerControlsProps) {
   const {
     currentStep,
     stepsLength,
@@ -15,7 +21,6 @@ export default function PlayerControls() {
     setPlaying,
     setPaused,
     reset,
-    activeLeds,
     speedMs,
   } = usePlayerStore();
 
@@ -25,102 +30,65 @@ export default function PlayerControls() {
 
   const isFirst = atFirstStep();
   const isLast = atLastStep();
-  const leds = activeLeds();
 
-  const holdNext = useHoldRepeat(
-    () => {
-      if (!isLast) nextStep();
-    },
-    { enabled: !isLast, delay: 400, interval: 90 }
-  );
+  const holdNext = useHoldRepeat(() => {
+    if (!isLast) nextStep();
+  }, { enabled: !isLast, delay: 400, interval: 90 });
 
-  const holdPrev = useHoldRepeat(
-    () => {
-      if (!isFirst) prevStep();
-    },
-    { enabled: !isFirst, delay: 400, interval: 90 }
-  );
+  const holdPrev = useHoldRepeat(() => {
+    if (!isFirst) prevStep();
+  }, { enabled: !isFirst, delay: 400, interval: 90 });
 
   return (
-    <div
-      className="
-        w-full max-w-full mb-4 px-4 py-3
-        rounded-[1.4rem]
-        border border-tn-border
-        bg-tn-surface/90 backdrop-blur-sm
-        shadow-[0_0_25px_rgba(0,0,0,0.6)]
-        relative
-        before:content-[''] before:absolute before:inset-0
-        before:rounded-[1.35rem]
-        before:border before:border-tn-border/40
-        before:pointer-events-none
-        stepatron-panel
-      "
-    >
-      {/* Header */}
-      <div className="w-full flex items-center justify-start absolute">
-        <span className="tn-step-module-name">STEP-A-TRON™</span>
-      </div>
+    <div className="w-full max-w-full mb-4 px-2 rounded-2xl border border-tn-border bg-tn-card shadow-sm">
+      <div className="px-5 py-2">
+        {/* 3-column layout on md+, stacks on small */}
+        <div className="grid items-center gap-4 md:grid-cols-[auto_1fr_auto]">
+          {/* LEFT COLUMN: readout + transport */}
+          <div className="flex flex-col items-center text-center">
+            {/* Step readout */}
+            <div>
+             
+              <div className="mt-1 flex items-center justify-center gap-2">
+                <div className="font-mono text-[13px] text-tn-text">
+                  {pad3(currentIndex)}
+                  <span className="text-tn-subtle"> / </span>
+                  <span className="text-tn-muted">{pad3(totalSteps)}</span>
+                </div>
 
-      <div className="flex items-center gap-4 flex-wrap">
-
-        {/* PWR LED */}
-        <div className="flex items-center gap-1 opacity-80 select-none">
-          <span
-            className={`
-              w-2.5 h-2.5 rounded-full
-              shadow-[0_0_6px_rgba(158,206,106,0.7)]
-              tn-crt-pulse-led
-              ${isPlaying ? "bg-tn-success" : "bg-tn-warning"}
-            `}
-          />
-          <span className="text-[0.55rem] tracking-widest text-tn-subtle uppercase">
-            PWR
-          </span>
-        </div>
-
-        {/* Main Unit */}
-        <div className="flex-shrink-0 ml-18">
-          <div className="tn-step-module">
-
-            {/* Step Display */}
-            <div className="tn-step-display">
-              <span className="tn-step-digit-main tn-crt-pulse">{pad3(currentIndex)}</span>
-              <span className="tn-step-display-dim">/</span>
-              <span className="tn-step-digit-total tn-crt-pulse-soft">
-                {pad3(totalSteps)}
-              </span>
+                <span
+                  className={
+                    "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium border " +
+                    (isPlaying
+                      ? "border-tn-success/30 bg-tn-success/15 text-tn-success"
+                      : paused
+                        ? "border-tn-warning/30 bg-tn-warning/15 text-tn-warning"
+                        : "border-tn-border bg-tn-surfaceSoft text-tn-muted")
+                  }
+                >
+                  {isPlaying ? "Playing" : paused ? "Paused" : "Stopped"}
+                </span>
+              </div>
             </div>
 
-            {/* LED Strip — rotating indicator (low power) */}
-            <div className="tn-step-led-strip">
-              {Array.from({ length: 10 }).map((_, i) => {
-                const activeIndex = currentStep % 10;
-                const isActive = i === activeIndex;
-
-                return (
-                  <span
-                    key={i}
-                    className={`tn-step-led ${isActive ? "is-active" : ""}`}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Transport Controls */}
-            <div className="tn-step-transport-row">
-
-              {/* REW */}
+            {/* Transport group */}
+            <div className="mt-3 inline-flex items-center gap-1 rounded-xl border border-tn-border bg-tn-surfaceSoft p-1 w-fit">
               <button
                 type="button"
                 {...holdPrev}
                 disabled={isFirst}
-                className="tn-step-transport-btn"
+                className="
+                  h-10 w-10 rounded-lg grid place-items-center
+                  text-tn-text hover:bg-tn-surface
+                  disabled:opacity-40 disabled:hover:bg-transparent
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/35
+                "
+                aria-label="Previous"
+                title="Previous"
               >
-                <span className="tn-transport-icon tn-transport-icon-triangle tn-transport-icon-rew" />
+                <SkipBack size={18} />
               </button>
 
-              {/* PLAY / PAUSE */}
               <button
                 type="button"
                 onClick={() => {
@@ -133,51 +101,96 @@ export default function PlayerControls() {
                   }
                 }}
                 className={
-                  "tn-step-transport-btn " +
-                  (isPlaying ? "tn-transport-pause" : paused ? "tn-transport-play" : "")
+                  "h-10 w-10 rounded-lg grid place-items-center border transition " +
+                  (isPlaying
+                    ? "border-tn-danger/35 bg-tn-danger/15 text-tn-danger hover:bg-tn-danger/20"
+                    : "border-tn-success/35 bg-tn-success/15 text-tn-success hover:bg-tn-success/20")
                 }
+                aria-label={isPlaying ? "Pause" : "Play"}
+                title={isPlaying ? "Pause" : "Play"}
               >
-                <span
-                  className={
-                    isPlaying
-                      ? "tn-transport-icon tn-transport-icon-pause"
-                      : "tn-transport-icon tn-transport-icon-triangle tn-transport-icon-play"
-                  }
-                />
+                {isPlaying ? <Pause size={18} /> : <Play size={18} />}
               </button>
 
-              {/* STOP */}
               <button
                 type="button"
                 onClick={reset}
-                className="tn-step-transport-btn"
+                className="
+                  h-10 w-10 rounded-lg grid place-items-center
+                  text-tn-text hover:bg-tn-surface
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/35
+                "
+                aria-label="Stop"
+                title="Stop"
               >
-                <span className="tn-transport-icon tn-transport-icon-stop" />
+                <Square size={18} />
               </button>
 
-              {/* FWD */}
               <button
                 type="button"
                 {...holdNext}
                 disabled={isLast}
-                className="tn-step-transport-btn"
+                className="
+                  h-10 w-10 rounded-lg grid place-items-center
+                  text-tn-text hover:bg-tn-surface
+                  disabled:opacity-40 disabled:hover:bg-transparent
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/35
+                "
+                aria-label="Next"
+                title="Next"
               >
-                <span className="tn-transport-icon tn-transport-icon-triangle tn-transport-icon-fwd" />
+                <SkipForward size={18} />
               </button>
-
             </div>
           </div>
-        </div>
 
-        {/* Speed Knob */}
-        <div className="flex-1" />
-        <div className="flex flex-col items-center mr-2">
-          <SpeedKnob
-            value={speedMs}
-            min={100}
-            max={1050}
-            onChange={(v) => usePlayerStore.getState().setSpeed(v)}
-          />
+          {/* CENTER COLUMN: description banner */}
+          <div className="min-w-0 flex justify-center md:justify-center">
+            <div
+              className="
+                w-full max-w-[560px]
+                rounded-xl border border-tn-border/70
+                bg-tn-surfaceSoft/70
+                px-3 py-2
+                text-center
+                shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]
+              "
+            >
+              <div className="flex items-center justify-center gap-2">
+
+                <div className="min-w-0">
+                  <div className="text-[11px] font-semibold tracking-[0.18em] uppercase text-tn-subtle">
+                    Current step
+                  </div>
+
+                  <div
+                    key={typeof description === "string" ? description : undefined}
+                    className="
+    mt-1
+    text-sm
+    leading-relaxed
+    font-semibold
+    text-tn-text
+    truncate
+  "
+                    title={typeof description === "string" ? description : undefined}
+                  >
+                    {description ?? "Ready."}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: slider */}
+          <div className="shrink-0 justify-self-center md:justify-self-end">
+            <SpeedSlider
+              value={speedMs}
+              min={100}
+              max={1050}
+              onChange={(v) => usePlayerStore.getState().setSpeed(v)}
+            />
+          </div>
         </div>
       </div>
     </div>

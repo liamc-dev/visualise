@@ -1,29 +1,29 @@
 // src/hooks/useVisualizer.ts
 import { useEffect, useMemo } from "react";
-import { mergeSortSteps } from "../algorithms/sorting/mergeSort";
-import { quickSortSteps } from "../algorithms/sorting/quickSort";
 import { usePlayerStore } from "../stores/usePlayerStore";
-import type {
-  AlgorithmStep,
-  MergeSortVisualState,
-  QuickSortVisualState,
-} from "../utils/types";
+import { ALGORITHMS, type Algorithm } from "../algorithms/registry";
+import type { AlgorithmStep, VisualState } from "../utils/types";
 
 const GRID_HEIGHT = 18;
 const GRID_WIDTH = 26;
-const CELL_SIZE = 24;
+const CELL_SIZE = 32;
 
-export type Algorithm = "merge" | "quick";
-type VisualState = MergeSortVisualState | QuickSortVisualState;
-
-export function useVisualizer(initialArray: number[], algorithm: Algorithm = "merge") {
+export function useVisualizer(
+  initialArray: number[],
+  algorithm: Algorithm = "merge-sort" as Algorithm // change to your real default key if needed
+) {
   /**
    * 1) Build steps whenever algorithm or input changes
+   *    (registry-driven)
    */
   const steps = useMemo<AlgorithmStep<VisualState>[]>(() => {
-    return algorithm === "quick"
-      ? (quickSortSteps(initialArray) as AlgorithmStep<VisualState>[])
-      : (mergeSortSteps(initialArray) as AlgorithmStep<VisualState>[]);
+    // If algorithm comes from route params, it can be invalid at runtime.
+    // This keeps the app from exploding.
+    const safeAlgorithm = (algorithm in ALGORITHMS
+      ? algorithm
+      : ("merge-sort" as Algorithm));
+
+    return ALGORITHMS[safeAlgorithm].steps(initialArray);
   }, [initialArray, algorithm]);
 
   /**

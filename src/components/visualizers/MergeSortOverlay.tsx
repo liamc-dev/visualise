@@ -108,7 +108,8 @@ export function MergeSortOverlay({
               )
             : "none";
 
-          const insetShadow = "inset 0 0 4px rgba(0,0,0,0.6)";
+          const insetShadow = "var(--tn-overlay-inset)";
+          const textShadow = "var(--tn-overlay-textshadow)";
           const boxShadow =
             rawShadow === "none" ? insetShadow : `${insetShadow}, ${rawShadow}`;
 
@@ -123,37 +124,47 @@ export function MergeSortOverlay({
           const borderWidth = isHighlight ? 3 : 1;
 
           return (
-            <div
-              key={`${node.id}-${globalIndex}`}
-              className="
-                absolute w-6 h-6
-                flex items-center justify-center
-                text-sm font-semibold
-                text-tn-text
-                rounded-md
-                bg-tn-surface
-              "
-              style={{
-                zIndex,
-                borderColor: shellColor,
-                borderWidth,
-                textShadow: "0 0 6px rgba(0,0,0,0.9)",
-                transform: `translate(${x}px, ${y}px) scale(${scale})`,
-                opacity,
-                boxShadow,
-                willChange: "transform, opacity, box-shadow",
-                transition: `
-                  transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
-                  opacity 220ms cubic-bezier(0.16, 1, 0.3, 1),
-                  box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
-                  border-color 200ms ease-out,
-                  background-color 200ms ease-out
-                `,
-              }}
-            >
-              {value}
-            </div>
-          );
+          <div
+            key={`${node.id}-${globalIndex}`}
+            className="
+              absolute
+              w-[var(--cell)]
+              h-[var(--cell)]
+              text-[var(--cellText)]
+              rounded-[var(--cellRadius)]
+              flex items-center justify-center
+              font-semibold
+              text-tn-text
+              bg-tn-surface
+              leading-none
+              border-solid
+            "
+            style={{
+              // ✅ dynamic sizing (driven by cellSize)
+              "--cell": `${cellSize}px`,
+              "--cellText": `${Math.max(10, cellSize * 0.45)}px`,
+              "--cellRadius": `${Math.max(4, cellSize * 0.18)}px`,
+
+              zIndex,
+              borderColor: shellColor,
+              borderWidth,
+              textShadow,
+              transform: `translate(${x}px, ${y}px) scale(${scale})`,
+              opacity,
+              boxShadow,
+              willChange: "transform, opacity, box-shadow",
+              transition: `
+                transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 220ms cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 200ms ease-out,
+                background-color 200ms ease-out
+              `,
+            } as React.CSSProperties}
+          >
+    {value}
+  </div>
+);
         });
       })}
     </>

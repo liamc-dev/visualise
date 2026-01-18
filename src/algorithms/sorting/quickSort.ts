@@ -79,7 +79,7 @@ function quickSort(
     steps,
     stack,
     arr,
-    `Partition complete → pivot ${arr[pivotIndex]} → [${pivotIndex}]`,
+    `Partition complete → pivot ${arr[pivotIndex]}`,
     [pivotIndex]
   );
 

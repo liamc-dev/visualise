@@ -90,16 +90,18 @@ export function QuickSortOverlay({
 
           const rawShadow = isGlow
             ? getBoxShadow(
-                isHighlight,
-                isTrail,
-                isPivot, // pivot as "mid"
-                isActiveRange,
-                isWriteStep,
-                node.depth
-              )
+              isHighlight,
+              isTrail,
+              isPivot, // pivot as "mid"
+              isActiveRange,
+              isWriteStep,
+              node.depth
+            )
             : "none";
 
-          const insetShadow = "inset 0 0 4px rgba(0,0,0,0.6)";
+          const insetShadow = "var(--tn-overlay-inset)";
+          const textShadow = "var(--tn-overlay-textshadow)";
+
           const boxShadow =
             rawShadow === "none" ? insetShadow : `${insetShadow}, ${rawShadow}`;
 
@@ -111,10 +113,10 @@ export function QuickSortOverlay({
           const zIndex = isHighlight
             ? 30
             : isPivot || isI || isJ
-            ? 25
-            : isActiveRange
-            ? 10
-            : 1;
+              ? 25
+              : isActiveRange
+                ? 10
+                : 1;
 
           const borderWidth =
             isHighlight || isPivot || isI || isJ ? 3 : 1;
@@ -123,18 +125,28 @@ export function QuickSortOverlay({
             <div
               key={`${node.id}-${globalIndex}`}
               className="
-                absolute w-6 h-6
-                flex items-center justify-center
-                text-sm font-semibold
-                text-tn-text
-                rounded-md
-                bg-tn-surface
-              "
+    absolute
+    w-[var(--cell)]
+    h-[var(--cell)]
+    text-[var(--cellText)]
+    rounded-[var(--cellRadius)]
+    flex items-center justify-center
+    font-semibold
+    text-tn-text
+    bg-tn-surface
+    leading-none
+    border-solid
+  "
               style={{
+                // dynamic sizing
+                "--cell": `${cellSize}px`,
+                "--cellText": `${Math.max(10, cellSize * 0.45)}px`,
+                "--cellRadius": `${Math.max(4, cellSize * 0.18)}px`,
+
                 zIndex,
                 borderColor,
                 borderWidth,
-                textShadow: "0 0 6px rgba(0,0,0,0.9)",
+                textShadow,
                 backgroundColor: isPivot
                   ? "color-mix(in srgb, var(--color-tn-warning) 18%, transparent)"
                   : undefined,
@@ -142,13 +154,13 @@ export function QuickSortOverlay({
                 opacity,
                 boxShadow,
                 transition: `
-                  transform 260ms cubic-bezier(0.25, 0.8, 0.25, 1),
-                  opacity 220ms ease,
-                  box-shadow 200ms ease,
-                  border-color 180ms ease,
-                  background-color 200ms ease
-                `,
-              }}
+      transform 260ms cubic-bezier(0.25, 0.8, 0.25, 1),
+      opacity 220ms ease,
+      box-shadow 200ms ease,
+      border-color 180ms ease,
+      background-color 200ms ease
+    `,
+              } as React.CSSProperties}
             >
               {value}
             </div>

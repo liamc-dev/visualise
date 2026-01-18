@@ -1,20 +1,18 @@
 // src/utils/types.ts
 
-export type AlgorithmStep<T> = {
-  state: T;
+/** Grid cell index (your current highlight representation). */
+export type Highlight = number[];
+
+/** A single visualisation step. */
+export type AlgorithmStep<TState> = {
+  state: TState;
   description: string;
-  highlight: number[];
+  highlight: Highlight;
 };
 
 // ===== MERGE SORT TYPES =====
 
-export type ActiveNode = {
-  id: number;
-  lo: number;
-  hi: number;
-  mid?: number;
-  depth: number;
-  phase:
+export type MergeSortPhase =
   | "start"
   | "split"
   | "recurse-left"
@@ -22,12 +20,20 @@ export type ActiveNode = {
   | "merge"
   | "write"
   | "end";
+
+export type MergeSortNode = {
+  id: number;
+  lo: number;
+  hi: number;
+  mid?: number;
+  depth: number;
+  phase: MergeSortPhase;
 };
 
-export interface MergeSortVisualState {
-  array: number[];      // full array at this moment
-  nodes: ActiveNode[];  // stack at this moment
-}
+export type MergeSortVisualState = {
+  array: number[];
+  nodes: MergeSortNode[];
+};
 
 // ===== QUICK SORT TYPES =====
 
@@ -48,26 +54,16 @@ export type QuickSortNode = {
   hi: number;
   depth: number;
   phase: QuickSortPhase;
-  pivotIndex?: number;   // current pivot index in array
-  scanIndex?: number;    // current j index while scanning
+  pivotIndex?: number;
+  scanIndex?: number;
   boundaryIndex?: number;
 };
 
-
-export interface QuickSortVisualState {
+export type QuickSortVisualState = {
   array: number[];
   nodes: QuickSortNode[];
-}
-
-// ===== MISC / OTHER =====
-
-export type Props = {
-  text: string;
 };
 
+// ===== Shared visual state union (used at the app boundary) =====
 
-// ===== SettingsStore =====
-export type SettingsState = {
-  glowEnabled: boolean;
-  toggleGlow: () => void;
-};
+export type VisualState = MergeSortVisualState | QuickSortVisualState;
