@@ -1,3 +1,5 @@
+// src/theme/ThemeApplier.ts
+
 import { useEffect } from "react";
 import { useThemeStore } from "../stores/useThemeStore";
 

@@ -14,116 +14,81 @@ function mix(color: string, pct: number) {
   return `color-mix(in srgb, ${color} ${pct}%, transparent)`;
 }
 
-// -----------------------------
-// 🌊 DEPTH SCALING
-// -----------------------------
-export function getDepthHighlightStrength(depth: number): number {
+export type VisualFlags = {
+  latest?: boolean;
+  active?: boolean;
+
+  highlight?: boolean;
+  trail?: boolean;
+  mid?: boolean;
+  write?: boolean;
+
+  depth?: number;
+};
+
+function strength(depth = 0): number {
   const min = 0.22;
   const max = 1.0;
   const clampedDepth = Math.max(0, Math.min(depth, 5));
-  const t = clampedDepth / 5;             // 0 at root, 1 deeper
-  return max * (1 - t) + min * t;         // lerp(max → min)
+  const t = clampedDepth / 5; // 0..1
+  return max * (1 - t) + min * t;
 }
 
-// -----------------------------
-// 🔥 OPACITY
-// -----------------------------
-export function getOpacity(isLatest: boolean, isActiveRange: boolean): number {
-  if (isLatest) return isActiveRange ? 1 : 0.85;
+
+
+export function opacity(v: VisualFlags): number {
+  const isLatest = !!v.latest;
+  const isActive = !!v.active;
+
+  if (isLatest) return isActive ? 1 : 0.85;
   return 0.55;
 }
 
-// -----------------------------
-// 🎨 BACKGROUND COLOR (DEPTH-AWARE + STATEFUL)
-// -----------------------------
-export function getBackgroundColor(
-  isLatest: boolean,
-  isHighlight: boolean,
-  isTrail: boolean,
-  isMid: boolean,
-  isActiveRange: boolean,
-  isWriteStep: boolean,
-  depth: number,
-): string {
-  const s = getDepthHighlightStrength(depth);
+export function backgroundColor(v: VisualFlags): string {
+  const s = strength(v.depth);
 
-  if (isHighlight) {
-    // was rgba cyan; now theme cyan w/ depth-scaled strength
-    return mix(HIGHLIGHT, Math.round(65 * s));
-  }
+  if (v.highlight) return mix(HIGHLIGHT, Math.round(65 * s));
+  if (v.trail) return mix(TRAIL, Math.round(28 * s));
+  if (v.write) return mix(WRITEBACK, Math.round(40 * s));
 
-  if (isTrail) {
-    return mix(TRAIL, Math.round(28 * s));
-  }
+  if (!v.latest) return mix(COMPLETED, 20);
 
-  if (isWriteStep) {
-    return mix(WRITEBACK, Math.round(40 * s));
-  }
-
-  if (!isLatest) {
-    // completed segments subtle tint
-    return mix(COMPLETED, 20);
-  }
-
-  if (isMid) return MID;
-  if (isActiveRange) return ACTIVE;
+  if (v.mid) return MID;
+  if (v.active) return ACTIVE;
 
   return NEUTRAL;
 }
 
-// -----------------------------
-// 🔥 SCALE
-// -----------------------------
-export function getScale(
-  isLatest: boolean,
-  isHighlight: boolean,
-  isTrail: boolean,
-  isMid: boolean,
-  isActiveRange: boolean,
-  depth: number,
-): number {
-  if (isHighlight) {
-    const s = getDepthHighlightStrength(depth);
-    return 0.95 + s * 0.05;
-  }
-  if (isTrail) return 0.92;
-  if (isMid) return 1.0;
-  if (isActiveRange) return 1.0;
-  return isLatest ? 1.0 : 0.95;
+export function scale(v: VisualFlags): number {
+  const s = strength(v.depth);
+
+  if (v.highlight) return 0.95 + s * 0.05;
+  if (v.trail) return 0.92;
+  if (v.mid) return 1.0;
+  if (v.active) return 1.0;
+
+  return v.latest ? 1.0 : 0.95;
 }
 
-// -----------------------------
-// 🌟 BOX SHADOW (theme-dynamic)
-// -----------------------------
-export function getBoxShadow(
-  isHighlight: boolean,
-  isTrail: boolean,
-  isMid: boolean,
-  isActiveRange: boolean,
-  isWriteStep: boolean,
-  depth: number,
-): string {
-  const s = getDepthHighlightStrength(depth);
+export function boxShadow(v: VisualFlags): string {
+  const s = strength(v.depth);
 
-  if (isHighlight) {
+  if (v.highlight) {
     const glow = 10 + s * 16;
-    // use theme cyan + alpha via color-mix
-    return `0 0 ${glow}px ${mix(HIGHLIGHT, Math.round(28 * s * 100) / 100)}`;
+    return `0 0 ${glow}px ${mix(HIGHLIGHT, Math.round(28 * s))}`;
   }
 
-  if (isTrail) {
+  if (v.trail) {
     const glow = 8 + 8 * s;
     return `0 0 ${glow}px ${mix(TRAIL, Math.round(20 * s))}`;
   }
 
-  if (isMid) return `0 0 14px ${mix(MID, 25)}`;
-  if (isActiveRange) return `0 0 14px ${mix(ACTIVE, 26)}`;
-
-  if (isWriteStep) return `0 0 16px ${mix(WRITEBACK, 25)}`;
+  if (v.mid) return `0 0 14px ${mix(MID, 25)}`;
+  if (v.active) return `0 0 14px ${mix(ACTIVE, 26)}`;
+  if (v.write) return `0 0 16px ${mix(WRITEBACK, 25)}`;
 
   return `0 0 10px ${mix(COMPLETED, 18)}`;
 }
-
 
 export function lerpColor(c1: string, c2: string, t: number) {
   const a = parseInt(c1.slice(1), 16);

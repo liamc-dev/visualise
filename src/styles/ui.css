@@ -1,0 +1,364 @@
+/* =============================================================================
+   COMPONENTS + UTILITIES
+   ============================================================================= */
+
+@layer components {
+
+    /* -----------------------------
+     Global kill switch (CRT/FX)
+     ----------------------------- */
+    .tn-no-anim *,
+    .tn-no-anim *::before,
+    .tn-no-anim *::after {
+        animation: none !important;
+        animation-play-state: paused !important;
+        transition-property: none !important;
+        transition-duration: 0s !important;
+        transition-delay: 0s !important;
+    }
+
+    /* -----------------------------
+   Focus surface (base)
+   ----------------------------- */
+    .tn-focus-surface {
+        position: relative;
+    }
+
+    /* -----------------------------
+     Code Panel
+     ----------------------------- */
+
+    /* Focus mode dim everything */
+    .acp-dim {
+        opacity: 0.18;
+    }
+
+    /* Re-boost visibility for highlighted regions */
+    .acp-undim {
+        opacity: 1;
+    }
+
+    /* Monaco code ref highlighting (line range) */
+    .acp-line-highlight {
+        background: rgb(var(--tn-accent) / 0.14);
+    }
+
+    /* Monaco inline span highlights */
+    .monaco-editor .acp-span-highlight {
+        background: transparent !important;
+        display: inline-block;
+        padding-bottom: 1px;
+        box-shadow: inset 0 -0.1em 0 rgb(var(--tn-accent) / 0.22);
+        border-radius: 1px;
+    }
+
+
+
+    /* Diff editor vertical divider (sash) */
+    .monaco-editor .monaco-sash.vertical,
+    .monaco-diff-editor .monaco-sash.vertical {
+        width: 4px !important;
+        background: rgba(255, 255, 255, 0.032) !important;
+    }
+
+    .monaco-editor .monaco-sash.vertical:hover,
+    .monaco-diff-editor .monaco-sash.vertical:hover {
+        background: rgba(255, 255, 255, 0.16) !important;
+    }
+
+    .monaco-editor .monaco-sash::before,
+    .monaco-diff-editor .monaco-sash::before {
+        display: none !important;
+    }
+
+    /* Monaco panel transparent */
+    .monaco-editor,
+    .monaco-editor .margin,
+    .monaco-editor-background {
+        background: transparent !important;
+    }
+
+    /* Plain panel pre line numbers */
+    .tn-codeblock code {
+        counter-reset: line;
+    }
+
+    .tn-codeblock code>div {
+        counter-increment: line;
+        position: relative;
+        padding-left: 2.5rem;
+    }
+
+    .tn-codeblock code>div::before {
+        content: counter(line);
+        position: absolute;
+        left: 0.5rem;
+        width: 1.5rem;
+        text-align: right;
+        opacity: 0.45;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* -----------------------------
+     Range sliders (theme-aware)
+     ----------------------------- */
+
+    .tn-range-modern {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 20px;
+        background: transparent;
+    }
+
+    .tn-range-modern::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 9999px;
+        background: linear-gradient(to right,
+                rgb(var(--tn-slider-accent)) 0%,
+                rgb(var(--tn-slider-accent)) var(--p, 50%),
+                rgb(var(--tn-border)) var(--p, 50%),
+                rgb(var(--tn-border)) 100%);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.10);
+    }
+
+    .tn-range-modern::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        margin-top: -6px;
+        width: 18px;
+        height: 18px;
+        border-radius: 9999px;
+        background: rgb(var(--tn-surface));
+        border: 2px solid rgb(var(--tn-slider-accent));
+        box-shadow:
+            0 10px 20px rgba(0, 0, 0, 0.18),
+            0 0 0 4px rgba(var(--tn-slider-accent), 0.14);
+    }
+
+    .tn-range-modern:focus-visible::-webkit-slider-thumb {
+        box-shadow:
+            0 10px 20px rgba(0, 0, 0, 0.18),
+            0 0 0 6px rgba(var(--tn-slider-accent), 0.22);
+    }
+
+    .tn-range-modern::-moz-range-track {
+        height: 6px;
+        border-radius: 9999px;
+        background: linear-gradient(to right,
+                rgb(var(--tn-slider-accent)) 0%,
+                rgb(var(--tn-slider-accent)) var(--p, 50%),
+                rgb(var(--tn-border)) var(--p, 50%),
+                rgb(var(--tn-border)) 100%);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.10);
+    }
+
+    .tn-range-modern::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 9999px;
+        background: rgb(var(--tn-surface));
+        border: 2px solid rgb(var(--tn-slider-accent));
+        box-shadow:
+            0 10px 20px rgba(0, 0, 0, 0.18),
+            0 0 0 4px rgba(var(--tn-slider-accent), 0.14);
+    }
+
+    .tn-active-band {
+        pointer-events: none;
+        z-index: 0;
+        background: linear-gradient(to right,
+                rgb(var(--tn-accent) / 0.10),
+                rgb(var(--tn-accent) / 0.02));
+        border-left: 3px solid rgb(var(--tn-accent) / 0.65);
+    }
+
+    /* -----------------------------
+     Buttons (tn-btn family)
+     ----------------------------- */
+
+    .tn-btn {
+        @apply relative inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-semibold tracking-wide border bg-tn-surfaceSoft text-tn-text backdrop-blur-sm transition-all duration-200;
+        box-shadow: var(--card-shadow);
+    }
+
+    .tn-btn:hover:not(:disabled) {
+        @apply bg-tn-surface;
+        box-shadow: var(--card-shadow);
+    }
+
+    .tn-btn:active:not(:disabled) {
+        @apply scale-[0.97] bg-tn-surfaceSoft;
+        box-shadow: var(--card-shadow);
+    }
+
+    .tn-btn:disabled {
+        @apply opacity-40 cursor-not-allowed;
+        box-shadow: none;
+    }
+
+    .tn-btn-cyan {
+        color: rgb(var(--tn-cyan));
+        border-color: rgb(var(--tn-cyan));
+    }
+
+    .tn-btn-magenta {
+        color: rgb(var(--tn-magenta));
+        border-color: rgb(var(--tn-magenta));
+    }
+
+    .tn-btn-green {
+        color: rgb(var(--tn-success));
+        border-color: rgb(var(--tn-success));
+    }
+
+    /* -----------------------------
+     Knob UI (base)
+     ----------------------------- */
+
+    .tn-knob-wrap {
+        @apply relative flex flex-col items-center gap-1;
+    }
+
+    .tn-knob-label {
+        @apply text-[0.55rem] tracking-[0.2em] uppercase text-tn-subtle;
+    }
+
+    .tn-knob {
+        @apply relative flex items-center justify-center rounded-full bg-tn-surfaceSoft border border-tn-border;
+        width: 3.25rem;
+        height: 3.25rem;
+        box-shadow: var(--card-shadow);
+    }
+
+    .tn-knob-inner {
+        @apply relative flex items-center justify-center rounded-full bg-tn-surface border border-tn-border;
+        width: 2.2rem;
+        height: 2.2rem;
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+    }
+
+    .tn-knob-indicator {
+        @apply absolute bg-tn-accent;
+        width: 0.22rem;
+        height: 0.9rem;
+        border-radius: 9999px;
+        top: 25%;
+        left: 50%;
+        transform-origin: 50% 100%;
+    }
+
+    .tn-knob-value {
+        @apply text-[0.6rem] font-mono text-tn-muted;
+    }
+
+    .tn-knob-range {
+        @apply absolute inset-0 opacity-0 cursor-pointer;
+    }
+
+}
+
+@layer utilities {
+
+    /* -----------------------------
+     GRID (theme-aware)
+     ----------------------------- */
+    .bg-tn-grid {
+        background-color: rgb(var(--tn-grid-bg) / var(--tn-grid-fill-alpha));
+    }
+
+    .tn-grid-cell {
+        border: 1px solid rgb(var(--tn-grid-rgb) / var(--tn-grid-line-alpha));
+    }
+}
+
+/* Cursor behavior */
+@layer base {
+
+    button,
+    [role="button"],
+    a,
+    select,
+    summary,
+    input[type="checkbox"],
+    input[type="radio"],
+    input[type="range"],
+    input[type="file"],
+    label {
+        cursor: pointer;
+    }
+
+    button:disabled,
+    [aria-disabled="true"],
+    input:disabled,
+    select:disabled {
+        cursor: not-allowed;
+    }
+}
+
+/* =============================================================================
+   GLOBAL BROWSER SCROLLBARS
+   Balanced + restrained
+   ============================================================================= */
+
+html *::-webkit-scrollbar {
+    width: 12px;
+    height: 10px;
+}
+
+/* LIGHT */
+html[data-theme="light"] *::-webkit-scrollbar-track {
+    background: rgb(var(--tn-surfaceSoft));
+}
+
+html[data-theme="light"] *::-webkit-scrollbar-thumb {
+    background: rgb(var(--tn-cyan) / 0.3);
+    border-radius: 999px;
+    border: 2px solid rgb(var(--tn-surfaceSoft));
+}
+
+html[data-theme="light"] *::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--tn-cyan) / 0.6);
+}
+
+/* DARK */
+html[data-theme="dark"] *::-webkit-scrollbar-track {
+    background: rgb(var(--tn-surfaceSoft));
+}
+
+html[data-theme="dark"] *::-webkit-scrollbar-thumb {
+    background: rgb(var(--tn-border) / 0.8);
+    border-radius: 999px;
+    border: 2px solid rgb(var(--tn-surfaceSoft));
+}
+
+html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--tn-cyan) / 0.25);
+}
+
+/* Corner */
+html *::-webkit-scrollbar-corner {
+    background: rgb(var(--tn-surfaceSoft));
+}
+
+/* =============================================================================
+   MONACO SCROLLBAR VISIBILITY (hover-only)
+   ============================================================================= */
+
+.tn-monaco .monaco-scrollable-element .scrollbar,
+.tn-monaco .monaco-scrollable-element .slider,
+.tn-monaco .monaco-scrollable-element .scrollbar .slider {
+    opacity: 0 !important;
+    transition: opacity 140ms ease;
+}
+
+.tn-monaco .monaco-scrollable-element .scrollbar {
+    pointer-events: none;
+}
+
+.tn-monaco.is-scrollbars-on .monaco-scrollable-element .scrollbar,
+.tn-monaco.is-scrollbars-on .monaco-scrollable-element .slider,
+.tn-monaco.is-scrollbars-on .monaco-scrollable-element .scrollbar .slider {
+    opacity: 1 !important;
+    pointer-events: auto;
+}

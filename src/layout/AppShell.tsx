@@ -1,85 +1,133 @@
-// AppShell.tsx
-import { useState, useEffect } from "react";
+// src/layout/AppShell.tsx
+import { useEffect, useState } from "react";
 import { useSettingsStore } from "../stores/useSettingsStore";
-import Sidebar from "../components/Sidebar";
-import ThemeSelect from "../components/control/ThemeSelect";
+import Sidebar from "../layout/Sidebar";
+import ThemeSelect from "../components/top-bar-menu/ThemeSelect";
+import UserMenu from "../components/top-bar-menu/UserMenu";
+import { useBrand } from "../brand/useBrand";
 
+const TOP_H = 52;
+const RAIL_W = 72;
+const OPEN_W = 150;
+
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const apply = () => setIsDesktop(mq.matches);
+    apply();
+
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  return isDesktop;
+}
+
+function MenuIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    >
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+}
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
+  const isDesktop = useIsDesktop();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-useEffect(() => {
-  const mq = window.matchMedia("(min-width: 1024px)");
-
-  const apply = () => setIsSidebarOpen(mq.matches);
-  apply();
-
-  const handler = () => setIsSidebarOpen(mq.matches);
-  mq.addEventListener("change", handler);
-
-  return () => mq.removeEventListener("change", handler);
-}, []);
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [isDesktop]);
 
   const glowEnabled = useSettingsStore((s) => s.glowEnabled);
   useEffect(() => {
-    // when glowEnabled is false → add tn-no-anim and kill all animations
-    if (!glowEnabled) {
-      document.body.classList.add("tn-no-anim");
-    } else {
-      document.body.classList.remove("tn-no-anim");
-    }
+    if (!glowEnabled) document.body.classList.add("tn-no-anim");
+    else document.body.classList.remove("tn-no-anim");
   }, [glowEnabled]);
 
+  const { appLogoSrc, appLogoAlt } = useBrand();
+  const desktopSidebarW = isSidebarOpen ? OPEN_W : RAIL_W;
+
   return (
-    <div className="min-h-screen bg-tn-bg text-tn-text flex">
+    <div className="h-screen overflow-hidden bg-tn-bg text-tn-text flex flex-col">
+
+      <header className="sticky top-0 z-50 bg-tn-bg shrink-0"
+        style={{
+          height: `${TOP_H}px`,
+        }}>
+        <div className="h-full flex">
+          <div
+            className="flex items-center justify-center"
+            style={{ width: isDesktop ? RAIL_W : TOP_H }}
+          >
+            <button
+              type="button"
+              onClick={() => setIsSidebarOpen((v) => !v)}
+              className="
+                inline-flex items-center justify-center
+                w-10 h-10 rounded-xl
+                text hover:text-tn-text
+                hover:bg-tn-surfaceSoft
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30
+                transition-colors
+              "
+              aria-label="Toggle navigation"
+            >
+              <MenuIcon className="h-6 w-6" />
+            </button>
+          </div>
+
+          <div className="h-full flex flex-1 items-center">
+            {appLogoSrc ? (
+              <img
+                src={appLogoSrc}
+                alt={appLogoAlt ?? "App logo"}
+                className="h-7 w-auto select-none pointer-events-none opacity-95"
+              />
+            ) : (
+              <span className="text-ui font-semibold tracking-wide text-tn-text">
+                {appLogoAlt ?? "App"}
+              </span>
+            )}
+
+            <div className="flex-1" />
+            <ThemeSelect />
+            {/* <UserMenu></UserMenu> */}
+          </div>
+        </div>
+      </header>
+
       <Sidebar
+        topOffset={TOP_H}
         isOpen={isSidebarOpen}
+        isDesktop={isDesktop}
+        railWidth={RAIL_W}
+        openWidth={OPEN_W}
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col">
-        <header
-          className="
-            h-14
-            border-b border-tn-border
-            bg-tn-surface/80 backdrop-blur-sm
-            flex items-center gap-4
-            px-4
-          "
-          style={{ boxShadow: "var(--card-shadow)" }}
-        >
-          {/* Hamburger (mobile only) */}
-          <button
-            type="button"
-            onClick={() => setIsSidebarOpen(v => !v)}
-            className="
-              p-2 rounded-md
-              hover:bg-tn-surfaceSoft/80
-              focus:outline-none focus:ring-2 focus:ring-tn-accent/60
-              transition-colors
-              lg:hidden
-            "
-          >
-            <span className="sr-only">Toggle navigation</span>
-            <div className="flex flex-col gap-1.5">
-              <span className="block w-5 h-0.5 rounded bg-tn-text" />
-              <span className="block w-5 h-0.5 rounded bg-tn-text" />
-              <span className="block w-5 h-0.5 rounded bg-tn-text" />
-            </div>
-          </button>
-
-        
-          {/* spacer pushes stuff to the right */}
-          <div className="flex-1" />
-
-          {/* Theme selector (top-right) */}
-          <ThemeSelect />
-        </header>
-
-        <main className="flex-1 px-4 py-4 overflow-auto">
-          <div className="w-full max-w-7xl mx-auto">{children}</div>
-        </main>
-      </div>
+      {/* MAIN */}
+      <main
+        className="flex-1 min-h-0 overflow-auto border border-tn-border/25"
+        style={{ paddingLeft: isDesktop ? desktopSidebarW : 0 }}
+      >
+        <div className="w-full px-4 py-2 h-full">
+          <div className="mx-auto w-full max-w-[1800px] h-full">
+            {children}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

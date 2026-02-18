@@ -1,5 +1,4 @@
 // src/components/control/SpeedSlider.tsx
-import * as React from "react";
 
 type Props = {
   value: number;
@@ -24,40 +23,34 @@ export function SpeedSlider({
 }: Props) {
   const clamped = Math.min(max, Math.max(min, value));
   const mult = msToMultiplier(clamped, min, max);
+  const range = max - min;
+  const p = range <= 0 ? 0 : ((clamped - min) / range) * 100;
 
   return (
-    <div className="w-42">
-      <div className="flex items-baseline justify-between mb-2">
-        <span className="text-[11px] font-semibold tracking-wider text-tn-subtle uppercase">
+    <div className="w-42 p-0.5">
+      <div className="flex items-baseline justify-between">
+        <span className="text-label font-semibold tracking-wider text-tn-subtle">
           Speed
         </span>
 
-        <span className="font-mono text-[11px] text-tn-text">
+        <span className="font-mono text-label text-tn-text">
           {mult.toFixed(1)}×
         </span>
       </div>
 
-     <input
-  type="range"
-  min={min}
-  max={max}
-  step={step}
-  value={clamped}
-  onChange={(e) => onChange(Number(e.target.value))}
-  className="
-  w-full
-  h-1.5
-  rounded-full
-  bg-tn-border/40
-  accent-tn-accent
-  hover:bg-tn-border/60
-  transition-colors
-"
-/>
-      <div className="mt-1 flex justify-between text-[10px] text-tn-subtle">
-        <span>Slow</span>
-        <span>Fast</span>
-      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={clamped}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="tn-range-modern cursor-pointer"
+        style={{
+          ["--p" as any]: `${p}%`,
+          pointerEvents: "auto",
+        }}
+      />
     </div>
   );
 }

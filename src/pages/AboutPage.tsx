@@ -1,14 +1,29 @@
 // src/pages/AboutPage.tsx
 const AboutPage = () => {
   return (
-    <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/70 backdrop-blur-sm p-4 md:p-5">
-      <h2 className="text-lg font-semibold mb-2">About this demo</h2>
-      <p className="text-sm text-neutral-400">
-        This is a React + TypeScript + Tailwind visualiser playground using an
-        app-shell layout: sidebar, top bar, and routed content area. It’s set up
-        so you can bolt on more visualisations and tooling without rewriting
-        layout.
-      </p>
+    <div className="rounded-2xl bg-tn-grid backdrop-blur-sm p-4 md:p-5">
+      <h2 className="text-title font-semibold mb-4 text-tn-text">About</h2>
+
+      <div className="space-y-3 text-body text-tn-muted">
+        <p>
+          <span className="text-tn-text font-medium">What it does</span> — 
+          Interactive step-by-step visualisation of sorting algorithms with 
+          synchronised code highlighting, tree/array views, and plain-language 
+          explanations.
+        </p>
+
+        <p>
+          <span className="text-tn-text font-medium">How to use it</span> — 
+          Step through manually or adjust playback speed. Switch between Java, 
+          C++, Python, and TypeScript implementations.
+        </p>
+
+        <p>
+          <span className="text-tn-text font-medium">What's next</span> — 
+          More algorithms and memorization features coming soon.
+        </p>
+
+      </div>
     </div>
   );
 };

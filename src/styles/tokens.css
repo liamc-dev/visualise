@@ -1,0 +1,214 @@
+/* src/styles/tokens.css
+   =============================================================================
+   THEME TOKENS (vars + tailwind mapping)
+   ============================================================================= */
+
+/* Defaults (shared) */
+:root {
+  --card-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --panel-glow: none;
+  --font-scale: 1;
+
+  /* Default: slider follows accent */
+  --tn-slider-accent: var(--tn-accent);
+
+  /* Typography */
+  --tn-fs-micro: 0.625rem; /* 10px */
+  --tn-fs-label: 0.6875rem; /* 11px */
+  --tn-fs-button: 0.75rem; /* 12px */
+  --tn-fs-ui:    0.8125rem; /* 13px */
+  --tn-fs-body: 0.875rem; /* 14px */
+  --tn-fs-title: 1.25rem;
+
+  --tn-lh-tight: 1.2;
+  --tn-lh-body: 1.55;
+
+  --tn-tr-label: 0.18em;
+  --tn-tr-tight: -0.01em;
+  --tn-tr-normal: 0em;
+  --tn-tr-wide: 0.08em;
+
+  --tn-elev-1: 0 1px 0 rgba(255,255,255,0.04), 0 10px 30px rgba(0,0,0,0.35);
+  --tn-elev-2: 0 1px 0 rgba(255,255,255,0.06), 0 18px 50px rgba(0,0,0,0.55);
+}
+
+html {
+  font-size: calc(16px * var(--font-scale));
+}
+
+/* Dark elevation */
+html[data-theme="dark"] {
+  --card-shadow: 0 16px 42px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+
+/* Tokyo elevation + glow */
+html[data-theme="tokyo-night"] {
+  --card-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+  --panel-glow: 0 0 30px rgba(122, 162, 247, 0.18);
+  color-scheme: dark;
+}
+
+/* TOKYO NIGHT */
+:root[data-theme="tokyo-night"] {
+  --tn-bg: 26 27 38;
+  --tn-surface: 22 22 30;
+  --tn-card: 36 40 59;
+  --tn-border: 31 35 53;
+  --tn-surfaceSoft: 21 23 40;
+
+  --tn-text: 192 202 245;
+  --tn-muted: 169 177 214;
+  --tn-subtle: 86 95 137;
+
+  --tn-accent: 122 162 247;
+  --tn-accentSoft: 59 66 97;
+  --tn-cyan: 125 207 255;
+  --tn-magenta: 187 154 247;
+
+  --tn-success: 158 206 106;
+  --tn-warning: 224 175 104;
+  --tn-danger: 247 118 142;
+
+  --tn-overlay-inset: inset 0 0 4px rgba(0, 0, 0, 0.6);
+  --tn-overlay-textshadow: 0 0 6px rgba(0, 0, 0, 0.9);
+
+  --font-scale: 1.05;
+
+  --tn-link: 62 166 255;       /* #3EA6FF-ish */
+  --tn-divider: 255 255 255;   /* use with low alpha */
+
+  /* Grid */
+  --tn-grid-bg: 36 40 59;
+  --tn-grid-fill-alpha: 0.10;
+  --tn-grid-line-alpha: 0.00;
+  --tn-grid-rgb: 255 255 255;
+
+  --grid-base: #1f2335;
+  --grid-bright: #8f962f;
+}
+
+/* (balanced dark) */
+:root[data-theme="dark"] {
+
+  /* Base layers */
+  --tn-bg: 24 24 24;          /* main canvas */
+  --tn-surface: 34 36 38;     /* panels */
+  --tn-card: 42 45 50;        /* raised elements */
+  --tn-surfaceSoft: 48 52 58; /* hover / active */
+
+  /* Borders */
+  --tn-border: 62 66 74;
+
+  /* Text — neutral */
+  --tn-text: 220 223 228;
+  --tn-muted: 170 174 182;
+  --tn-subtle: 130 134 142;
+
+  /* Accent — like blue */
+  --tn-accent: 88 140 255;
+  --tn-accentSoft: 40 52 78;
+
+  /* Supporting colors */
+  --tn-cyan: 86 201 176;
+  --tn-magenta: 197 134 192;
+
+  --tn-success: 106 153 85;
+  --tn-warning: 220 220 170;
+  --tn-danger: 244 135 113;
+
+  /* Overlays */
+  --tn-overlay-inset: inset 0 0 8px rgba(0,0,0,0.55);
+  --tn-overlay-textshadow: 0 0 6px rgba(0,0,0,0.75);
+
+  --font-scale: 1.02;
+
+  --tn-link: 88 140 255;
+  --tn-divider: 255 255 255;
+
+  /* Grid — visible but subtle */
+  --tn-grid-fill-alpha: 0.04;
+  --tn-grid-line-alpha: 0.015;
+  --tn-grid-rgb: 255 255 255;
+  --tn-grid-bg: 34 36 41;
+}
+
+
+/* LIGHT */
+:root[data-theme="light"] {
+  --tn-bg: 248 250 252;
+  --tn-surface: 255 255 255;
+
+  --tn-card: 248 250 252;
+  --tn-surfaceSoft: 241 245 249;
+
+  --tn-border: 226 232 240;
+  --tn-borderSoft: 241 245 249;
+
+  --tn-text: 15 23 42;
+  --tn-muted: 75 85 99;
+  --tn-subtle: 107 114 128;
+
+  --tn-accent: 59 130 246;
+  --tn-accentSoft: 219 234 254;
+
+  --tn-cyan: 56 189 248;
+  --tn-magenta: 216 180 254;
+
+  --tn-success: 34 197 94;
+  --tn-warning: 234 179 8;
+  --tn-danger: 239 68 68;
+
+  --tn-slider-accent:var(--tn-cyan);
+  --font-scale: 1.02;
+
+  --tn-link: 6 95 212;
+  --tn-divider: 15 23 42;
+
+  --tn-grid-fill-alpha: 0.06;
+  --tn-grid-line-alpha: 0.04;
+  --tn-grid-rgb: 15 23 42;
+  --tn-grid-bg: 203 213 225;
+}
+
+/* Tailwind theme tokens from runtime vars */
+@theme {
+  --color-tn-bg: rgb(var(--tn-bg));
+  --color-tn-surface: rgb(var(--tn-surface));
+  --color-tn-card: rgb(var(--tn-card));
+  --color-tn-border: rgb(var(--tn-border));
+  --color-tn-surfaceSoft: rgb(var(--tn-surfaceSoft));
+
+  --color-tn-text: rgb(var(--tn-text));
+  --color-tn-muted: rgb(var(--tn-muted));
+  --color-tn-subtle: rgb(var(--tn-subtle));
+
+  --color-tn-accent: rgb(var(--tn-accent));
+  --color-tn-accentSoft: rgb(var(--tn-accentSoft));
+  --color-tn-cyan: rgb(var(--tn-cyan));
+  --color-tn-magenta: rgb(var(--tn-magenta));
+
+  --color-tn-success: rgb(var(--tn-success));
+  --color-tn-warning: rgb(var(--tn-warning));
+  --color-tn-danger: rgb(var(--tn-danger));
+
+  --color-tn-link: rgb(var(--tn-link));
+  --color-tn-divider: rgb(var(--tn-divider));
+  
+  --text-label: var(--tn-fs-label);
+  --text-body: var(--tn-fs-body);
+  --text-title: var(--tn-fs-title);
+  --text-ui: var(--tn-fs-ui);
+
+
+  --tracking-tight: var(--tn-tr-tight);
+  --tracking-normal: var(--tn-tr-normal);
+  --tracking-label: var(--tn-tr-label);
+  --tracking-wide: var(--tn-tr-wide);
+
+  --text-button: var(--tn-fs-button);
+
+  --shadow-tn-1: var(--tn-elev-1);
+  --shadow-tn-2: var(--tn-elev-2);
+  
+}
