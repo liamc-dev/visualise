@@ -84,7 +84,7 @@ html[data-theme="tokyo-night"] {
   --tn-grid-line-alpha: 0.00;
   --tn-grid-rgb: 255 255 255;
 
-  --grid-base: #1f2335;
+  --grid-base: #1f233557;
   --grid-bright: #8f962f;
 }
 
@@ -127,10 +127,10 @@ html[data-theme="tokyo-night"] {
   --tn-divider: 255 255 255;
 
   /* Grid — visible but subtle */
-  --tn-grid-fill-alpha: 0.04;
+  --tn-grid-fill-alpha: 0.5;
   --tn-grid-line-alpha: 0.015;
   --tn-grid-rgb: 255 255 255;
-  --tn-grid-bg: 34 36 41;
+  --tn-grid-bg: 34 36 38;
 }
 
 

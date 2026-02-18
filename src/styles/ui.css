@@ -312,13 +312,13 @@ html[data-theme="light"] *::-webkit-scrollbar-track {
 }
 
 html[data-theme="light"] *::-webkit-scrollbar-thumb {
-    background: rgb(var(--tn-cyan) / 0.3);
+    background: rgb(var(--tn-accent) / 0.14);
     border-radius: 999px;
     border: 2px solid rgb(var(--tn-surfaceSoft));
 }
 
 html[data-theme="light"] *::-webkit-scrollbar-thumb:hover {
-    background: rgb(var(--tn-cyan) / 0.6);
+    background: rgb(var(--tn-accent) / 0.24);
 }
 
 /* DARK */
@@ -333,7 +333,7 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb {
 }
 
 html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover {
-    background: rgb(var(--tn-cyan) / 0.25);
+    background: rgb(var(--tn-accent) / 0.14);
 }
 
 /* Corner */

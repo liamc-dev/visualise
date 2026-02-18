@@ -237,5 +237,5 @@ html[data-theme="tokyo-night"] *::-webkit-scrollbar-thumb {
 }
 
 html[data-theme="tokyo-night"] *::-webkit-scrollbar-thumb:hover {
-    background: rgb(var(--tn-magenta) / 0.65);
+    background: rgb(var(--tn-magenta) / 0.35);
 }
