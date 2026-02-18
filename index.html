@@ -1,32 +1,49 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/visualise/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>visualise</title>
 
-    <script>
-      
-      (function () {
-        var l = window.location;
-        if (l.search.startsWith("?/")) {
-          var route = l.search.slice(2);
-          var newUrl =
-            l.origin +
-            l.pathname.replace(/\/$/, "") +
-            "/" +
-            route +
-            l.hash;
-          window.history.replaceState(null, "", newUrl);
-        }
-      })();
-    </script>
-    <script type="module" crossorigin src="/visualise/assets/index-D5wZ4KMB.js"></script>
-    <link rel="stylesheet" crossorigin href="/visualise/assets/index-BZqb1gSC.css">
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/visualise/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>visualise</title>
 
-  <body>
-    <div id="root"></div>
-  </body>
+  <script>
+    (function () {
+      try {
+        var raw = localStorage.getItem("theme");
+        if (!raw) return;
+        var data = JSON.parse(raw);
+        var theme = data?.state?.theme;
+        if (!theme) return;
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.classList.toggle("dark", theme !== "light");
+        document.documentElement.style.colorScheme = theme === "light" ? "light" : "dark";
+      } catch (e) { }
+    })();
+  </script>
+
+  <script>
+
+    (function () {
+      var l = window.location;
+      if (l.search.startsWith("?/")) {
+        var route = l.search.slice(2);
+        var newUrl =
+          l.origin +
+          l.pathname.replace(/\/$/, "") +
+          "/" +
+          route +
+          l.hash;
+        window.history.replaceState(null, "", newUrl);
+      }
+    })();
+  </script>
+  <script type="module" crossorigin src="/visualise/assets/index-BGzBGURg.js"></script>
+  <link rel="stylesheet" crossorigin href="/visualise/assets/index-nMGhHJ5E.css">
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+
 </html>
