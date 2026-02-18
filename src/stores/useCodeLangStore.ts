@@ -14,14 +14,14 @@ const isCodeLang = (v: unknown): v is CodeLang =>
 export const useCodeLangStore = create<State>()(
   persist(
     (set) => ({
-      lang: "pseudo",
+      lang: "java",
       setLang: (lang) => set({ lang }),
     }),
     {
       name: "tn-code-lang",
       migrate: (persisted) => {
         const p = persisted as any;
-        const lang = isCodeLang(p?.state?.lang) ? p.state.lang : "pseudo";
+        const lang = isCodeLang(p?.state?.lang) ? p.state.lang : "java";
         return { ...p, state: { ...p.state, lang } };
       },
     }
