@@ -5,7 +5,7 @@ function cx(...parts: Array<string | false | null | undefined>) {
 }
 
 type PanelTone = "solid" | "soft" | "glass" | "base";
-type PanelRadius = "lg" | "xl" | "2xl";
+type PanelRadius = "none" | "lg" | "xl" | "2xl";
 
 type PanelProps<T extends React.ElementType> = {
     as?: T;
@@ -37,11 +37,13 @@ export function Panel<T extends React.ElementType = "div">({
                     : "bg-tn-surfaceSoft/45";
 
     const radiusCls =
-        radius === "lg"
-            ? "rounded-lg"
-            : radius === "xl"
-                ? "rounded-xl"
-                : "rounded-2xl";
+        radius === "none"
+            ? ""
+            : radius === "lg"
+                ? "rounded-lg"
+                : radius === "xl"
+                    ? "rounded-xl"
+                    : "rounded-2xl";
 
     const borderCls = border ? "border border-tn-border" : "";
 

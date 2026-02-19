@@ -367,7 +367,7 @@ export default function Sidebar({
       <Panel
         as="aside"
         tone="base"
-        radius="lg"
+        radius="none"
         border={false}
         className={cn(
           "fixed left-0 z-50 overflow-hidden py-2",
