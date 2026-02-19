@@ -43,7 +43,7 @@ function Transport() {
   const currentStep = usePlayerStore((s) => s.currentStep);
   const stepsLength = usePlayerStore((s) => s.stepsLength);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
-  const paused = usePlayerStore((s) => s.paused);
+  const _paused = usePlayerStore((s) => s.paused);
 
   const nextStep = usePlayerStore((s) => s.nextStep);
   const prevStep = usePlayerStore((s) => s.prevStep);

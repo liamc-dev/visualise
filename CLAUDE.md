@@ -10,7 +10,7 @@ Algorithm visualization web app built with React 19, Vite 7, TypeScript, and Tai
 
 - **Dev server:** `pnpm dev`
 - **Build:** `pnpm build`
-- **Lint:** `pnpm lint` (ESLint 9 — note: only targets `.js`/`.jsx` files, not `.ts`/`.tsx`)
+- **Lint:** `pnpm lint` (ESLint 9 with typescript-eslint — covers `.js`/`.jsx`/`.ts`/`.tsx`)
 - **Deploy:** `pnpm deploy` (runs build then gh-pages)
 - **Package manager:** pnpm 10.30.0 (do not use npm/yarn)
 

@@ -14,19 +14,15 @@ const DEFAULT_SCENE_ID = "file-upload-cdn";
 export default function ScenePage() {
     const { sceneId } = useParams<{ sceneId: string }>();
 
-    if (!sceneId) {
-        return <Navigate to="/scenes/file-upload-cdn" replace />;
-    }
+    const def = sceneId ? SCENES[sceneId] : undefined;
 
-    const def = SCENES[sceneId];
-    if (!def) {
-        return <Navigate to="/scenes/file-upload-cdn" replace />;
-    }
-
-
-    const frames = React.useMemo(() => def.trace(), [def.id]);
+    const frames = React.useMemo(() => def?.trace() ?? [], [def]);
 
     const trace = useVisualizerTraceFromFrames(frames);
+
+    if (!sceneId || !def) {
+        return <Navigate to="/scenes/file-upload-cdn" replace />;
+    }
 
     const leftNode = (
         <div className="min-w-0 flex flex-col gap-2">

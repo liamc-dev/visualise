@@ -1,4 +1,4 @@
-// src/generators/algorithms/registry.tsx
+// src/generators/algorithms/registry.ts
 import type { ReactNode, ComponentType } from "react";
 import type { Theme } from "../../stores/useThemeStore";
 import type { TraceFrame } from "../../types/trace-types";

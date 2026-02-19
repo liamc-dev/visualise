@@ -72,7 +72,7 @@ export type CodeSpan = {
   to: number;     // 0-based (exclusive)
 };
 
-export type spanMaps = {
+export type MarkerParseResult = {
   content: string;                           // code with markers removed
   spansByToken: Record<string, CodeSpan[]>;  // token -> spans in content
 };

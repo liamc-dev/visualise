@@ -211,7 +211,6 @@ function SidebarContent({
     )
   }
 
-
   const algoGroups: Array<{ header: string; items: NavItem[] }> = useMemo(
     () =>
       groups.map((g) => ({

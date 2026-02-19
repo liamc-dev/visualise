@@ -17,13 +17,10 @@ const AlgoCodePanelDesktop = React.lazy(
   () => import("../components/code/AlgoCodePanelDesktop")
 );
 
-export default function VisualiserPage() {
-  const INITIAL_ARRAY = [12, 5, 19, 3, 14, 8, 17, 1, 10, 6, 15, 2, 18, 7, 13];
+const INITIAL_ARRAY = [12, 5, 19, 3, 14, 8, 17, 1, 10, 6, 15, 2, 18, 7, 13];
 
+export default function VisualiserPage() {
   const { algorithm } = useParams<{ algorithm: string }>();
-  if (!algorithm || !(algorithm in ALGORITHMS)) {
-    return <Navigate to="/visualiser/merge-sort" replace />;
-  }
 
   const algoKey: AlgorithmId =
     toAlgorithmId(algorithm ?? "") ?? ("merge-sort" as AlgorithmId);
@@ -33,6 +30,10 @@ export default function VisualiserPage() {
   const logoSrc = getAlgoLogoSrc(algoKey);
 
   const trace = useVisualizerTrace(INITIAL_ARRAY, algoKey);
+
+  if (!algorithm || !(algorithm in ALGORITHMS)) {
+    return <Navigate to="/visualiser/merge-sort" replace />;
+  }
 
   const visualNode =
     def.trace && trace.traceEnabled && trace.scene ? (
@@ -51,7 +52,7 @@ export default function VisualiserPage() {
       </div>
     );
 
-  
+
   const codeBundle = def.codeBundle;
   const codeRef = trace.codeRef;
 

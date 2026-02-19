@@ -19,7 +19,7 @@ export default function TraceNodeLayer({
   nodePx,
   focusNodes,
   cellSize,
-  colOffset,
+  colOffset: _colOffset,
   glow,
 }: {
   nodes: TraceNode[];

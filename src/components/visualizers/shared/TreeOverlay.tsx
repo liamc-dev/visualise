@@ -1,5 +1,5 @@
 // src/components/visualizers/shared/TreeOverlay.tsx
-import React, { useMemo } from "react";
+import React, { useId } from "react";
 
 export type TreePoint = { x: number; y: number };
 
@@ -69,12 +69,9 @@ function buildRoundedPath(from: TreePoint, via: TreePoint[], to: TreePoint, radi
 }
 
 export function TreeOverlay({ edges, zIndex = 0 }: Props) {
-  if (!edges.length) return null;
+  const markerId = `tn-arrow-${useId()}`;
 
-  const markerId = useMemo(
-    () => `tn-arrow-${Math.random().toString(36).slice(2)}`,
-    []
-  );
+  if (!edges.length) return null;
 
   return (
     <svg

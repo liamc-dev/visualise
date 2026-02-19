@@ -43,7 +43,7 @@ function withAlpha(hex, alpha01) {
  *
  */
 export function defineLightTn(monaco) {
-    const bg = cssRgbVarToHex("--tn-bg", "#ffffff");
+    const _bg = cssRgbVarToHex("--tn-bg", "#ffffff");
     const surface = cssRgbVarToHex("--tn-surface", "#ffffff");
     const surfaceSoft = cssRgbVarToHex("--tn-surfaceSoft", "#f6f8fa");
     const border = cssRgbVarToHex("--tn-border", "#d0d7de");
@@ -63,7 +63,7 @@ export function defineLightTn(monaco) {
     const selectionInactive = withAlpha(accent, 0.10);
     const findMatch = withAlpha(warning, 0.25);
     const hoverBg = surfaceSoft;
-    const indentGuide = withAlpha(border, 0.9);
+    const _indentGuide = withAlpha(border, 0.9);
 
     monaco.editor.defineTheme("tn-light", {
         base: "vs",

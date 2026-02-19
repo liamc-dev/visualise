@@ -14,7 +14,7 @@ export const QUICK_SORT_CPP =
  }
 
  [[qs.partition_call]]static int partition(vector<int>& a, int left, int right) {[[/qs.partition_call]]
-   [[qs.choose_pivot]]igenerators/nt pivot = a[right];[[/qs.choose_pivot]]
+   [[qs.choose_pivot]]int pivot = a[right];[[/qs.choose_pivot]]
    [[qs.choose_pivot]]int i = left;[[/qs.choose_pivot]]
 
    for (int j = left; j < right; j++) {
