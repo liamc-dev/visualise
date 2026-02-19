@@ -2,6 +2,7 @@
 import React, { useMemo } from "react";
 import type { CodeRef, CodeBundle, CodeSpan } from "../../types/algo-types";
 import { useCodeLangStore } from "../../stores/useCodeLangStore";
+import { Panel } from "../ui/Panel";
 import CodeLangSelect from "./CodeLangSelect";
 
 function clamp(n: number, min: number, max: number) {
@@ -98,7 +99,7 @@ export default function AlgoCodePanel({
   }, [spans]);
 
   return (
-    <div className="rounded-2xl border border-tn-border bg-tn-surface/85 backdrop-blur-sm p-4">
+    <Panel tone="glass" className="p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex flex-col">
           <div className="text-label tracking-[0.18em] uppercase text-tn-subtle/70">
@@ -150,6 +151,6 @@ export default function AlgoCodePanel({
           </code>
         </pre>
       )}
-    </div>
+    </Panel>
   );
 }

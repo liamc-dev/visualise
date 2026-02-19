@@ -1,4 +1,5 @@
 import React from "react";
+import { Panel } from "./Panel";
 
 function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -16,7 +17,7 @@ export function SegmentedControl<T extends string>({
   className?: string;
 }) {
   return (
-    <div className={cx("mt-1 inline-flex rounded-xl border border-tn-border bg-tn-surfaceSoft/45 p-1", className)}>
+    <Panel tone="soft" radius="xl" className={cx("mt-1 inline-flex p-1", className)}>
       {options.map((opt) => {
         const active = opt.value === value;
         return (
@@ -33,6 +34,6 @@ export function SegmentedControl<T extends string>({
           </button>
         );
       })}
-    </div>
+    </Panel>
   );
 }

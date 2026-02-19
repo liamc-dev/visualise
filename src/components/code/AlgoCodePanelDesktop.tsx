@@ -3,6 +3,7 @@ import type { CodeBundle, CodeRef } from "../../types/algo-types";
 import CodeLangSelect from "./CodeLangSelect";
 import AlgoCodeMonacoHost from "./AlgoCodeMonacoHost";
 import { Btn } from "../ui/Btn";
+import { Panel } from "../ui/Panel";
 
 import {
   Focus,
@@ -48,7 +49,7 @@ export default function AlgoCodePanelDesktop({
   const [focusMode, setFocusMode] = useState(false);
 
   return (
-    <div className="rounded-2xl border border-tn-border bg-tn-surface/85 min-w-0 w-full h-full min-h-0 flex flex-col">
+    <Panel tone="glass" className="min-w-0 w-full h-full min-h-0 flex flex-col">
       <div className="flex items-center justify-between mb-1 pt-2 px-2 shrink-0">
         <div className="text-label tracking-[0.18em] uppercase text-tn-subtle/70 pl-1">
           {headerLabel}
@@ -180,6 +181,6 @@ export default function AlgoCodePanelDesktop({
           onRecallReady={({ canReset }) => setCanReset(canReset)}
         />
       </div>
-    </div>
+    </Panel>
   );
 }

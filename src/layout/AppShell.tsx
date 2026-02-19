@@ -4,6 +4,7 @@ import { useSettingsStore } from "../stores/useSettingsStore";
 import Sidebar from "../layout/Sidebar";
 import ThemeSelect from "../components/top-bar-menu/ThemeSelect";
 import UserMenu from "../components/top-bar-menu/UserMenu";
+import { Btn } from "../components/ui/Btn";
 import { useBrand } from "../brand/useBrand";
 
 const TOP_H = 52;
@@ -71,21 +72,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             className="flex items-center justify-center"
             style={{ width: isDesktop ? RAIL_W : TOP_H }}
           >
-            <button
-              type="button"
+            <Btn
+              variant="ghost"
+              size="md"
               onClick={() => setIsSidebarOpen((v) => !v)}
-              className="
-                inline-flex items-center justify-center
-                w-10 h-10 rounded-xl
-                text hover:text-tn-text
-                hover:bg-tn-surfaceSoft
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30
-                transition-colors
-              "
               aria-label="Toggle navigation"
+              className="w-10 px-0"
             >
               <MenuIcon className="h-6 w-6" />
-            </button>
+            </Btn>
           </div>
 
           <div className="h-full flex flex-1 items-center">
@@ -103,7 +98,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
             <div className="flex-1" />
             <ThemeSelect />
-            {/* <UserMenu></UserMenu> */}
+            <UserMenu></UserMenu>
           </div>
         </div>
       </header>

@@ -4,6 +4,7 @@ import { authService } from "../../api/auth-service";
 import { userService, MeResponse } from "../../api/user-service";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { api } from "../../api/http";
+import { Btn } from "../../components/ui/Btn";
 
 function getErrorMessage(err: unknown) {
   if (err instanceof Error) return err.message;
@@ -347,16 +348,9 @@ export default function AccountPage() {
             />
 
             <div className="mt-5">
-              <button
-                onClick={onLogout}
-                className={[
-                  "rounded-full border border-tn-border px-4 py-2 text-ui",
-                  "bg-tn-surfaceSoft/60 hover:bg-tn-surfaceSoft transition-colors",
-                  "focus:outline-none focus:ring-2 focus:ring-tn-accent/30",
-                ].join(" ")}
-              >
+              <Btn variant="soft" size="md" onClick={onLogout} className="rounded-full">
                 Log out
-              </button>
+              </Btn>
             </div>
           </section>
         </div>

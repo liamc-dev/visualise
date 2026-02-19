@@ -14,6 +14,7 @@ import { useVisualizerTrace } from "../hooks/use-visualizer-trace";
 import { useBrand } from "../brand/useBrand";
 import { useArrayInputStore } from "../stores/useArrayInputStore";
 import ArrayInputBar from "../components/control/ArrayInputBar";
+import { Panel } from "../components/ui/Panel";
 
 const AlgoCodePanelDesktop = React.lazy(
   () => import("../components/code/AlgoCodePanelDesktop")
@@ -47,10 +48,10 @@ export default function VisualiserPage() {
         domainSize={trace.rootLength}
       />
     ) : (
-      <div className="w-full min-h-[360px] rounded-xl border border-tn-border bg-tn-surface flex items-center justify-center text-tn-subtle">
+      <Panel tone="solid" radius="xl" className="w-full min-h-[360px] flex items-center justify-center text-tn-subtle">
         Trace not available for{" "}
         <span className="ml-1 font-semibold text-tn-text">{def.label}</span>.
-      </div>
+      </Panel>
     );
 
 

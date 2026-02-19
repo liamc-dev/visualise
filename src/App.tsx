@@ -24,7 +24,7 @@ function App() {
       {/* <AuthBootstrap> */}
         <AppShell>
           <Routes>
-            {/* <Route
+            <Route
               path="/account"
               element={
                 <RequireAuth>
@@ -33,7 +33,7 @@ function App() {
               }
             />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} /> */}
+            <Route path="/signup" element={<SignupPage />} />
 
             {/* default */}
             <Route path="/" element={<Navigate to="/visualiser/merge-sort" replace />} />

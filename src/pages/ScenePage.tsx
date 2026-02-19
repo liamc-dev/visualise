@@ -6,6 +6,7 @@ import Visualizer from "../components/visualizers/Visualizer";
 import AlgoWorkspaceShell from "../components/layout/AlgoWorkSpaceShell";
 import AlgoInfoPanel from "../components/code/AlgoInfoPanel";
 
+import { Panel } from "../components/ui/Panel";
 import { SCENES } from "../generators/scenes/registry";
 import { useVisualizerTraceFromFrames } from "../hooks/use-visualizer-trace-from-frames";
 
@@ -50,9 +51,9 @@ export default function ScenePage() {
 
     const rightNode = (
         <div className="min-w-0 w-full flex flex-col min-h-0 h-full">
-            <div className="rounded-xl border border-tn-border bg-tn-surfaceSoft/55 p-4 text-sm text-tn-muted">
+            <Panel tone="soft" radius="xl" className="p-4 text-sm text-tn-muted">
                 Scene controls panel (coming next).
-            </div>
+            </Panel>
         </div>
     );
 

@@ -6,6 +6,8 @@ import { useAuthStore } from "../../stores/useAuthStore";
 import { AuthInput } from "../../components/ui/AuthInput";
 import { useField } from "../../hooks/use-field";
 import { emailValidator, passwordValidator, usernameOptionalValidator } from "../../validation/auth";
+import { Panel } from "../../components/ui/Panel";
+import { Btn } from "../../components/ui/Btn";
 
 function getErrorMessage(err: unknown) {
   if (err instanceof Error) return err.message;
@@ -69,7 +71,7 @@ export default function SignupPage() {
           <p className="mt-1 text-sm text-tn-muted">Create your account to start using the app.</p>
         </div>
 
-        <div className="rounded-2xl border border-tn-border bg-tn-surface/85 backdrop-blur-sm p-5 shadow-[0_10px_30px_rgba(0,0,0,0.10)]">
+        <Panel tone="glass" className="p-5 shadow-[0_10px_30px_rgba(0,0,0,0.10)]">
           <div className="min-h-[52px]">
             <div
               className={[
@@ -115,33 +117,30 @@ export default function SignupPage() {
               disabled={submitting}
               field={password}
               rightSlot={
-                <button
-                  type="button"
+                <Btn
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowPw((v) => !v)}
                   disabled={submitting}
-                  className="rounded-lg px-2 py-1 text-xs text-tn-muted hover:text-tn-text transition
-                             focus:outline-none focus:ring-2 focus:ring-tn-accent/40 disabled:opacity-60"
+                  className="text-tn-muted hover:text-tn-text"
                 >
                   {showPw ? "Hide" : "Show"}
-                </button>
+                </Btn>
               }
             />
 
-            <button
+            <Btn
               type="submit"
+              variant="primary"
+              size="md"
               disabled={!canSubmit}
-              className="h-11 rounded-xl border border-tn-border bg-tn-surfaceSoft/70 px-3 text-sm font-medium
-                         hover:bg-tn-surfaceSoft/85 transition
-                         focus:outline-none focus:ring-2 focus:ring-tn-accent/40
-                         disabled:opacity-60 disabled:cursor-not-allowed"
+              className="h-11"
             >
-              <span className="inline-flex items-center justify-center gap-2">
-                {submitting && (
-                  <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-tn-border border-t-transparent" />
-                )}
-                {submitting ? "Creating…" : "Create account"}
-              </span>
-            </button>
+              {submitting && (
+                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-tn-border border-t-transparent" />
+              )}
+              {submitting ? "Creating…" : "Create account"}
+            </Btn>
           </form>
 
           <div className="mt-4 text-xs text-tn-muted">
@@ -150,7 +149,7 @@ export default function SignupPage() {
               Log in
             </Link>
           </div>
-        </div>
+        </Panel>
       </div>
     </div>
   );

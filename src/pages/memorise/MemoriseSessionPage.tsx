@@ -10,6 +10,7 @@ import { Btn } from "../../components/ui/Btn";
 import { ALGORITHMS, type AlgorithmId, toAlgorithmId } from "../../generators/algorithms/registry";
 import { useVisualizerTrace } from "../../hooks/use-visualizer-trace";
 import { useBrand } from "../../brand/useBrand";
+import { Panel } from "../../components/ui/Panel";
 import AlgoWorkspaceShell from "../../components/layout/AlgoWorkSpaceShell";
 
 const AlgoCodePanelDesktop = React.lazy(
@@ -55,10 +56,10 @@ export default function MemoriseSessionPage() {
                         domainSize={trace.rootLength}
                     />
                 ) : (
-                    <div className="w-full min-h-[360px] rounded-2xl border border-tn-border bg-tn-surface flex items-center justify-center text-tn-subtle">
+                    <Panel tone="solid" className="w-full min-h-[360px] flex items-center justify-center text-tn-subtle">
                         Trace not available for{" "}
                         <span className="ml-1 font-semibold text-tn-text">{def.label}</span>.
-                    </div>
+                    </Panel>
                 )}
 
                 {/* Visualiser lock overlay */}

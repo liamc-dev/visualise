@@ -1,4 +1,6 @@
 import { Panel } from "../../../components/ui/Panel";
+import { Btn } from "../../../components/ui/Btn";
+import { TextInput } from "../../../components/ui/TextInput";
 import { FieldLabel } from "../../../components/ui/FieldLabel";
 import FieldSelect from "../../../components/ui/portal-select/FieldSelect";
 import type { PortalSelectOption } from "../../../components/ui/portal-select/PortalSelect";
@@ -42,32 +44,23 @@ export function BrowseToolbar({
                     <FieldLabel>Search</FieldLabel>
 
                     <div className="relative mt-1">
-                        <input
+                        <TextInput
                             value={q}
                             onChange={(e) => setQ(e.target.value)}
                             placeholder={scope === "deck" ? "Search your deck…" : "Search catalog…"}
-                            className="
-                h-10 w-full rounded-xl border border-tn-border bg-tn-surfaceSoft/55
-                pl-3 pr-9 text-sm text-tn-text outline-none
-                focus:ring-2 focus:ring-tn-accent/35
-                placeholder:text-tn-muted/60
-              "
+                            className="pr-9"
                         />
 
                         {q.length > 0 && (
-                            <button
-                                type="button"
+                            <Btn
+                                variant="ghost"
+                                size="icon"
                                 aria-label="Clear search"
                                 onClick={() => setQ("")}
-                                className="
-                  absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 rounded-md
-                  text-tn-muted hover:text-tn-text hover:bg-tn-surfaceSoft/70
-                  flex items-center justify-center transition
-                  focus:outline-none focus:ring-2 focus:ring-tn-accent/40
-                "
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-tn-muted hover:text-tn-text"
                             >
                                 ✕
-                            </button>
+                            </Btn>
                         )}
                     </div>
                 </div>

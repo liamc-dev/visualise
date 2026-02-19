@@ -6,6 +6,8 @@ import { useField } from "../../hooks/use-field";
 import { AuthInput } from "../../components/ui/AuthInput";
 import { emailValidator, passwordValidator } from "../../validation/auth";
 import { ApiError } from "../../api/api-error";
+import { Panel } from "../../components/ui/Panel";
+import { Btn } from "../../components/ui/Btn";
 
 type LocationState = {
   from?: { pathname?: string };
@@ -78,7 +80,7 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl border border-tn-border bg-tn-surface/85 backdrop-blur-sm p-5 shadow-[0_10px_30px_rgba(0,0,0,0.10)]">
+        <Panel tone="glass" className="p-5 shadow-[0_10px_30px_rgba(0,0,0,0.10)]">
           {/* Error slot (reserved height) */}
           <div className="min-h-[52px]">
             <div
@@ -113,36 +115,33 @@ export default function LoginPage() {
               disabled={submitting}
               field={password}
               rightSlot={
-                <button
-                  type="button"
+                <Btn
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowPw((v) => !v)}
                   disabled={submitting}
-                  className="rounded-lg px-2 py-1 text-xs text-tn-muted hover:text-tn-text transition
-                             focus:outline-none focus:ring-2 focus:ring-tn-accent/40 disabled:opacity-60"
+                  className="text-tn-muted hover:text-tn-text"
                 >
                   {showPw ? "Hide" : "Show"}
-                </button>
+                </Btn>
               }
             />
 
-            <button
+            <Btn
               type="submit"
+              variant="primary"
+              size="md"
               disabled={!canSubmit}
-              className="h-11 rounded-xl border border-tn-border bg-tn-surfaceSoft/70 px-3 text-sm font-medium
-                         hover:bg-tn-surfaceSoft/85 transition
-                         focus:outline-none focus:ring-2 focus:ring-tn-accent/40
-                         disabled:opacity-60 disabled:cursor-not-allowed"
+              className="h-11"
             >
-              <span className="inline-flex items-center justify-center gap-2">
-                {submitting && (
-                  <span
-                    className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-tn-border border-t-transparent"
-                    aria-hidden="true"
-                  />
-                )}
-                {submitting ? "Logging in…" : "Log in"}
-              </span>
-            </button>
+              {submitting && (
+                <span
+                  className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-tn-border border-t-transparent"
+                  aria-hidden="true"
+                />
+              )}
+              {submitting ? "Logging in…" : "Log in"}
+            </Btn>
           </form>
 
           <div className="mt-4 flex items-center justify-between text-xs text-tn-muted">
@@ -161,7 +160,7 @@ export default function LoginPage() {
               Forgot password?
             </button>
           </div>
-        </div>
+        </Panel>
       </div>
     </div>
   );

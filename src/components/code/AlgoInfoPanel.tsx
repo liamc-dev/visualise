@@ -1,5 +1,6 @@
 // src/components/AlgoInfoPanel.tsx
 import type { ReactNode } from "react";
+import { Panel } from "../ui/Panel";
 
 type AlgoInfoPanelProps = {
   logoSrc: string;
@@ -17,17 +18,11 @@ const AlgoInfoPanel = ({
   bullets = [],
 }: AlgoInfoPanelProps) => {
   return (
-    <aside
-      className="
-        rounded-2xl
-        border border-tn-border
-        bg-tn-bg backdrop-blur-sm
-        p-4 md:p-5
-        flex flex-col gap-4
-        mb-20
-      "
+    <Panel
+      as="aside"
+      tone="base"
+      className="p-4 md:p-5 flex flex-col gap-4 mb-20"
       style={{ boxShadow: "var(--card-shadow)" }}
-
     >
       <div className="space-y-3">
         {/* Logo */}
@@ -67,7 +62,7 @@ const AlgoInfoPanel = ({
           </ul>
         </div>
       )}
-    </aside>
+    </Panel>
   );
 };
 

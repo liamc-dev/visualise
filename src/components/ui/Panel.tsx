@@ -4,7 +4,7 @@ function cx(...parts: Array<string | false | null | undefined>) {
     return parts.filter(Boolean).join(" ");
 }
 
-type PanelTone = "solid" | "soft" | "glass";
+type PanelTone = "solid" | "soft" | "glass" | "base";
 type PanelRadius = "lg" | "xl" | "2xl";
 
 type PanelProps<T extends React.ElementType> = {
@@ -29,8 +29,10 @@ export function Panel<T extends React.ElementType = "div">({
         tone === "solid"
             ? "bg-tn-surface"
             : tone === "glass"
-                ? "bg-tn-surface/65 backdrop-blur-sm"
-                : "bg-tn-surfaceSoft/45";
+                ? "bg-tn-surface/85 backdrop-blur-sm"
+                : tone === "base"
+                    ? "bg-tn-bg backdrop-blur-sm"
+                    : "bg-tn-surfaceSoft/45";
 
     const radiusCls =
         radius === "lg"

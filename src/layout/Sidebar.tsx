@@ -10,6 +10,7 @@ import {
   Dot,
   Share2,
 } from "lucide-react";
+import { TextInput } from "../components/ui/TextInput";
 
 type NavItem = {
   label: string;
@@ -246,15 +247,10 @@ function SidebarContent({
             </div>
 
             <div className="px-3 pb-2">
-              <input
+              <TextInput
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search…"
-                className={cn(
-                  "w-full rounded-xl border border-tn-border bg-tn-surface/70",
-                  "px-3 py-2 text-ui text-tn-text placeholder:text-tn-muted/70",
-                  "focus:outline-none focus:ring-2 focus:ring-tn-accent/30"
-                )}
               />
             </div>
 

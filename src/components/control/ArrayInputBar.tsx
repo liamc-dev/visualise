@@ -4,6 +4,7 @@ import { useCallback, useRef } from "react";
 import { Shuffle, Dices, RotateCcw } from "lucide-react";
 import { Panel } from "../ui/Panel";
 import { Btn } from "../ui/Btn";
+import { TextInput } from "../ui/TextInput";
 import { useArrayInputStore } from "../../stores/useArrayInputStore";
 
 export default function ArrayInputBar() {
@@ -45,23 +46,16 @@ export default function ArrayInputBar() {
       {/* Controls row */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Text input */}
-        <input
+        <TextInput
           ref={inputRef}
-          type="text"
+          size="sm"
           value={rawInput}
           onChange={(e) => setRawInput(e.target.value)}
           onBlur={commitInput}
           onKeyDown={handleKeyDown}
           spellCheck={false}
-          className={[
-            "flex-1 min-w-0 h-7 px-2 rounded-lg",
-            "bg-tn-base/60 border text-xs font-mono text-tn-text",
-            "focus:outline-none focus:ring-2 focus:ring-tn-accent/30",
-            "placeholder:text-tn-subtle/50",
-            error
-              ? "border-red-500/70 focus:ring-red-500/30"
-              : "border-tn-border",
-          ].join(" ")}
+          error={!!error}
+          className="flex-1 min-w-0 font-mono"
           placeholder="e.g. 5, 3, 8, 1, 12"
         />
 
