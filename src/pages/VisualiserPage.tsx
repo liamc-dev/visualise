@@ -12,12 +12,12 @@ import { ALGORITHMS, type AlgorithmId, toAlgorithmId } from "../generators/algor
 import { useVisualizerTrace } from "../hooks/use-visualizer-trace";
 
 import { useBrand } from "../brand/useBrand";
+import { useArrayInputStore } from "../stores/useArrayInputStore";
+import ArrayInputBar from "../components/control/ArrayInputBar";
 
 const AlgoCodePanelDesktop = React.lazy(
   () => import("../components/code/AlgoCodePanelDesktop")
 );
-
-const INITIAL_ARRAY = [12, 5, 19, 3, 14, 8, 17, 1, 10, 6, 15, 2, 18, 7, 13];
 
 export default function VisualiserPage() {
   const { algorithm } = useParams<{ algorithm: string }>();
@@ -29,7 +29,8 @@ export default function VisualiserPage() {
   const { getAlgoLogoSrc } = useBrand();
   const logoSrc = getAlgoLogoSrc(algoKey);
 
-  const trace = useVisualizerTrace(INITIAL_ARRAY, algoKey);
+  const inputArray = useArrayInputStore((s) => s.array);
+  const trace = useVisualizerTrace(inputArray, algoKey);
 
   if (!algorithm || !(algorithm in ALGORITHMS)) {
     return <Navigate to="/visualiser/merge-sort" replace />;
@@ -59,6 +60,8 @@ export default function VisualiserPage() {
   const leftNode = (
     <div className="min-w-0 flex flex-col gap-2">
       {visualNode}
+
+      <ArrayInputBar />
 
       <AlgoInfoPanel
         logoSrc={logoSrc ?? ""}

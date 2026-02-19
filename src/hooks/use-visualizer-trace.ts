@@ -69,7 +69,7 @@ export function useVisualizerTrace(
     setPlaying(false);
     setPaused(false);
     setStep(0);
-  }, [traceEnabled, algorithm, setPlaying, setPaused, setStep]);
+  }, [traceEnabled, algorithm, initialArray, setPlaying, setPaused, setStep]);
 
   const { frame, description, codeRef } = useMemo(() => {
     if (!traceEnabled) return { frame: null as any, description: "", codeRef: undefined as CodeRef | undefined };
