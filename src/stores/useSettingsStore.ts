@@ -1,17 +1,23 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type SettingsState = {
-  glowEnabled: boolean;
-  toggleGlow: () => void;
-  setGlowEnabled: (value: boolean) => void;
+  effectsEnabled: boolean;
+  toggleEffects: () => void;
+  setEffectsEnabled: (value: boolean) => void;
 };
 
-export const useSettingsStore = create<SettingsState>(set => ({
-  glowEnabled: false,
+export const useSettingsStore = create<SettingsState>()(
+  persist(
+    (set) => ({
+      effectsEnabled: true,
 
-  toggleGlow: () =>
-    set(state => ({ glowEnabled: !state.glowEnabled })),
+      toggleEffects: () =>
+        set((state) => ({ effectsEnabled: !state.effectsEnabled })),
 
-  setGlowEnabled: (value: boolean) =>
-    set({ glowEnabled: value }),
-}));
+      setEffectsEnabled: (value: boolean) =>
+        set({ effectsEnabled: value }),
+    }),
+    { name: "tn-effects" },
+  ),
+);

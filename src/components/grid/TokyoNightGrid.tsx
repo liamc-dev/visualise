@@ -16,8 +16,8 @@ export default function TokyoNightGrid({
   cellSize,
   sweepSpeed = 18000,
 }: TokyoNightGridProps) {
-  const glowEnabled = useSettingsStore((s) => s.glowEnabled);
-  const sweepPhase = useGridSweepPhase(sweepSpeed);
+  const effectsEnabled = useSettingsStore((s) => s.effectsEnabled);
+  const sweepPhase = useGridSweepPhase(sweepSpeed, 100, 1000, effectsEnabled);
 
   const BASE = "#1f2335";
   const BRIGHT = "#8f962fff";
@@ -31,7 +31,7 @@ export default function TokyoNightGrid({
 
   const bandCenter = 1 - sweepPhase;
   const bandWidth = 0.22;
-  const bandBoost = glowEnabled ? 0.475 : 0;
+  const bandBoost = effectsEnabled ? 0.475 : 0;
 
   const cells: ReactNode[] = [];
 
@@ -54,7 +54,7 @@ export default function TokyoNightGrid({
       const borderColor = lerpColor(BASE, BRIGHT, t);
 
       const boxShadow =
-        glowEnabled && sweepEnergy > 0.01
+        effectsEnabled && sweepEnergy > 0.01
           ? `0 0 ${4 + sweepEnergy * 8}px rgba(122,162,247,${0.08 + sweepEnergy * 0.3})`
           : "none";
 

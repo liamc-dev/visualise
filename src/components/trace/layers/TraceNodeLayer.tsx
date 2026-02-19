@@ -20,14 +20,14 @@ export default function TraceNodeLayer({
   focusNodes,
   cellSize,
   colOffset: _colOffset,
-  glow,
+  effects,
 }: {
   nodes: TraceNode[];
   nodePx: Map<string, { x: number; y: number }>;
   focusNodes: Set<string>;
   cellSize: number;
   colOffset: number;
-  glow: boolean;
+  effects: boolean;
 }) {
   return (
     <>
@@ -46,7 +46,7 @@ export default function TraceNodeLayer({
           highlight,
           trail: false,
           write: false,
-          glow,
+          effects,
         });
 
         if (isCardNode(n)) {

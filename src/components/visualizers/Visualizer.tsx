@@ -4,6 +4,7 @@ import Grid from "../grid/GridCanvas";
 import PlayerBar from "../control/PlayerBar";
 import { useMeasure } from "../../hooks/use-measure";
 import { useGridLayout } from "../../hooks/use-grid-layout";
+import { useSettingsStore } from "../../stores/useSettingsStore";
 import TraceRenderer from "../trace/TraceRenderer";
 import type { TraceScene, TraceFocus } from "../../types/trace-types";
 
@@ -57,6 +58,7 @@ export default function Visualizer({
   domainSize,
   contentWidthCols,
 }: VisualizerProps) {
+  const effectsEnabled = useSettingsStore((s) => s.effectsEnabled);
   const { ref, size } = useMeasure<HTMLDivElement>(8);
   const measured = size.width > 0;
 
@@ -86,7 +88,7 @@ export default function Visualizer({
         >
           <div className="w-full max-w-full overflow-hidden">
             <div className="w-full">
-              <div className="relative pb-20" style={{ height }}>
+              <div className={`relative pb-20${effectsEnabled ? "" : " tn-no-anim"}`} style={{ height }}>
                 <Grid
                   height={gridHeight}
                   width={gridWidth}

@@ -10,6 +10,7 @@ import AlgoWorkspaceShell from "../components/layout/AlgoWorkSpaceShell";
 
 import { ALGORITHMS, type AlgorithmId, toAlgorithmId } from "../generators/algorithms/registry";
 import { useVisualizerTrace } from "../hooks/use-visualizer-trace";
+import { useLastAlgorithm, getLastAlgorithm } from "../hooks/use-last-algorithm";
 
 import { useBrand } from "../brand/useBrand";
 import { useArrayInputStore } from "../stores/useArrayInputStore";
@@ -26,6 +27,7 @@ export default function VisualiserPage() {
   const algoKey: AlgorithmId =
     toAlgorithmId(algorithm ?? "") ?? ("merge-sort" as AlgorithmId);
 
+  useLastAlgorithm(algoKey);
   const def = ALGORITHMS[algoKey];
   const { getAlgoLogoSrc } = useBrand();
   const logoSrc = getAlgoLogoSrc(algoKey);
@@ -34,7 +36,7 @@ export default function VisualiserPage() {
   const trace = useVisualizerTrace(inputArray, algoKey);
 
   if (!algorithm || !(algorithm in ALGORITHMS)) {
-    return <Navigate to="/visualiser/merge-sort" replace />;
+    return <Navigate to={`/visualiser/${getLastAlgorithm()}`} replace />;
   }
 
   const visualNode =

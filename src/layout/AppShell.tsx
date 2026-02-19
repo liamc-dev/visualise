@@ -1,15 +1,14 @@
 // src/layout/AppShell.tsx
 import { useEffect, useState } from "react";
-import { useSettingsStore } from "../stores/useSettingsStore";
 import Sidebar from "../layout/Sidebar";
 import ThemeSelect from "../components/top-bar-menu/ThemeSelect";
 import UserMenu from "../components/top-bar-menu/UserMenu";
-import { Btn } from "../components/ui/Btn";
+import { IconBtn } from "../components/ui/IconBtn";
 import { useBrand } from "../brand/useBrand";
 
 const TOP_H = 52;
 const RAIL_W = 72;
-const OPEN_W = 150;
+const OPEN_W = 260;
 
 function useIsDesktop() {
   const [isDesktop, setIsDesktop] = useState(false);
@@ -51,12 +50,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     setIsSidebarOpen(false);
   }, [isDesktop]);
 
-  const glowEnabled = useSettingsStore((s) => s.glowEnabled);
-  useEffect(() => {
-    if (!glowEnabled) document.body.classList.add("tn-no-anim");
-    else document.body.classList.remove("tn-no-anim");
-  }, [glowEnabled]);
-
   const { appLogoSrc, appLogoAlt } = useBrand();
   const desktopSidebarW = isSidebarOpen ? OPEN_W : RAIL_W;
 
@@ -72,15 +65,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             className="flex items-center justify-center"
             style={{ width: isDesktop ? RAIL_W : TOP_H }}
           >
-            <Btn
-              variant="ghost"
-              size="md"
+            <IconBtn
               onClick={() => setIsSidebarOpen((v) => !v)}
               aria-label="Toggle navigation"
-              className="w-10 px-0"
             >
               <MenuIcon className="h-6 w-6" />
-            </Btn>
+            </IconBtn>
           </div>
 
           <div className="h-full flex flex-1 items-center">
@@ -114,7 +104,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* MAIN */}
       <main
-        className="flex-1 min-h-0 overflow-auto border border-tn-border/25"
+        className="flex-1 min-h-0 overflow-auto border border-tn-border/25 transition-[padding-left] duration-300"
         style={{ paddingLeft: isDesktop ? desktopSidebarW : 0 }}
       >
         <div className="w-full px-4 py-2 h-full">

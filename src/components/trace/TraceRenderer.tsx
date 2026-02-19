@@ -20,7 +20,7 @@ export default function TraceRenderer({
   cellSize: number;
   colOffset: number;
 }) {
-  const glow = useSettingsStore((s) => s.glowEnabled);
+  const effects = useSettingsStore((s) => s.effectsEnabled);
 
   const focusNodes = useMemo(() => new Set(focus?.nodes ?? []), [focus?.nodes]);
   const focusEdges = useMemo(() => new Set(focus?.edges ?? []), [focus?.edges]);
@@ -60,7 +60,7 @@ export default function TraceRenderer({
         focusNodes={focusNodes}
         cellSize={cellSize}
         colOffset={colOffset}
-        glow={glow}
+        effects={effects}
       />
 
       <TracePointerLayer

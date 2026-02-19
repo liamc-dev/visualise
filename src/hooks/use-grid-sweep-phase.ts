@@ -5,8 +5,9 @@ import { useEffect, useRef, useState } from "react";
  * @param value Raw knob value (e.g. 100–1000 from SpeedKnob)
  * @param min   Minimum knob value (default 100)
  * @param max   Maximum knob value (default 1000)
+ * @param enabled  When false, the RAF loop is stopped and 0 is returned
  */
-export function useGridSweepPhase(value: number, min = 100, max = 1000) {
+export function useGridSweepPhase(value: number, min = 100, max = 1000, enabled = true) {
   const [phase, setPhase] = useState(0); // 0..1
 
   const periodRef = useRef(8000);       // current period in ms
@@ -35,6 +36,12 @@ export function useGridSweepPhase(value: number, min = 100, max = 1000) {
   // --- 2. RAF loop: increment phase smoothly using dt/period ---
 
   useEffect(() => {
+    if (!enabled) {
+      setPhase(0);
+      lastTimeRef.current = null;
+      return;
+    }
+
     let frame: number;
 
     const loop = (timestamp: number) => {
@@ -56,7 +63,7 @@ export function useGridSweepPhase(value: number, min = 100, max = 1000) {
 
     frame = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frame);
-  }, []);
+  }, [enabled]);
 
   return phase; // 0..1, continuous even when speed changes
 }

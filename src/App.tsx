@@ -4,6 +4,7 @@ import AppShell from "./layout/AppShell";
 import VisualiserPage from "./pages/VisualiserPage";
 import AboutPage from "./pages/AboutPage";
 import ThemeApplier from "./theme/ThemeApplier";
+import { getLastAlgorithm } from "./hooks/use-last-algorithm";
 
 import MemoriseLayout from "./pages/memorise/MemoriseLayout";
 import MemoriseHomePage from "./pages/memorise/MemoriseHomePage";
@@ -16,6 +17,11 @@ import AccountPage from "./pages/auth/AccountPage";
 import AuthBootstrap from "./routes/AuthBootstrap";
 
 import ScenePage from "./pages/ScenePage";
+
+/** Reads localStorage at render time so the redirect is always fresh. */
+function RedirectToLastAlgo() {
+  return <Navigate to={`/visualiser/${getLastAlgorithm()}`} replace />;
+}
 
 function App() {
   return (
@@ -36,9 +42,9 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
 
             {/* default */}
-            <Route path="/" element={<Navigate to="/visualiser/merge-sort" replace />} />
+            <Route path="/" element={<RedirectToLastAlgo />} />
 
-            <Route path="/visualiser" element={<Navigate to="/visualiser/merge-sort" replace />} />
+            <Route path="/visualiser" element={<RedirectToLastAlgo />} />
             <Route path="/visualiser/:algorithm" element={<VisualiserPage />} />
 
             {/* MEMORISE */}
@@ -71,7 +77,7 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
 
             {/* Fallback */}
-            <Route path="*" element={<Navigate to="/visualiser/quick-sort" replace />} />
+            <Route path="*" element={<RedirectToLastAlgo />} />
           </Routes>
         </AppShell>
       {/* </AuthBootstrap> */}

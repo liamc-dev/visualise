@@ -11,6 +11,7 @@ type PanelProps<T extends React.ElementType> = {
     as?: T;
     tone?: PanelTone;
     radius?: PanelRadius;
+    border?: boolean;
     className?: string;
     children?: React.ReactNode;
 } & Omit<React.ComponentPropsWithoutRef<T>, "as" | "className" | "children">;
@@ -19,6 +20,7 @@ export function Panel<T extends React.ElementType = "div">({
     as,
     tone = "soft",
     radius = "2xl",
+    border = true,
     className,
     children,
     ...rest
@@ -41,8 +43,10 @@ export function Panel<T extends React.ElementType = "div">({
                 ? "rounded-xl"
                 : "rounded-2xl";
 
+    const borderCls = border ? "border border-tn-border" : "";
+
     return (
-        <As className={cx(radiusCls, "border border-tn-border", toneCls, className)} {...rest}>
+        <As className={cx(radiusCls, borderCls, toneCls, className)} {...rest}>
             {children}
         </As>
     );

@@ -53,7 +53,7 @@ export function getTraceCellStyle(args: {
   highlight?: boolean;
   trail?: boolean;
   write?: boolean;
-  glow?: boolean;
+  effects?: boolean;
 }) {
   const {
     cellSize,
@@ -64,7 +64,7 @@ export function getTraceCellStyle(args: {
     highlight = false,
     trail = false,
     write = false,
-    glow = true,
+    effects = true,
   } = args;
 
   const isTemp = node.kind === "temp";
@@ -106,7 +106,7 @@ export function getTraceCellStyle(args: {
   const toneBorder = isTemp ? null : toneBorderColor(tone);
   const borderColor = toneBorder ?? baseBorder;
 
-  const rawShadow = isTemp ? "none" : glow ? boxShadow(flags) : "none";
+  const rawShadow = isTemp ? "none" : effects ? boxShadow(flags) : "none";
   const insetShadow = "var(--tn-overlay-inset)";
   const finalShadow =
     rawShadow === "none" ? insetShadow : `${insetShadow}, ${rawShadow}`;

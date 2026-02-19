@@ -2,12 +2,12 @@
 import React, { useMemo, useState } from "react";
 import { NavLink, useLocation, matchPath } from "react-router-dom";
 import { useAlgorithmMenu } from "../hooks/use-algorithm-menu";
+import { Panel } from "../components/ui/Panel";
 
 import {
   Info,
   Brain,
   ChevronDown,
-  Dot,
   Share2,
 } from "lucide-react";
 import { TextInput } from "../components/ui/TextInput";
@@ -40,8 +40,6 @@ function SideRow({
   collapsed: boolean;
   onClick?: () => void;
 }) {
-
-
   const location = useLocation();
   const isSamePath = !!matchPath({ path: item.to, end: false }, location.pathname);
 
@@ -57,31 +55,53 @@ function SideRow({
         }
         onClick?.();
       }}
-      className={({ isActive }) =>
-        cn(
-          "group relative flex items-center gap-0.5 rounded-xl ",
-          "transition-colors",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30",
-          isActive
-            ? "bg-tn-card text-tn-text"
-            : "text-tn-muted hover:text-tn-text hover:bg-tn-surfaceSoft"
-        )
-      }
       title={collapsed ? item.label : undefined}
       aria-label={collapsed ? item.label : undefined}
     >
-      {item.icon && (
-        <span
+      {({ isActive }) => (
+        <div
           className={cn(
-            "flex items-center justify-center text-current",
-            collapsed ? "w-10 h-10 rounded-xl" : "w-8 h-8 rounded-lg"
+            "group relative flex items-center rounded-xl",
+            "transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30",
+            item.icon ? "gap-0.5" : "gap-0 pl-3 py-1.5",
+            isActive
+              ? "bg-tn-card text-tn-text"
+              : "text-tn-muted hover:text-tn-text hover:bg-tn-surfaceSoft"
           )}
         >
-          {item.icon}
-        </span>
-      )}
+          {/* Active accent pill */}
+          <div
+            className={cn(
+              "absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-full bg-tn-accent transition-all duration-200",
+              isActive ? "h-4 opacity-100" : "h-0 opacity-0"
+            )}
+          />
 
-      {!collapsed && <span className="truncate text-ui">{item.label}</span>}
+          {item.icon && (
+            <span
+              className={cn(
+                "flex items-center justify-center text-current",
+                collapsed ? "w-10 h-10 rounded-xl" : "w-8 h-8 rounded-lg"
+              )}
+            >
+              {item.icon}
+            </span>
+          )}
+
+          {/* Animated text label */}
+          <span
+            className={cn(
+              "truncate text-ui transition-all duration-200",
+              collapsed
+                ? "opacity-0 -translate-x-2 w-0 overflow-hidden"
+                : "opacity-100 translate-x-0"
+            )}
+          >
+            {item.label}
+          </span>
+        </div>
+      )}
     </NavLink>
   );
 }
@@ -112,7 +132,7 @@ function AlgoCategory({
         onClick={() => setOpen((v) => !v)}
         className={cn(
           "w-full flex items-center justify-between",
-          "px-2 py-2 rounded-xl",
+          "px-2 py-1.5 rounded-xl",
           "text-tn-subtle/80 hover:text-tn-text hover:bg-tn-surfaceSoft",
           "transition-colors",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30"
@@ -126,24 +146,30 @@ function AlgoCategory({
         </div>
         <ChevronDown
           className={cn(
-            "h-4 w-4 opacity-80 transition-transform",
+            "h-4 w-4 opacity-80 transition-transform duration-200",
             open && "rotate-180"
           )}
         />
       </button>
 
-      {open && (
-        <div className="mt-1 space-y-1 pb-2">
-          {items.map((it) => (
-            <SideRow
-              key={it.to}
-              item={it}
-              collapsed={collapsed}
-              onClick={onItemClick}
-            />
-          ))}
+      {/* Animated accordion via CSS grid trick */}
+      <div
+        className="grid transition-[grid-template-rows] duration-200 ease-out"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <div className="mt-1 space-y-0.5 pb-1.5">
+            {items.map((it) => (
+              <SideRow
+                key={it.to}
+                item={it}
+                collapsed={collapsed}
+                onClick={onItemClick}
+              />
+            ))}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -166,14 +192,18 @@ function Section({
   if (collapsed && items.length === 0) return null;
 
   return (
-    <div className="">
-      {!collapsed && (
-        <div className="px-3 pb-2 text-label font-medium tracking-[0.18em] uppercase text-tn-subtle/70">
-          {section.header}
-        </div>
-      )}
+    <div>
+      {/* Header always rendered, fades on collapse */}
+      <div
+        className={cn(
+          "px-3 pb-1.5 text-label font-medium tracking-[0.18em] uppercase text-tn-subtle/70 transition-opacity duration-200",
+          collapsed ? "opacity-0" : "opacity-100"
+        )}
+      >
+        {section.header}
+      </div>
 
-      <div className="space-y-2 px-4">
+      <div className="space-y-1 px-4">
         {items.map((it) => (
           <SideRow
             key={it.to}
@@ -198,19 +228,8 @@ function SidebarContent({
   collapsed: boolean;
   onItemClick?: () => void;
 }) {
-
-  // Search only affects algo browsing section
   const [query, setQuery] = useState("");
-  
   const { groups, isLoading } = useAlgorithmMenu(query);
-
-  {
-    isLoading && (
-      <div className="px-5 py-3 text-xs text-tn-muted">
-        Loading algorithms…
-      </div>
-    )
-  }
 
   const algoGroups: Array<{ header: string; items: NavItem[] }> = useMemo(
     () =>
@@ -219,7 +238,6 @@ function SidebarContent({
         items: g.items.map((it) => ({
           label: it.label,
           to: it.to,
-          icon: <Dot className="h-4 w-4" />,
           hideWhenCollapsed: true,
         })),
       })),
@@ -231,50 +249,69 @@ function SidebarContent({
     : sections;
 
   return (
-    <nav className={cn("h-full")}>
-      
+    <nav className="flex flex-col h-full">
+      {/* Top: primary nav sections */}
+      <div className="shrink-0">
         {visibleSections.map((sec) => (
           <div key={sec.header}>
             <Section section={sec} collapsed={collapsed} onItemClick={onItemClick} />
           </div>
         ))}
+      </div>
 
-        {/* Algorithms browser lives under the doorway, not as “main nav” */}
-        {!collapsed && (
-          <div className="pt-2">
-            <div className="px-3 pb-2 text-label font-medium tracking-[0.18em] uppercase text-tn-subtle/70">
-              Browse Algorithms
-            </div>
+      {/* Divider */}
+      <div
+        className={cn(
+          "mx-4 border-t border-tn-border/30 my-2 transition-opacity duration-200",
+          collapsed ? "opacity-0" : "opacity-100"
+        )}
+      />
 
-            <div className="px-3 pb-2">
-              <TextInput
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search…"
-              />
-            </div>
+      {/* Bottom: browse algorithms (scrollable) */}
+      <div
+        className={cn(
+          "flex-1 min-h-0 flex flex-col transition-opacity duration-200",
+          collapsed ? "opacity-0 pointer-events-none" : "opacity-100"
+        )}
+      >
+        <div className="shrink-0 px-3 pb-1.5 text-label font-medium tracking-[0.18em] uppercase text-tn-subtle/70">
+          Browse Algorithms
+        </div>
 
-            <div className="space-y-2">
-              {algoGroups.map((g, idx) => (
-                <AlgoCategory
-                  key={g.header}
-                  header={g.header}
-                  items={g.items}
-                  collapsed={collapsed}
-                  defaultOpen={idx === 0 && !query} // open first group by default
-                  onItemClick={onItemClick}
-                />
-              ))}
+        <div className="shrink-0 px-3 pb-2">
+          <TextInput
+            size="sm"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search…"
+          />
+        </div>
 
-              {algoGroups.length === 0 && (
-                <div className="px-5 py-3 text-xs text-tn-muted">
-                  No matches.
-                </div>
-              )}
-            </div>
+        {isLoading && (
+          <div className="px-5 py-3 text-xs text-tn-muted">
+            Loading algorithms…
           </div>
         )}
-     
+
+        <div className="flex-1 min-h-0 overflow-y-auto space-y-1">
+          {algoGroups.map((g, idx) => (
+            <AlgoCategory
+              key={g.header}
+              header={g.header}
+              items={g.items}
+              collapsed={collapsed}
+              defaultOpen={idx === 0 && !query}
+              onItemClick={onItemClick}
+            />
+          ))}
+
+          {algoGroups.length === 0 && !isLoading && (
+            <div className="px-5 py-3 text-xs text-tn-muted">
+              No matches.
+            </div>
+          )}
+        </div>
+      </div>
     </nav>
   );
 }
@@ -297,7 +334,7 @@ export default function Sidebar({
   onClose: () => void;
 }) {
   const sections = useMemo<NavSection[]>(
-    () => [ 
+    () => [
       {
         header: "Menu",
         items: [
@@ -313,13 +350,6 @@ export default function Sidebar({
   const collapsed = isDesktop ? !isOpen : false;
   const width = isDesktop ? (isOpen ? openWidth : railWidth) : 288;
 
-  const asideClass = cn(
-    "border border-tn-border/15 fixed left-0 z-50 bg-tn-bg overflow-hidden py-2",
-    !isDesktop && "transition-transform duration-200",
-    !isDesktop && (isOpen ? "translate-x-0" : "-translate-x-full"),
-    isDesktop && "z-40 transition-[width] duration-300"
-  );
-
   return (
     <>
       {/* Mobile overlay */}
@@ -334,8 +364,17 @@ export default function Sidebar({
         />
       )}
 
-      <aside
-        className={asideClass}
+      <Panel
+        as="aside"
+        tone="base"
+        radius="lg"
+        border={false}
+        className={cn(
+          "fixed left-0 z-50 overflow-hidden py-2",
+          !isDesktop && "transition-transform duration-200",
+          !isDesktop && (isOpen ? "translate-x-0" : "-translate-x-full"),
+          isDesktop && "z-40 transition-[width] duration-300"
+        )}
         style={{
           top: topOffset,
           height: `calc(100vh - ${topOffset}px)`,
@@ -347,7 +386,7 @@ export default function Sidebar({
           collapsed={collapsed}
           onItemClick={!isDesktop ? onClose : undefined}
         />
-      </aside>
+      </Panel>
     </>
   );
 }

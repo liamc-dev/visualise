@@ -4,6 +4,7 @@ import { User2 } from "lucide-react";
 import { authService } from "../../api/auth-service";
 import { userService, MeResponse } from "../../api/user-service";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { IconBtn } from "../ui/IconBtn";
 import { api } from "../../api/http";
 
 function getDisplayName(me: MeResponse | null) {
@@ -90,23 +91,16 @@ export default function UserMenu() {
 
   return (
     <div className="relative">
-      <button
+      <IconBtn
         ref={btnRef}
-        type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`
-          inline-flex items-center justify-center
-          w-10 h-10 rounded-xl
-          hover:bg-tn-surfaceSoft transition-colors
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30
-          ${open ? "bg-tn-surfaceSoft/70" : ""}
-        `}
+        active={open}
         aria-label="Account"
         aria-haspopup="menu"
         aria-expanded={open}
       >
         <User2 size={18} />
-      </button>
+      </IconBtn>
 
       {open && (
         <div
