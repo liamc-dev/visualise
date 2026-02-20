@@ -74,7 +74,7 @@ export default function LoginPage() {
           <div className="text-label tracking-[0.22em] uppercase text-tn-subtle/70">
             Account
           </div>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight">Log in</h1>
+          <h1 className="mt-2 text-2xl font-[var(--st-fw-semibold)] tracking-tight">Log in</h1>
           <p className="mt-1 text-sm text-tn-muted">
             Welcome back. Enter your details to continue.
           </p>
@@ -86,7 +86,7 @@ export default function LoginPage() {
           <div className="min-h-[52px]">
             <div
               className={[
-                "rounded-xl border px-3 py-3 text-sm transition",
+                "rounded-st-sm border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] px-3 py-3 text-sm transition",
                 serverErr
                   ? "border-tn-danger/30 bg-tn-danger/10 text-tn-danger"
                   : "border-transparent bg-transparent text-transparent",

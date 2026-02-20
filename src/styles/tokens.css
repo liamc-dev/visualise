@@ -30,6 +30,32 @@
 
   --tn-elev-1: 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.22);
   --tn-elev-2: 0 1px 0 rgba(255,255,255,0.06), 0 8px 36px rgba(0,0,0,0.30);
+
+  /* ── Style preset tokens (shape/motion/blur) ── */
+  --st-radius-sm: 12px;
+  --st-radius-md: 16px;
+  --st-radius-lg: 20px;
+  --st-radius-xl: 24px;
+
+  --st-border-w: 1px;
+  --st-border-style: solid;
+  --st-border-color: rgb(var(--tn-border) / 0.6);
+
+  --st-shadow-card: var(--card-shadow);
+  --st-shadow-btn: none;
+  --st-shadow-dropdown: 0 12px 30px rgba(0,0,0,0.18);
+
+  --st-font-ui: inherit;
+  --st-fw-normal: 400;
+  --st-fw-medium: 500;
+  --st-fw-semibold: 600;
+
+  --st-dur-fast: 150ms;
+  --st-dur-normal: 200ms;
+  --st-ease: ease-out;
+
+  --st-blur: 12px;
+  --st-blur-sm: 4px;
 }
 
 html {
@@ -228,6 +254,95 @@ html[data-theme="tokyo-night"] {
   --tn-grid-bg: 203 213 225;
 }
 
+/* =============================================================================
+   STYLE PRESETS (shape/motion/blur — orthogonal to color themes)
+   ============================================================================= */
+
+/* TERMINAL — sharp, monospace, utilitarian */
+html[data-style="terminal"] {
+  --st-radius-sm: 0px;
+  --st-radius-md: 0px;
+  --st-radius-lg: 2px;
+  --st-radius-xl: 2px;
+
+  --st-border-w: 1px;
+  --st-border-style: dashed;
+  --st-border-color: rgb(var(--tn-border));
+
+  --st-shadow-card: none;
+  --st-shadow-btn: none;
+  --st-shadow-dropdown: none;
+
+  --st-font-ui: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --st-fw-normal: 400;
+  --st-fw-medium: 400;
+  --st-fw-semibold: 400;
+
+  --st-dur-fast: 0ms;
+  --st-dur-normal: 0ms;
+  --st-ease: linear;
+
+  --st-blur: 0px;
+  --st-blur-sm: 0px;
+
+  --font-scale: 0.95;
+  font-family: var(--st-font-ui);
+}
+
+/* CLEAN — sharp, flat, editor-like */
+html[data-style="clean"] {
+  --st-radius-sm: 0px;
+  --st-radius-md: 0px;
+  --st-radius-lg: 0px;
+  --st-radius-xl: 0px;
+
+  --st-border-w: 1px;
+  --st-border-color: rgb(var(--tn-border) / 0.4);
+
+  --st-shadow-card: none;
+  --st-shadow-btn: none;
+  --st-shadow-dropdown: 0 2px 8px rgba(0,0,0,0.12);
+
+  --st-font-ui: inherit;
+  --st-fw-normal: 400;
+  --st-fw-medium: 400;
+  --st-fw-semibold: 500;
+
+  --st-dur-fast: 100ms;
+  --st-dur-normal: 150ms;
+  --st-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --st-blur: 0px;
+  --st-blur-sm: 0px;
+}
+
+/* ORGANIC — bubbly, floaty, playful */
+html[data-style="organic"] {
+  --st-radius-sm: 14px;
+  --st-radius-md: 16px;
+  --st-radius-lg: 16px;
+  --st-radius-xl: 16px;
+
+  --st-border-w: 0px;
+  --st-border-color: transparent;
+
+  --st-shadow-card: none;
+  --st-shadow-btn: none;
+  --st-shadow-dropdown: none;
+
+  --st-font-ui: inherit;
+  --st-fw-normal: 400;
+  --st-fw-medium: 500;
+  --st-fw-semibold: 600;
+
+  --st-dur-fast: 200ms;
+  --st-dur-normal: 350ms;
+  --st-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --st-blur: 16px;
+  --st-blur-sm: 6px;
+}
+
 /* Tailwind theme tokens from runtime vars */
 @theme {
   --color-tn-bg: rgb(var(--tn-bg));
@@ -252,6 +367,7 @@ html[data-theme="tokyo-night"] {
 
   --color-tn-link: rgb(var(--tn-link));
   --color-tn-divider: rgb(var(--tn-divider));
+  --color-st-border: var(--st-border-color);
   
   --text-label: var(--tn-fs-label);
   --text-body: var(--tn-fs-body);
@@ -270,5 +386,13 @@ html[data-theme="tokyo-night"] {
   --shadow-card: var(--card-shadow);
   --shadow-tn-1: var(--tn-elev-1);
   --shadow-tn-2: var(--tn-elev-2);
-  
+
+  /* Style preset → Tailwind */
+  --radius-st-sm: var(--st-radius-sm);
+  --radius-st-md: var(--st-radius-md);
+  --radius-st-lg: var(--st-radius-lg);
+  --radius-st-xl: var(--st-radius-xl);
+  --shadow-st-card: var(--st-shadow-card);
+  --shadow-st-btn: var(--st-shadow-btn);
+  --shadow-st-dropdown: var(--st-shadow-dropdown);
 }

@@ -61,7 +61,7 @@ function SideRow({
       {({ isActive }) => (
         <div
           className={cn(
-            "group relative flex items-center rounded-2xl",
+            "group relative flex items-center rounded-st-md",
             "transition-colors",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30",
             item.icon ? "gap-0.5" : "gap-0 pl-3 py-1.5",
@@ -82,7 +82,7 @@ function SideRow({
             <span
               className={cn(
                 "flex items-center justify-center text-current",
-                collapsed ? "w-10 h-10 rounded-2xl" : "w-8 h-8 rounded-xl"
+                collapsed ? "w-10 h-10 rounded-st-md" : "w-8 h-8 rounded-st-sm"
               )}
             >
               {item.icon}
@@ -132,14 +132,14 @@ function AlgoCategory({
         onClick={() => setOpen((v) => !v)}
         className={cn(
           "w-full flex items-center justify-between",
-          "px-2 py-1.5 rounded-2xl",
+          "px-2 py-1.5 rounded-st-md",
           "text-tn-subtle/80 hover:text-tn-text hover:bg-tn-surfaceSoft",
           "transition-colors",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30"
         )}
       >
         <div className="flex items-center gap-2">
-          <span className="text-label font-medium tracking-[0.18em] uppercase">
+          <span className="text-label font-[var(--st-fw-medium)] tracking-[0.18em] uppercase">
             {header}
           </span>
           <span className="text-label text-tn-muted/80">({items.length})</span>
@@ -196,7 +196,7 @@ function Section({
       {/* Header always rendered, fades on collapse */}
       <div
         className={cn(
-          "px-3 pb-1.5 text-label font-medium tracking-[0.18em] uppercase text-tn-subtle/70 transition-opacity duration-200",
+          "px-3 pb-1.5 text-label font-[var(--st-fw-medium)] tracking-[0.18em] uppercase text-tn-subtle/70 transition-opacity duration-200",
           collapsed ? "opacity-0" : "opacity-100"
         )}
       >
@@ -274,7 +274,7 @@ function SidebarContent({
           collapsed ? "opacity-0 pointer-events-none" : "opacity-100"
         )}
       >
-        <div className="shrink-0 px-3 pb-1.5 text-label font-medium tracking-[0.18em] uppercase text-tn-subtle/70">
+        <div className="shrink-0 px-3 pb-1.5 text-label font-[var(--st-fw-medium)] tracking-[0.18em] uppercase text-tn-subtle/70">
           Browse Algorithms
         </div>
 

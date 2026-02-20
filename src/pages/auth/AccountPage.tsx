@@ -53,7 +53,7 @@ function SectionTitle({
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <h2 className="text-body font-semibold text-tn-text">{title}</h2>
+        <h2 className="text-body font-[var(--st-fw-semibold)] text-tn-text">{title}</h2>
         {subtitle ? (
           <p className="mt-1 text-body text-tn-muted max-w-[760px]">{subtitle}</p>
         ) : null}
@@ -65,11 +65,11 @@ function SectionTitle({
 
 function StatPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-full border border-tn-border bg-tn-surfaceSoft/50 px-3 py-1">
+    <div className="rounded-full border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-st-border bg-tn-surfaceSoft/50 px-3 py-1">
       <div className="text-micro tracking-[0.18em] uppercase text-tn-subtle/70">
         {label}
       </div>
-      <div className="text-ui font-semibold text-tn-text">{value}</div>
+      <div className="text-ui font-[var(--st-fw-semibold)] text-tn-text">{value}</div>
     </div>
   );
 }
@@ -153,7 +153,7 @@ export default function AccountPage() {
               Account
             </div>
 
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight leading-tight">
+            <h1 className="mt-2 text-2xl font-[var(--st-fw-semibold)] tracking-tight leading-tight">
               Profile, playback, and recall settings
             </h1>
 
@@ -167,8 +167,8 @@ export default function AccountPage() {
           </div>
 
           <div className="shrink-0">
-            <div className="h-16 w-16 rounded-full bg-tn-card border border-tn-border flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.10)]">
-              <span className="text-sm font-semibold text-tn-text/80">
+            <div className="h-16 w-16 rounded-full bg-tn-card border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-st-border flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.10)]">
+              <span className="text-sm font-[var(--st-fw-semibold)] text-tn-text/80">
                 {avatarLetter}
               </span>
             </div>
@@ -179,7 +179,7 @@ export default function AccountPage() {
         <div className="mt-7 border-t border-tn-divider/10" />
 
         {!loading && err ? (
-          <div className="mt-5 rounded-xl border border-tn-danger/30 bg-tn-danger/10 px-3 py-3 text-sm text-tn-text">
+          <div className="mt-5 rounded-st-sm border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-tn-danger/30 bg-tn-danger/10 px-3 py-3 text-sm text-tn-text">
             {err}
           </div>
         ) : null}
@@ -192,9 +192,9 @@ export default function AccountPage() {
               subtitle="Your identity in the app and where your progress is stored."
             />
 
-            <div className="mt-4 rounded-2xl border border-tn-border bg-tn-surface/60 p-4">
+            <div className="mt-4 rounded-st-md border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-st-border bg-tn-surface/60 p-4">
               <div className="text-button text-tn-muted">Signed in</div>
-              <div className="mt-1 text-ui font-medium">
+              <div className="mt-1 text-ui font-[var(--st-fw-medium)]">
                 {me?.email ?? "Unknown"}
               </div>
               {me?.username ? (

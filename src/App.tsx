@@ -4,6 +4,7 @@ import AppShell from "./layout/AppShell";
 import VisualiserPage from "./pages/VisualiserPage";
 import AboutPage from "./pages/AboutPage";
 import ThemeApplier from "./theme/ThemeApplier";
+import StyleApplier from "./theme/StyleApplier";
 import { getLastAlgorithm } from "./hooks/use-last-algorithm";
 
 import MemoriseLayout from "./pages/memorise/MemoriseLayout";
@@ -27,6 +28,7 @@ function App() {
   return (
     <Router basename={import.meta.env.BASE_URL}>
       <ThemeApplier />
+      <StyleApplier />
       {/* <AuthBootstrap> */}
         <AppShell>
           <Routes>

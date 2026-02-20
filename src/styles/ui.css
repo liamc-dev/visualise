@@ -182,18 +182,23 @@
      ----------------------------- */
 
     .tn-btn {
-        @apply relative inline-flex items-center justify-center px-4 py-2 rounded-xl text-sm font-semibold tracking-wide border border-tn-border/60 bg-tn-surfaceSoft text-tn-text backdrop-blur-sm transition-all duration-200;
-        box-shadow: var(--card-shadow);
+        @apply relative inline-flex items-center justify-center px-4 py-2 text-sm tracking-wide bg-tn-surfaceSoft text-tn-text transition-all;
+        font-weight: var(--st-fw-semibold);
+        border-radius: var(--st-radius-sm);
+        border: var(--st-border-w) var(--st-border-style) var(--st-border-color);
+        backdrop-filter: blur(var(--st-blur-sm));
+        box-shadow: var(--st-shadow-card);
+        transition-duration: var(--st-dur-normal);
     }
 
     .tn-btn:hover:not(:disabled) {
         @apply bg-tn-surface;
-        box-shadow: var(--card-shadow);
+        box-shadow: var(--st-shadow-card);
     }
 
     .tn-btn:active:not(:disabled) {
         @apply scale-[0.97] bg-tn-surfaceSoft;
-        box-shadow: var(--card-shadow);
+        box-shadow: var(--st-shadow-card);
     }
 
     .tn-btn:disabled {
@@ -298,6 +303,29 @@
     select:disabled {
         cursor: not-allowed;
     }
+
+    /* Normalize Chrome/Safari autofill (bg + text) */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active,
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover,
+    textarea:-webkit-autofill:focus,
+    textarea:-webkit-autofill:active,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus,
+    select:-webkit-autofill:active {
+        -webkit-text-fill-color: rgb(var(--tn-text)) !important;
+        caret-color: rgb(var(--tn-text)) !important;
+
+        -webkit-box-shadow: 0 0 0 1000px rgb(var(--tn-surfaceSoft) / 0.60) inset !important;
+        box-shadow: 0 0 0 1000px rgb(var(--tn-surfaceSoft) / 0.60) inset !important;
+
+        background-clip: padding-box;
+        transition: background-color 999999s ease-out 0s;
+    }
 }
 
 /* =============================================================================
@@ -377,6 +405,45 @@ html[data-theme="tokyo-night"] *::-webkit-scrollbar-thumb:hover {
 /* Corner */
 html *::-webkit-scrollbar-corner {
     background: rgb(var(--tn-surfaceSoft));
+}
+
+/* =========================
+   TEXTAREA SCROLLBARS
+   ========================= */
+
+/* Chromium / Safari */
+textarea::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+textarea::-webkit-scrollbar-track {
+    background: rgb(var(--tn-surfaceSoft));
+    border-radius: 999px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background: rgb(var(--tn-accent) / 0.25);
+    border-radius: 999px;
+    border: 2px solid rgb(var(--tn-surfaceSoft));
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--tn-accent) / 0.4);
+}
+
+/* Firefox */
+textarea {
+    scrollbar-width: none;
+    scrollbar-color:
+        rgb(var(--tn-accent) / 0.25) rgb(var(--tn-surfaceSoft));
+}
+
+/* Remove scrollbar arrow buttons (WebKit) */
+textarea::-webkit-scrollbar-button {
+  display: thin;
+  width: 0;
+  height: 0;
 }
 
 /* =============================================================================

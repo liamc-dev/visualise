@@ -97,7 +97,7 @@ function Transport() {
 
   const btnBase = `
     flex-1 h-full aspect-square
-    rounded-xl grid place-items-center
+    rounded-st-sm grid place-items-center
     text-tn-text hover:bg-tn-surface
     disabled:opacity-40 disabled:hover:bg-transparent
     focus:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/35

@@ -35,18 +35,18 @@ export function Btn<T extends React.ElementType = "button">({
 
   const base = cx(
     "inline-flex items-center justify-center gap-2",
-    "border select-none",
-    "transition-[background-color,border-color,color,transform,box-shadow] duration-150 ease-out",
+    "border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] select-none",
+    "transition-[background-color,border-color,color,transform,box-shadow] duration-[var(--st-dur-fast)] ease-out",
     "focus:outline-none focus:ring-2 focus:ring-tn-accent/30",
     disabled && "opacity-60 cursor-not-allowed pointer-events-none"
   );
 
   const sizeCls =
     size === "md"
-      ? "h-10 px-3 rounded-2xl text-button font-semibold"
+      ? "h-10 px-3 rounded-st-md text-button font-[var(--st-fw-semibold)]"
       : size === "icon"
-        ? "h-6 w-6 p-0 rounded-xl"
-        : "h-6 px-2.5 rounded-xl text-label font-semibold";
+        ? "h-6 w-6 p-0 rounded-st-sm"
+        : "h-6 px-2.5 rounded-st-sm text-label font-[var(--st-fw-semibold)]";
 
   const variantCls = (() => {
     switch (variant) {

@@ -49,7 +49,7 @@ function renderLineWithSpans(line: string, spans: CodeSpan[], lineNo: number) {
         className={[
           "relative inline whitespace-pre",
           "text-tn-text",
-          "font-medium",
+          "font-[var(--st-fw-medium)]",
           "leading-[1]",
           "before:content-['']",
           "before:absolute",

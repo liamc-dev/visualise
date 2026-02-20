@@ -21,7 +21,7 @@ const AlgoInfoPanel = ({
     <Panel
       as="aside"
       tone="base"
-      className="p-4 md:p-5 flex flex-col gap-4 mb-20 shadow-card"
+      className="p-4 md:p-5 flex flex-col gap-4 mb-20 shadow-st-card"
     >
       <div className="space-y-3">
         {/* Logo */}
@@ -38,7 +38,7 @@ const AlgoInfoPanel = ({
         )}
 
         {/* Title */}
-        <h3 className="text-label font-semibold tracking-[0.22em] uppercase text-tn-subtle text-center">
+        <h3 className="text-label font-[var(--st-fw-semibold)] tracking-[0.22em] uppercase text-tn-subtle text-center">
           {title}
         </h3>
 
@@ -50,7 +50,7 @@ const AlgoInfoPanel = ({
 
       {bullets.length > 0 && (
         <div className="border-t border-tn-border/80 pt-3">
-          <h4 className="text-label font-semibold tracking-[0.16em] uppercase text-tn-subtle mb-2">
+          <h4 className="text-label font-[var(--st-fw-semibold)] tracking-[0.16em] uppercase text-tn-subtle mb-2">
             Summary
           </h4>
 

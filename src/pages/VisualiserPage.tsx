@@ -52,7 +52,7 @@ export default function VisualiserPage() {
     ) : (
       <Panel tone="solid" radius="xl" className="w-full min-h-[360px] flex items-center justify-center text-tn-subtle">
         Trace not available for{" "}
-        <span className="ml-1 font-semibold text-tn-text">{def.label}</span>.
+        <span className="ml-1 font-[var(--st-fw-semibold)] text-tn-text">{def.label}</span>.
       </Panel>
     );
 

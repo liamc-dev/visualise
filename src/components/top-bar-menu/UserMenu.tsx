@@ -108,9 +108,9 @@ export default function UserMenu() {
           role="menu"
           className="
             absolute right-0 mt-2 w-52
-            rounded-2xl border border-tn-border
-            bg-tn-surface/95 backdrop-blur-sm
-            shadow-[0_12px_30px_rgba(0,0,0,0.18)]
+            rounded-st-md border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-st-border
+            bg-tn-surface/95 backdrop-blur-[var(--st-blur-sm)]
+            shadow-st-dropdown
             overflow-hidden
           "
         >
@@ -118,7 +118,7 @@ export default function UserMenu() {
             <div className="text-label tracking-[0.18em] uppercase text-tn-subtle/70">
               {token ? "Signed in" : "Session"}
             </div>
-            <div className="mt-1 text-sm font-medium text-tn-text truncate">
+            <div className="mt-1 text-sm font-[var(--st-fw-medium)] text-tn-text truncate">
               {signedInLabel}
             </div>
           </div>

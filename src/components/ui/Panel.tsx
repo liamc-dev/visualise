@@ -31,21 +31,21 @@ export function Panel<T extends React.ElementType = "div">({
         tone === "solid"
             ? "bg-tn-surface"
             : tone === "glass"
-                ? "bg-tn-surface/80 backdrop-blur-md"
+                ? "bg-tn-surface/80 backdrop-blur-[var(--st-blur)]"
                 : tone === "base"
-                    ? "bg-tn-bg backdrop-blur-md"
+                    ? "bg-tn-bg backdrop-blur-[var(--st-blur)]"
                     : "bg-tn-surfaceSoft/40";
 
     const radiusCls =
         radius === "none"
             ? ""
             : radius === "lg"
-                ? "rounded-xl"
+                ? "rounded-st-sm"
                 : radius === "xl"
-                    ? "rounded-2xl"
-                    : "rounded-3xl";
+                    ? "rounded-st-md"
+                    : "rounded-st-lg";
 
-    const borderCls = border ? "border border-tn-border/60" : "";
+    const borderCls = border ? "border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-st-border" : "";
 
     return (
         <As className={cx(radiusCls, borderCls, toneCls, className)} {...rest}>

@@ -45,7 +45,7 @@ export default function FieldSelect<T extends string>({
       buttonClassName={`
         mt-1 h-10 w-full
         inline-flex items-center justify-between gap-2
-        rounded-xl border border-tn-border
+        rounded-st-sm border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-st-border
         bg-tn-surfaceSoft/55 px-3
         text-button text-tn-text
         hover:bg-tn-surfaceSoft/65

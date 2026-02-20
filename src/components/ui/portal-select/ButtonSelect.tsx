@@ -32,7 +32,7 @@ export default function ButtonSelect<T extends string>({
   offset,
   menuWidth = "content",
   showChevron = true,
-  className = "",
+  className = "rounded-st-sm px-2 py-1.5",
   menuClassName = "",
   itemClassName = "text-label px-3 py-1.5",
   buttonLabel,
@@ -53,7 +53,6 @@ export default function ButtonSelect<T extends string>({
       renderOption={renderOption}
       buttonClassName={`
         inline-flex items-center justify-center gap-1
-        rounded-xl px-2 py-1.5
         text-label text-tn-text
         hover:bg-tn-surfaceSoft/70
         ${className}

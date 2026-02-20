@@ -29,7 +29,7 @@ export function SpeedSlider({
   return (
     <div className="w-42 p-0.5">
       <div className="flex items-baseline justify-between">
-        <span className="text-label font-semibold tracking-wider text-tn-subtle">
+        <span className="text-label font-[var(--st-fw-semibold)] tracking-wider text-tn-subtle">
           Speed
         </span>
 

@@ -58,7 +58,7 @@ export default function MemoriseSessionPage() {
                 ) : (
                     <Panel tone="solid" className="w-full min-h-[360px] flex items-center justify-center text-tn-subtle">
                         Trace not available for{" "}
-                        <span className="ml-1 font-semibold text-tn-text">{def.label}</span>.
+                        <span className="ml-1 font-[var(--st-fw-semibold)] text-tn-text">{def.label}</span>.
                     </Panel>
                 )}
 
@@ -66,18 +66,18 @@ export default function MemoriseSessionPage() {
                 {!hasSubmittedAttempt && (
                     <div
                         className="
-              absolute inset-0 rounded-2xl
+              absolute inset-0 rounded-st-md
               bg-tn-surface/70 backdrop-blur-[2px]
-              border border-tn-border
+              border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-st-border
               flex items-center justify-center
-              pointer-events-auto shadow-card
+              pointer-events-auto shadow-st-card
             "
                     >
                         <div className="max-w-[46ch] text-center px-4">
                             <div className="text-label tracking-[0.18em] uppercase text-tn-subtle/70">
                                 Memorise
                             </div>
-                            <div className="mt-2 text-sm font-medium">locked</div>
+                            <div className="mt-2 text-sm font-[var(--st-fw-medium)]">locked</div>
                             <div className="mt-1 text-xs text-tn-muted">
                                 Submit your first recall attempt to unlock.
                             </div>
@@ -110,7 +110,7 @@ export default function MemoriseSessionPage() {
             {/* Minimal “phase bar” */}
             <div
                 className="
-          mb-2 rounded-xl border border-tn-border
+          mb-2 rounded-st-sm border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-st-border
           bg-tn-surfaceSoft/55 px-3 py-2
           flex items-center justify-between gap-3
         "
@@ -119,7 +119,7 @@ export default function MemoriseSessionPage() {
                     <div className="text-label tracking-[0.18em] uppercase text-tn-subtle/70">
                         Memorise Session
                     </div>
-                    <div className="text-sm font-medium truncate">
+                    <div className="text-sm font-[var(--st-fw-medium)] truncate">
                         {def.label} · {phase === "recall" ? "Recall" : phase}
                     </div>
                 </div>

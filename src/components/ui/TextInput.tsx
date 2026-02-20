@@ -19,7 +19,7 @@ type TextInputProps = {
 export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
   ({ size = "md", error, onClear, className, value, ...rest }, ref) => {
     const base = cx(
-      "w-full border text-tn-text",
+      "w-full border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] text-tn-text",
       "focus:outline-none focus:ring-2",
       "placeholder:text-tn-muted/60",
       "transition",
@@ -28,8 +28,8 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
 
     const sizeCls =
       size === "sm"
-        ? "h-7 px-2 rounded-xl text-xs"
-        : "h-10 px-3 rounded-2xl text-sm";
+        ? "h-7 px-2 rounded-st-sm text-xs"
+        : "h-10 px-3 rounded-st-md text-sm";
 
     const borderCls = error
       ? "border-tn-danger/70 focus:ring-tn-danger/30"

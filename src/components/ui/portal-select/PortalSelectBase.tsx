@@ -200,7 +200,7 @@ export default function PortalSelectBase<T extends string>({
             aria-activedescendant={highlight >= 0 ? `ps-opt-${highlight}` : undefined}
             className={cn(
               "fixed z-[1000] overflow-hidden",
-              "rounded-2xl border border-tn-border/60 bg-tn-surface/90 backdrop-blur-md shadow-lg",
+              "rounded-st-md border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-st-border bg-tn-surface/90 backdrop-blur-[var(--st-blur)] shadow-st-dropdown",
               menuClassName
             )}
             style={menuStyle}

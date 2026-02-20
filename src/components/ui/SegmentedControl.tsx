@@ -26,7 +26,7 @@ export function SegmentedControl<T extends string>({
             type="button"
             onClick={() => onChange(opt.value)}
             className={cx(
-              "h-8 rounded-lg px-3 text-label font-semibold transition",
+              "h-8 rounded-[var(--st-radius-sm)] px-3 text-label font-[var(--st-fw-semibold)] transition",
               active ? "bg-tn-surface/70" : "hover:bg-tn-surfaceSoft/70"
             )}
           >

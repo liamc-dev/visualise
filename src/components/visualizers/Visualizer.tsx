@@ -80,9 +80,9 @@ export default function Visualizer({
       <div className="w-full max-w-full" style={{ opacity: measured ? 1 : 0 }}>
         <section
           className="
-            relative block w-full max-w-full rounded-2xl
-            border border-tn-border bg-tn-grid backdrop-blur-sm
-            p-3 sm:p-4 shadow-card
+            relative block w-full max-w-full rounded-st-xl
+            border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-tn-border bg-tn-grid backdrop-blur-[var(--st-blur-sm)]
+            p-3 sm:p-4 shadow-st-card
           "
         >
           <div className="w-full max-w-full overflow-hidden">

@@ -10,7 +10,7 @@ export function IconBtn({ active, className, children, ref, ...rest }: IconBtnPr
       type="button"
       ref={ref}
       className={[
-        "inline-flex items-center justify-center w-10 h-10 rounded-2xl",
+        "inline-flex items-center justify-center w-10 h-10 rounded-st-md",
         "hover:bg-tn-surfaceSoft transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30",
         active && "bg-tn-surfaceSoft/70",

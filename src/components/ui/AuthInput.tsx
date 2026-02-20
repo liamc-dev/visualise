@@ -33,7 +33,7 @@ export function AuthInput({ label, type = "text", placeholder, autoComplete, dis
           autoComplete={autoComplete}
           disabled={disabled}
           className={[
-            "h-11 w-full rounded-xl border bg-tn-surfaceSoft/60 px-3 outline-none",
+            "h-11 w-full rounded-st-sm border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] bg-tn-surfaceSoft/60 px-3 outline-none",
             "text-tn-text caret-tn-text transition",
             "placeholder:text-tn-muted/60 disabled:opacity-60",
             rightSlot ? "pr-12" : "",

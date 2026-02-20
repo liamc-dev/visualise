@@ -1,9 +1,12 @@
 // src/layout/AppShell.tsx
 import { useEffect, useState } from "react";
+import { Zap } from "lucide-react";
 import Sidebar from "../layout/Sidebar";
 import ThemeSelect from "../components/top-bar-menu/ThemeSelect";
+import StyleSelect from "../components/top-bar-menu/StyleSelect";
 import UserMenu from "../components/top-bar-menu/UserMenu";
 import { IconBtn } from "../components/ui/IconBtn";
+import { useSettingsStore } from "../stores/useSettingsStore";
 import { useBrand } from "../brand/useBrand";
 
 const TOP_H = 52;
@@ -50,6 +53,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     setIsSidebarOpen(false);
   }, [isDesktop]);
 
+  const effectsEnabled = useSettingsStore((s) => s.effectsEnabled);
+  const toggleEffects = useSettingsStore((s) => s.toggleEffects);
   const { appLogoSrc, appLogoAlt } = useBrand();
   const desktopSidebarW = isSidebarOpen ? OPEN_W : RAIL_W;
 
@@ -81,12 +86,24 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 className="h-7 w-auto select-none pointer-events-none opacity-95"
               />
             ) : (
-              <span className="text-ui font-semibold tracking-wide text-tn-text">
+              <span className="text-ui font-[var(--st-fw-semibold)] tracking-wide text-tn-text">
                 {appLogoAlt ?? "App"}
               </span>
             )}
 
             <div className="flex-1" />
+            <IconBtn
+              onClick={toggleEffects}
+              title="Toggle effects"
+              aria-label="Toggle effects"
+            >
+              <Zap
+                size={16}
+                className={effectsEnabled ? "text-tn-accent" : "text-tn-muted"}
+                fill={effectsEnabled ? "currentColor" : "none"}
+              />
+            </IconBtn>
+            <StyleSelect />
             <ThemeSelect />
             <UserMenu></UserMenu>
           </div>

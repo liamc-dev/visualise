@@ -95,7 +95,7 @@ export function BrowseToolbar({
                         value={sort}
                         onChange={(e) => setSort(e.target.value as any)}
                         className="
-              mt-1 h-10 rounded-xl border border-tn-border bg-tn-surfaceSoft/55 px-3
+              mt-1 h-10 rounded-st-sm border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-st-border bg-tn-surfaceSoft/55 px-3
               text-button text-tn-text outline-none
               focus:ring-2 focus:ring-tn-accent/35
             "

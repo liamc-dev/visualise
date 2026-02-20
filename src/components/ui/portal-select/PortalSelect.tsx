@@ -17,7 +17,7 @@ export default function PortalSelect<T extends string>(props: {
       menuWidth={menuWidth}
       buttonClassName={`
         inline-flex items-center justify-center gap-1
-        rounded-xl px-2 py-1.5 text-xs
+        rounded-st-sm px-2 py-1.5 text-xs
         text-tn-text
         focus-visible:outline-none
         focus-visible:ring-2 focus-visible:ring-tn-accent/30
@@ -27,8 +27,8 @@ export default function PortalSelect<T extends string>(props: {
       chevronClassName={`h-3 w-3 opacity-70 shrink-0`}
       menuClassName={`
         fixed z-[1000] overflow-hidden
-        rounded-xl border border-tn-border
-        bg-tn-surface/95 backdrop-blur-sm shadow-lg
+        rounded-st-md border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-st-border
+        bg-tn-surface/95 backdrop-blur-[var(--st-blur-sm)] shadow-st-dropdown
       `}
       itemClassName={`
         cursor-pointer whitespace-nowrap text-xs text-tn-text
