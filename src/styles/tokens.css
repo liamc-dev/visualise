@@ -179,7 +179,7 @@ html[data-theme="tokyo-night"] {
 
   --font-scale: 1.02;
 
-  --tn-slider-accent: 155 60 14;
+  --tn-slider-accent: 170 120 85;
 
   --tn-link: 160 55 10;
   --tn-divider: 35 22 14;
@@ -216,7 +216,7 @@ html[data-theme="tokyo-night"] {
   --tn-warning: 234 179 8;
   --tn-danger: 239 68 68;
 
-  --tn-slider-accent: 38 160 218;
+  --tn-slider-accent: 130 160 195;
   --font-scale: 1.02;
 
   --tn-link: 6 95 212;
@@ -242,6 +242,7 @@ html[data-theme="tokyo-night"] {
 
   --color-tn-accent: rgb(var(--tn-accent));
   --color-tn-accentSoft: rgb(var(--tn-accentSoft));
+  --color-tn-sliderAccent: rgb(var(--tn-slider-accent));
   --color-tn-cyan: rgb(var(--tn-cyan));
   --color-tn-magenta: rgb(var(--tn-magenta));
 

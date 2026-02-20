@@ -143,7 +143,10 @@ export default function AlgoCodePanel({
       {!content ? (
         <div className="text-xs text-tn-muted">No code available.</div>
       ) : (
-        <pre className="text-xs leading-5 font-mono whitespace-pre overflow-auto tn-codeblock">
+        <pre
+          className="font-mono whitespace-pre overflow-auto tn-codeblock"
+          style={{ fontSize: editorFontSize, lineHeight: `${Math.round(editorFontSize * 1.38)}px` }}
+        >
           <code>
             {lines.map((line, idx) => {
               const lineNo = idx + 1;

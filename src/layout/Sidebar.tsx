@@ -73,7 +73,7 @@ function SideRow({
           {/* Active accent pill */}
           <div
             className={cn(
-              "absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-full bg-tn-accent transition-all duration-200",
+              "absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-full bg-tn-sliderAccent transition-all duration-200",
               isActive ? "h-4 opacity-100" : "h-0 opacity-0"
             )}
           />
