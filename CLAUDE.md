@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Algorithm visualization web app built with React 19, Vite 7, TypeScript, and Tailwind CSS 4. It renders step-by-step animated traces of algorithms (currently sorting: merge sort, quick sort, heap sort) with synchronized code highlighting, narration, and playback controls. Deployed to GitHub Pages at `/visualise/`.
+Algorithm visualization web app built with React 19, Vite 7, TypeScript, and Tailwind CSS 4. It renders step-by-step animated traces of algorithms (currently sorting: bubble sort, insertion sort, merge sort, quick sort, heap sort) with synchronized code highlighting, narration, and playback controls. Deployed to GitHub Pages at `/visualise/`.
 
 ## Commands
 
 - **Dev server:** `pnpm dev`
 - **Build:** `pnpm build`
 - **Lint:** `pnpm lint` (ESLint 9 with typescript-eslint — covers `.js`/`.jsx`/`.ts`/`.tsx`)
-- **Deploy:** `pnpm deploy` (runs build then gh-pages)
+- **Deploy:** `pnpm run deploy` (runs build then gh-pages)
 - **Package manager:** pnpm 10.30.0 (do not use npm/yarn)
 
 There is no test runner configured.
