@@ -66,7 +66,7 @@ function SideRow({
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30",
             item.icon ? "gap-0.5" : "gap-0 pl-3 py-1.5",
             isActive
-              ? "bg-tn-card text-tn-text"
+              ? "text-tn-text"
               : "text-tn-muted hover:text-tn-text hover:bg-tn-surfaceSoft"
           )}
         >
@@ -283,6 +283,7 @@ function SidebarContent({
             size="sm"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onClear={() => setQuery("")}
             placeholder="Search…"
           />
         </div>
