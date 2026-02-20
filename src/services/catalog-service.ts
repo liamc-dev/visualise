@@ -83,5 +83,17 @@ const mockData = [
                 "name": "Sorting"
             }
         ]
+    },
+    {
+        "id": "0e0aa9ab-d83f-4ca8-8b82-03c011f84a8y",
+        "key": "insertion-sort",
+        "name": "Insertion Sort",
+        "categories": [
+            {
+                "id": "4472b151-6b88-4508-b2e4-b6cb8ecdb7ey",
+                "key": "sorting",
+                "name": "Sorting"
+            }
+        ]
     }
 ]
