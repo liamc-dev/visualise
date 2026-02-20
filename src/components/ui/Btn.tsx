@@ -43,10 +43,10 @@ export function Btn<T extends React.ElementType = "button">({
 
   const sizeCls =
     size === "md"
-      ? "h-10 px-3 rounded-xl text-button font-semibold"
+      ? "h-10 px-3 rounded-2xl text-button font-semibold"
       : size === "icon"
-        ? "h-6 w-6 p-0 rounded-lg"
-        : "h-6 px-2.5 rounded-lg text-label font-semibold";
+        ? "h-6 w-6 p-0 rounded-xl"
+        : "h-6 px-2.5 rounded-xl text-label font-semibold";
 
   const variantCls = (() => {
     switch (variant) {
@@ -58,14 +58,14 @@ export function Btn<T extends React.ElementType = "button">({
 
       case "soft":
         return cx(
-          "bg-tn-surface/60 border-tn-border",
+          "bg-tn-surface/60 border-tn-border/60",
           "hover:bg-tn-surfaceSoft/80"
         );
 
       case "ghost":
         return cx(
-          "bg-transparent border-tn-border/70",
-          "hover:bg-tn-surfaceSoft/60 hover:border-tn-border/90"
+          "bg-transparent border-tn-border/50",
+          "hover:bg-tn-surfaceSoft/60 hover:border-tn-border/70"
         );
 
       case "danger":

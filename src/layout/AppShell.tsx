@@ -104,7 +104,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* MAIN */}
       <main
-        className="flex-1 min-h-0 overflow-auto border border-tn-border/25 transition-[padding-left] duration-300"
+        className="flex-1 min-h-0 overflow-auto border border-tn-border/15 transition-[padding-left] duration-300"
         style={{ paddingLeft: isDesktop ? desktopSidebarW : 0 }}
       >
         <div className="w-full px-4 py-2 h-full">

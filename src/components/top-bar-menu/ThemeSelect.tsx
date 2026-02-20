@@ -49,7 +49,7 @@ export default function ThemeSelect() {
         )}
         menuWidth="match"
         showChevron={false}
-        className="w-10 h-10 p-0 rounded-xl hover:bg-tn-surfaceSoft"
+        className="w-10 h-10 p-0 rounded-2xl hover:bg-tn-surfaceSoft"
         itemClassName="px-0 py-2"
       />
     </div>

@@ -217,7 +217,7 @@ export default function AlgoCodeMonacoHost({
     };
 
     return (
-        <div className="tn-monaco h-full min-h-0 w-full overflow-hidden rounded-b-xl relative">
+        <div className="tn-monaco h-full min-h-0 w-full overflow-hidden rounded-b-2xl relative">
             {/* Reference */}
             <div
                 className="absolute inset-0"

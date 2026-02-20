@@ -79,7 +79,7 @@ export default function ArrayInputBar() {
           spellCheck={false}
           className={[
             "flex-1 min-w-0 font-mono resize-none",
-            "min-h-7 px-2 py-1 rounded-lg text-xs leading-snug",
+            "min-h-7 px-2 py-1 rounded-xl text-xs leading-snug",
             "w-full border text-tn-text bg-tn-surfaceSoft/55",
             "focus:outline-none focus:ring-2",
             "placeholder:text-tn-muted/60 transition",

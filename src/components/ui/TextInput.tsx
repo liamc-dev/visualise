@@ -28,8 +28,8 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
 
     const sizeCls =
       size === "sm"
-        ? "h-7 px-2 rounded-lg text-xs"
-        : "h-10 px-3 rounded-xl text-sm";
+        ? "h-7 px-2 rounded-xl text-xs"
+        : "h-10 px-3 rounded-2xl text-sm";
 
     const borderCls = error
       ? "border-tn-danger/70 focus:ring-tn-danger/30"

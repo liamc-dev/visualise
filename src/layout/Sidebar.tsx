@@ -61,7 +61,7 @@ function SideRow({
       {({ isActive }) => (
         <div
           className={cn(
-            "group relative flex items-center rounded-xl",
+            "group relative flex items-center rounded-2xl",
             "transition-colors",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30",
             item.icon ? "gap-0.5" : "gap-0 pl-3 py-1.5",
@@ -82,7 +82,7 @@ function SideRow({
             <span
               className={cn(
                 "flex items-center justify-center text-current",
-                collapsed ? "w-10 h-10 rounded-xl" : "w-8 h-8 rounded-lg"
+                collapsed ? "w-10 h-10 rounded-2xl" : "w-8 h-8 rounded-xl"
               )}
             >
               {item.icon}
@@ -132,7 +132,7 @@ function AlgoCategory({
         onClick={() => setOpen((v) => !v)}
         className={cn(
           "w-full flex items-center justify-between",
-          "px-2 py-1.5 rounded-xl",
+          "px-2 py-1.5 rounded-2xl",
           "text-tn-subtle/80 hover:text-tn-text hover:bg-tn-surfaceSoft",
           "transition-colors",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/30"
