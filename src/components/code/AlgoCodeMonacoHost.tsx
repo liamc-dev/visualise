@@ -31,7 +31,8 @@ export default function AlgoCodeMonacoHost({
 
     const lang = useCodeLangStore((s) => s.lang);
     const themeKey = useThemeStore((s) => s.theme);
-    const themeName = themeKey === "light" ? "tn-light" : "tn-dark";
+    const isLightTheme = themeKey === "light" || themeKey === "ember";
+    const themeName = `tn-${themeKey}`;
 
     const languageId = useMemo(() => EDITOR_LANG_MAP[lang] ?? "plaintext", [lang]);
 
@@ -60,10 +61,10 @@ export default function AlgoCodeMonacoHost({
     // Theme
     useEffect(() => {
         if (!monaco) return;
-        if (themeKey === "light") defineLightTn(monaco);
-        else defineDarkTn(monaco);
+        if (isLightTheme) defineLightTn(monaco, themeName);
+        else defineDarkTn(monaco, themeName);
         monaco.editor.setTheme(themeName);
-    }, [monaco, themeKey, themeName]);
+    }, [monaco, isLightTheme, themeName]);
     // ----------------------------
     // Reference editor decorations
     // ----------------------------

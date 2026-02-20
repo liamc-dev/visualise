@@ -3,8 +3,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type Theme = "light" | "dark" | "tokyo-night";
-const THEMES: Theme[] = ["light", "dark", "tokyo-night"];
+export type Theme = "light" | "dark" | "tokyo-night" | "ember";
+const THEMES: Theme[] = ["light", "dark", "tokyo-night", "ember"];
 
 type ThemeState = {
   theme: Theme;

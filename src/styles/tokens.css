@@ -42,11 +42,10 @@ html[data-theme="dark"] {
   color-scheme: dark;
 }
 
-/* Ember elevation */
+/* Ember elevation (light scheme — warm) */
 html[data-theme="ember"] {
-  --card-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
-  --panel-glow: 0 0 24px rgba(225, 160, 60, 0.06);
-  color-scheme: dark;
+  --card-shadow: 0 10px 30px rgba(80, 40, 10, 0.12);
+  color-scheme: light;
 }
 
 /* Tokyo elevation + glow */
@@ -145,51 +144,51 @@ html[data-theme="tokyo-night"] {
 }
 
 
-/* EMBER (warm charcoal + amber gold) */
+/* EMBER (bold warm light scheme — terracotta/sienna surfaces) */
 :root[data-theme="ember"] {
 
-  /* Base layers — warm charcoal */
-  --tn-bg: 20 18 16;
-  --tn-surface: 30 27 24;
-  --tn-card: 42 38 34;
-  --tn-surfaceSoft: 52 47 42;
+  /* Base layers — rich terracotta/sienna */
+  --tn-bg: 210 180 158;
+  --tn-surface: 218 190 168;
+  --tn-card: 198 166 142;
+  --tn-surfaceSoft: 188 155 130;
 
   /* Borders */
-  --tn-border: 65 58 50;
+  --tn-border: 160 120 88;
 
-  /* Text — warm whites */
-  --tn-text: 235 228 218;
-  --tn-muted: 182 172 160;
-  --tn-subtle: 128 118 106;
+  /* Text — dark warm browns */
+  --tn-text: 35 22 14;
+  --tn-muted: 85 60 42;
+  --tn-subtle: 120 90 68;
 
-  /* Accent — amber gold */
-  --tn-accent: 225 160 60;
-  --tn-accentSoft: 58 44 22;
+  /* Accent — deep burnt orange/rust */
+  --tn-accent: 185 75 20;
+  --tn-accentSoft: 240 210 185;
 
-  /* Supporting colors */
-  --tn-cyan: 85 195 175;
-  --tn-magenta: 215 140 165;
+  /* Supporting colors — warm-shifted */
+  --tn-cyan: 30 140 130;
+  --tn-magenta: 165 70 110;
 
-  --tn-success: 140 195 85;
-  --tn-warning: 240 190 90;
-  --tn-danger: 240 100 95;
+  --tn-success: 55 140 45;
+  --tn-warning: 195 130 15;
+  --tn-danger: 195 50 40;
 
-  /* Overlays */
-  --tn-overlay-inset: inset 0 0 6px rgba(0,0,0,0.5);
-  --tn-overlay-textshadow: 0 0 6px rgba(0,0,0,0.8);
+  /* Overlays (light scheme — subtle) */
+  --tn-overlay-inset: inset 0 0 4px rgba(80, 40, 10, 0.15);
+  --tn-overlay-textshadow: none;
 
   --font-scale: 1.02;
 
-  --tn-slider-accent: var(--tn-accentSoft);
+  --tn-slider-accent: 155 60 14;
 
-  --tn-link: 225 160 60;
-  --tn-divider: 255 255 255;
+  --tn-link: 160 55 10;
+  --tn-divider: 35 22 14;
 
-  /* Grid */
-  --tn-grid-fill-alpha: 0.4;
-  --tn-grid-line-alpha: 0.02;
-  --tn-grid-rgb: 225 160 60;
-  --tn-grid-bg: 32 28 24;
+  /* Grid — warm-tinted */
+  --tn-grid-fill-alpha: 0.08;
+  --tn-grid-line-alpha: 0.05;
+  --tn-grid-rgb: 120 70 30;
+  --tn-grid-bg: 185 148 118;
 }
 
 /* LIGHT */
@@ -217,7 +216,7 @@ html[data-theme="tokyo-night"] {
   --tn-warning: 234 179 8;
   --tn-danger: 239 68 68;
 
-  --tn-slider-accent:var(--tn-cyan);
+  --tn-slider-accent: 38 160 218;
   --font-scale: 1.02;
 
   --tn-link: 6 95 212;

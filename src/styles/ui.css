@@ -342,6 +342,22 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover {
     background: rgb(var(--tn-accent) / 0.14);
 }
 
+/* EMBER (light scheme — higher alpha for visibility on warm surfaces) */
+html[data-theme="ember"] *::-webkit-scrollbar-track {
+    background: rgb(var(--tn-surfaceSoft));
+    border-radius: 999px;
+}
+
+html[data-theme="ember"] *::-webkit-scrollbar-thumb {
+    background: rgb(var(--tn-accent) / 0.22);
+    border-radius: 999px;
+    border: 2px solid rgb(var(--tn-surfaceSoft));
+}
+
+html[data-theme="ember"] *::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--tn-accent) / 0.35);
+}
+
 /* TOKYO NIGHT */
 html[data-theme="tokyo-night"] *::-webkit-scrollbar-track {
     border-radius: 999px;

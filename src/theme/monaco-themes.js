@@ -42,7 +42,7 @@ function withAlpha(hex, alpha01) {
 /**
  *
  */
-export function defineLightTn(monaco) {
+export function defineLightTn(monaco, name = "tn-light") {
     const _bg = cssRgbVarToHex("--tn-bg", "#ffffff");
     const surface = cssRgbVarToHex("--tn-surface", "#ffffff");
     const surfaceSoft = cssRgbVarToHex("--tn-surfaceSoft", "#f6f8fa");
@@ -65,7 +65,7 @@ export function defineLightTn(monaco) {
     const hoverBg = surfaceSoft;
     const _indentGuide = withAlpha(border, 0.9);
 
-    monaco.editor.defineTheme("tn-light", {
+    monaco.editor.defineTheme(name, {
         base: "vs",
         inherit: true,
         rules: [
@@ -136,6 +136,12 @@ export function defineLightTn(monaco) {
             // Minimap
             "minimap.selectionHighlight": withAlpha(accent, 0.25),
 
+            // Sticky scroll
+            "editorStickyScroll.background": surface,
+            "editorStickyScroll.border": withAlpha(border, 0.6),
+            "editorStickyScroll.shadow": withAlpha(border, 0.0),
+            "editorStickyScrollHover.background": surfaceSoft,
+
             // ----------------------------
             // Diff editor (calm / low-saturation)
             // ----------------------------
@@ -159,10 +165,10 @@ export function defineLightTn(monaco) {
         },
     });
 
-    monaco.editor.setTheme("tn-light");
+    monaco.editor.setTheme(name);
 }
 
-export function defineDarkTn(monaco) {
+export function defineDarkTn(monaco, name = "tn-dark") {
     const surface = cssRgbVarToHex("--tn-surface", "#1e1b24");
     const text = cssRgbVarToHex("--tn-text", "#e4e0ea");
     const muted = cssRgbVarToHex("--tn-muted", "#b2acbc");
@@ -175,7 +181,7 @@ export function defineDarkTn(monaco) {
     const warning = cssRgbVarToHex("--tn-warning", "#e6c382");
     const danger = cssRgbVarToHex("--tn-danger", "#fa7882");
 
-    monaco.editor.defineTheme("tn-dark", {
+    monaco.editor.defineTheme(name, {
         base: "vs-dark",
         inherit: true,
         rules: [
@@ -229,6 +235,12 @@ export function defineDarkTn(monaco) {
             "editorError.foreground": danger,
             "editorWarning.foreground": warning,
             "editorInfo.foreground": accent,
+
+            // Sticky scroll
+            "editorStickyScroll.background": surface,
+            "editorStickyScroll.border": withAlpha(border, 0.6),
+            "editorStickyScroll.shadow": "#00000000",
+            "editorStickyScrollHover.background": withAlpha(accent, 0.08),
 
             // Scrollbar
             "scrollbar.shadow": "#00000025",

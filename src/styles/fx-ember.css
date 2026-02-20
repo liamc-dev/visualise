@@ -1,0 +1,74 @@
+/* =============================================================================
+   EMBER FX
+   Visual enhancements only — no base UI rules
+   ============================================================================= */
+
+@layer components {
+
+    /* ------------------------------------------------------------------
+   Monaco highlights (Ember variant — warm underline, darker for light bg)
+   ------------------------------------------------------------------ */
+
+    html[data-theme="ember"] .monaco-editor .acp-span-highlight {
+        box-shadow: inset 0 -0.1em 0 rgb(var(--tn-accent) / 0.35);
+    }
+
+    /* ------------------------------------------------------------------
+   Button glow overrides (subtle on light surfaces)
+   ------------------------------------------------------------------ */
+
+    html[data-theme="ember"] .tn-btn {
+        box-shadow: 0 1px 3px rgba(80, 40, 10, 0.12);
+    }
+
+    html[data-theme="ember"] .tn-btn:hover:not(:disabled) {
+        box-shadow:
+            0 2px 6px rgba(80, 40, 10, 0.16),
+            inset 0 0 2px rgba(185, 75, 20, 0.08);
+    }
+
+    html[data-theme="ember"] .tn-btn:active:not(:disabled) {
+        box-shadow:
+            0 1px 2px rgba(80, 40, 10, 0.10),
+            inset 0 1px 3px rgba(80, 40, 10, 0.12);
+    }
+
+    /* ------------------------------------------------------------------
+   Focus surface glow (warm, subtle on light bg)
+   ------------------------------------------------------------------ */
+    html[data-theme="ember"] .tn-focus-surface::before {
+        content: "";
+        position: absolute;
+        inset: -8px;
+        border-radius: 1.25rem;
+        pointer-events: none;
+
+        background: radial-gradient(circle at 50% 0%,
+                rgba(185, 75, 20, 0.06),
+                transparent 70%);
+
+        opacity: 0.5;
+    }
+
+    /* ------------------------------------------------------------------
+   Description bar (kept consistent — unused but matching palette)
+   ------------------------------------------------------------------ */
+
+    html[data-theme="ember"] .tn-desc-bar {
+        @apply mt-3 mb-4 mx-3 px-4 py-2 text-sm rounded-md border text-tn-text;
+        background: linear-gradient(to bottom, rgb(218 190 168), rgb(198 166 142));
+        border-color: rgba(160, 120, 88, 0.7);
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            0 2px 6px rgba(80, 40, 10, 0.12);
+    }
+
+    html[data-theme="ember"] .tn-desc-text {
+        letter-spacing: 0.04em;
+    }
+
+    html[data-theme="ember"] .tn-desc-em {
+        color: rgb(var(--tn-accent));
+    }
+
+}

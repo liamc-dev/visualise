@@ -16,8 +16,9 @@
         var theme = data?.state?.theme;
         if (!theme) return;
         document.documentElement.dataset.theme = theme;
-        document.documentElement.classList.toggle("dark", theme !== "light");
-        document.documentElement.style.colorScheme = theme === "light" ? "light" : "dark";
+        var isLight = theme === "light" || theme === "ember";
+        document.documentElement.classList.toggle("dark", !isLight);
+        document.documentElement.style.colorScheme = isLight ? "light" : "dark";
       } catch (e) { }
     })();
   </script>

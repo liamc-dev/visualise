@@ -10,7 +10,8 @@ export default function ThemeApplier() {
     const root = document.documentElement;
 
     // Tailwind's dark: utilities
-    if (theme === "light") root.classList.remove("dark");
+    const isLight = theme === "light" || theme === "ember";
+    if (isLight) root.classList.remove("dark");
     else root.classList.add("dark");
 
     root.dataset.theme = theme;

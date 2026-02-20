@@ -33,10 +33,11 @@ export const BRAND_ASSETS: {
     light: '',
     dark: '',
     "tokyo-night": '',
+    ember: '',
   },
 
   algoLogos: {
-    "merge-sort": { light: '', dark: '', "tokyo-night": '' },
-    "quick-sort": { light: '', dark: '', "tokyo-night": '' },
+    "merge-sort": { light: '', dark: '', "tokyo-night": '', ember: '' },
+    "quick-sort": { light: '', dark: '', "tokyo-night": '', ember: '' },
   },
 };

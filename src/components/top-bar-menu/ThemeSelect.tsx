@@ -1,4 +1,4 @@
-import { Sun, Moon, Sparkles, Zap } from "lucide-react";
+import { Sun, Moon, Sparkles, Flame, Zap } from "lucide-react";
 import { useThemeStore, type Theme } from "../../stores/useThemeStore";
 import { useSettingsStore } from "../../stores/useSettingsStore";
 import { IconBtn } from "../ui/IconBtn";
@@ -9,6 +9,7 @@ const THEMES: readonly PortalSelectOption<Theme>[] = [
   { value: "light", label: "Light", Icon: Sun },
   { value: "dark", label: "Dark", Icon: Moon },
   { value: "tokyo-night", label: "Tokyo Night", Icon: Sparkles },
+  { value: "ember", label: "Ember", Icon: Flame },
 ];
 
 export default function ThemeSelect() {
