@@ -20,5 +20,4 @@ export const INSERTION_SORT_PSEUDO_POINTER_HINTS = {
 export const INSERTION_SORT_PSEUDO_POINTER_LABELS = {
   i: "i",
   j: "j",
-  sorted: "sorted",
 } as const satisfies Record<string, string>;

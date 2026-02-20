@@ -23,5 +23,4 @@ export const INSERTION_SORT_JAVA_POINTER_HINTS = {
 export const INSERTION_SORT_JAVA_POINTER_LABELS = {
   i: "i",
   j: "j",
-  sorted: "sorted",
 } as const satisfies Record<string, string>;

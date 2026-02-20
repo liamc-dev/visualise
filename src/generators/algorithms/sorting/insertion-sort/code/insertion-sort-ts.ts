@@ -23,5 +23,4 @@ export const INSERTION_SORT_TS_POINTER_HINTS = {
 export const INSERTION_SORT_TS_POINTER_LABELS = {
   i: "i",
   j: "j",
-  sorted: "sorted",
 } as const satisfies Record<string, string>;
