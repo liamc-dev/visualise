@@ -17,22 +17,29 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
   const layout = makeInsertionSortLayout();
   let stepNo = 0;
 
-  const sorted = new Set<number>();
+  // Track which iteration we're on so we can dim the unsorted tail.
+  // In insertion sort the sorted prefix (0..i-1) is the *active workspace*
+  // — dimming it would hide the comparisons and shifts. Instead we dim
+  // elements we haven't reached yet (i+1..n-1).
+  let currentI: number | undefined;
 
   function buildScene(): TraceScene {
-    const nodes: TraceNode[] = arr.map((value, idx) => ({
-      id: cellId(idx),
-      kind: "cell",
-      pos: { x: layout.colOffset + idx, y: layout.arrayY },
-      meta: {
-        value,
-        index: idx,
-        emphasis: sorted.has(idx) ? ("soft" as const) : ("active" as const),
-        ...(sorted.has(idx)
-          ? { tone: "muted" as const, opacityMul: 0.45 }
-          : undefined),
-      },
-    }));
+    const nodes: TraceNode[] = arr.map((value, idx) => {
+      const isUnsorted = currentI !== undefined && idx > currentI;
+      return {
+        id: cellId(idx),
+        kind: "cell",
+        pos: { x: layout.colOffset + idx, y: layout.arrayY },
+        meta: {
+          value,
+          index: idx,
+          emphasis: isUnsorted ? ("soft" as const) : ("active" as const),
+          ...(isUnsorted
+            ? { tone: "muted" as const, opacityMul: 0.45 }
+            : undefined),
+        },
+      };
+    });
     return { nodes };
   }
 
@@ -93,14 +100,13 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
     };
   }
 
-  function sortedPointer(): TracePointer[] {
-    if (sorted.size === 0) return [];
-    const maxSorted = Math.max(...sorted);
+  function sortedPointer(i: number): TracePointer[] {
+    if (i < 1) return [];
     return [
       {
         id: "sorted",
         label: "sorted",
-        target: { kind: "node", nodeId: cellId(maxSorted) },
+        target: { kind: "node", nodeId: cellId(i - 1) },
         lane: "below",
         color: "var(--color-tn-subtle)",
       },
@@ -115,11 +121,9 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
     meta: { n },
   });
 
-  // index 0 is trivially sorted
-  sorted.add(0);
-
   // --- main loop ---
   for (let i = 1; i < n; i++) {
+    currentI = i;
     const key = arr[i];
 
     // --- is.pick ---
@@ -128,7 +132,7 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
       codeToken: "is.pick",
       narrationToken: "is.pick",
       highlight: [i],
-      pointers: [iPointer(i), ...sortedPointer()],
+      pointers: [iPointer(i), ...sortedPointer(i)],
       meta: { i, key },
     });
 
@@ -143,7 +147,7 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
         codeToken: "is.compare",
         narrationToken: "is.compare",
         highlight: [j],
-        pointers: [iPointer(i), jPointer(j), ...sortedPointer()],
+        pointers: [iPointer(i), jPointer(j), ...sortedPointer(i)],
         meta: { i, j, key, valJ },
       });
 
@@ -157,7 +161,7 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
         codeToken: "is.shift",
         narrationToken: "is.shift",
         highlight: [j, j + 1],
-        pointers: [iPointer(i), jPointer(j), ...sortedPointer()],
+        pointers: [iPointer(i), jPointer(j), ...sortedPointer(i)],
         meta: { i, j, key, valJ },
       });
 
@@ -172,15 +176,13 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
       codeToken: "is.insert",
       narrationToken: "is.insert",
       highlight: [j + 1],
-      pointers: [iPointer(i), ...sortedPointer()],
+      pointers: [iPointer(i), ...sortedPointer(i)],
       meta: { i, j, key, insertPos: j + 1 },
     });
-
-    sorted.add(i);
   }
 
   // --- is.done ---
-  sorted.clear();
+  currentI = undefined;
 
   push({
     kind: "done",
