@@ -13,7 +13,10 @@ import {
   GitCompare,
   ArrowLeft,
   X,
+  Minus,
+  Plus,
 } from "lucide-react";
+import { useSettingsStore } from "../../stores/useSettingsStore";
 
 export type ViewMode = "reference" | "recall" | "compare";
 
@@ -47,12 +50,42 @@ export default function AlgoCodePanelDesktop({
   const resetFnRef = useRef<null | (() => void)>(null);
   const [canReset, setCanReset] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
+  const editorFontSize = useSettingsStore((s) => s.editorFontSize);
+  const setEditorFontSize = useSettingsStore((s) => s.setEditorFontSize);
 
   return (
     <Panel tone="glass" className="min-w-0 w-full h-full min-h-0 flex flex-col">
       <div className="flex items-center justify-between mb-1 pt-2 px-2 shrink-0">
-        <div className="text-label tracking-[0.18em] uppercase text-tn-subtle/70 pl-1">
-          {headerLabel}
+        <div className="flex items-center gap-1.5">
+          <span className="text-label tracking-[0.18em] uppercase text-tn-subtle/70 pl-1">
+            {headerLabel}
+          </span>
+
+          <button
+            type="button"
+            onClick={() => setEditorFontSize(editorFontSize - 1)}
+            disabled={editorFontSize <= 12}
+            title="Decrease font size"
+            aria-label="Decrease font size"
+            className="text-tn-subtle/50 hover:text-tn-text disabled:opacity-30 transition-colors p-0.5"
+          >
+            <Minus size={12} />
+          </button>
+
+          <span className="text-[10px] text-tn-subtle/50 w-4 text-center select-none tabular-nums">
+            {editorFontSize}
+          </span>
+
+          <button
+            type="button"
+            onClick={() => setEditorFontSize(editorFontSize + 1)}
+            disabled={editorFontSize >= 20}
+            title="Increase font size"
+            aria-label="Increase font size"
+            className="text-tn-subtle/50 hover:text-tn-text disabled:opacity-30 transition-colors p-0.5"
+          >
+            <Plus size={12} />
+          </button>
         </div>
 
         <div className="flex items-center gap-2">

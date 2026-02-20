@@ -2,8 +2,10 @@
 import React, { useMemo } from "react";
 import type { CodeRef, CodeBundle, CodeSpan } from "../../types/algo-types";
 import { useCodeLangStore } from "../../stores/useCodeLangStore";
+import { useSettingsStore } from "../../stores/useSettingsStore";
 import { Panel } from "../ui/Panel";
 import CodeLangSelect from "./CodeLangSelect";
+import { Minus, Plus } from "lucide-react";
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
@@ -83,6 +85,8 @@ export default function AlgoCodePanel({
   codeRef?: CodeRef;
 }) {
   const lang = useCodeLangStore((s) => s.lang);
+  const editorFontSize = useSettingsStore((s) => s.editorFontSize);
+  const setEditorFontSize = useSettingsStore((s) => s.setEditorFontSize);
 
   const source = codeBundle.sources[lang] ?? codeBundle.sources.pseudo;
   const content = source?.content ?? "";
@@ -101,10 +105,36 @@ export default function AlgoCodePanel({
   return (
     <Panel tone="glass" className="p-4">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex flex-col">
-          <div className="text-label tracking-[0.18em] uppercase text-tn-subtle/70">
+        <div className="flex items-center gap-1.5">
+          <span className="text-label tracking-[0.18em] uppercase text-tn-subtle/70">
             Code
-          </div>
+          </span>
+
+          <button
+            type="button"
+            onClick={() => setEditorFontSize(editorFontSize - 1)}
+            disabled={editorFontSize <= 12}
+            title="Decrease font size"
+            aria-label="Decrease font size"
+            className="text-tn-subtle/50 hover:text-tn-text disabled:opacity-30 transition-colors p-0.5"
+          >
+            <Minus size={12} />
+          </button>
+
+          <span className="text-[10px] text-tn-subtle/50 w-4 text-center select-none tabular-nums">
+            {editorFontSize}
+          </span>
+
+          <button
+            type="button"
+            onClick={() => setEditorFontSize(editorFontSize + 1)}
+            disabled={editorFontSize >= 20}
+            title="Increase font size"
+            aria-label="Increase font size"
+            className="text-tn-subtle/50 hover:text-tn-text disabled:opacity-30 transition-colors p-0.5"
+          >
+            <Plus size={12} />
+          </button>
         </div>
 
         <CodeLangSelect bundle={codeBundle} />

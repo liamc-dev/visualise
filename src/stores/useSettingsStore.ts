@@ -5,6 +5,8 @@ type SettingsState = {
   effectsEnabled: boolean;
   toggleEffects: () => void;
   setEffectsEnabled: (value: boolean) => void;
+  editorFontSize: number;
+  setEditorFontSize: (size: number) => void;
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -17,6 +19,11 @@ export const useSettingsStore = create<SettingsState>()(
 
       setEffectsEnabled: (value: boolean) =>
         set({ effectsEnabled: value }),
+
+      editorFontSize: 14,
+
+      setEditorFontSize: (size: number) =>
+        set({ editorFontSize: Math.min(20, Math.max(12, size)) }),
     }),
     { name: "tn-effects" },
   ),

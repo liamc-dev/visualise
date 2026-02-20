@@ -7,6 +7,7 @@ import { useThemeStore } from "../../stores/useThemeStore";
 import { defineLightTn, defineDarkTn } from "../../theme/monaco-themes";
 import { EDITOR_LANG_MAP } from "../../types/algo-types";
 import { useCodeDraftStore } from "../../stores/useCodeDraftStore";
+import { useSettingsStore } from "../../stores/useSettingsStore";
 
 type ViewMode = "reference" | "recall" | "compare";
 
@@ -31,6 +32,7 @@ export default function AlgoCodeMonacoHost({
 
     const lang = useCodeLangStore((s) => s.lang);
     const themeKey = useThemeStore((s) => s.theme);
+    const editorFontSize = useSettingsStore((s) => s.editorFontSize);
     const isLightTheme = themeKey === "light" || themeKey === "ember";
     const themeName = `tn-${themeKey}`;
 
@@ -200,10 +202,10 @@ export default function AlgoCodeMonacoHost({
     const baseOptions = {
         minimap: { enabled: false },
         scrollBeyondLastLine: false,
-        wordWrap: "off",
-        lineNumbers: "on",
-        fontSize: 13,
-        lineHeight: 18,
+        wordWrap: "off" as const,
+        lineNumbers: "on" as const,
+        fontSize: editorFontSize,
+        lineHeight: Math.round(editorFontSize * 1.38),
         fontFamily:
             "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
         scrollbar: {
@@ -212,7 +214,7 @@ export default function AlgoCodeMonacoHost({
             verticalScrollbarSize: 8,
             useShadows: false,
         },
-    } as const;
+    };
 
     return (
         <div className="tn-monaco h-full min-h-0 w-full overflow-hidden rounded-b-xl relative">
