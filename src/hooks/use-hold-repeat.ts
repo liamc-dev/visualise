@@ -45,7 +45,13 @@ export function useHoldRepeat(
     }, delay);
   }, [action, delay, interval, enabled]);
 
+  // Clear timers on unmount
   useEffect(() => clearAll, [clearAll]);
+
+  // Clear active timers when disabled (e.g. button swaps out mid-hold)
+  useEffect(() => {
+    if (!enabled) clearAll();
+  }, [enabled, clearAll]);
 
   return {
     onMouseDown: start,

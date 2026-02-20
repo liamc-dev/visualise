@@ -1,6 +1,7 @@
 // src/hooks/use-visualizer-trace-from-frames.ts
 import { useEffect, useMemo } from "react";
 import { usePlayerStore } from "../stores/usePlayerStore";
+import { usePlaybackLoop } from "./use-playback-loop";
 import type { TraceFrame } from "../types/trace-types";
 
 /**
@@ -11,8 +12,6 @@ export function useVisualizerTraceFromFrames(frames: TraceFrame[]) {
   const {
     setStepsLength,
     currentStep,
-    isPlaying,
-    nextStep,
     setPlaying,
     setPaused,
     setStep,
@@ -75,19 +74,7 @@ export function useVisualizerTraceFromFrames(frames: TraceFrame[]) {
     return Math.max(1, Math.ceil(maxX - minX + 1));
   }, [frames]);
 
-  // Playback tick (same logic as useVisualizerTrace)
-  useEffect(() => {
-    if (!traceEnabled) return;
-    if (!isPlaying) return;
-
-    if (currentStep >= frames.length - 1) {
-      setPlaying(false);
-      return;
-    }
-
-    const id = setTimeout(() => nextStep(), 1000 - speedMs);
-    return () => clearTimeout(id);
-  }, [traceEnabled, isPlaying, currentStep, frames.length, nextStep, setPlaying, speedMs]);
+  usePlaybackLoop({ enabled: traceEnabled, frameCount: frames.length });
 
   return {
     traceEnabled,

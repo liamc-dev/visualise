@@ -3,8 +3,10 @@ import type { ReactNode } from "react";
 import Transport from "./Transport";
 import { SpeedSlider } from "./SpeedSlider";
 import { usePlayerStore } from "../../stores/usePlayerStore";
+import { usePredictStore } from "../../stores/usePredictStore";
 import NarrationModeSwitch from "../control/NarrationModeSwitch";
 import { useNarrationStore } from "../../stores/useNarrationStore";
+import { Brain } from "lucide-react";
 
 type Props = { description?: ReactNode };
 
@@ -15,15 +17,25 @@ export default function PlayerBar({ description }: Props) {
   const paused = usePlayerStore((s) => s.paused);
   const speedMs = usePlayerStore((s) => s.speedMs);
   const setSpeed = usePlayerStore((s) => s.setSpeed);
+  const awaitingReveal = usePlayerStore((s) => s.awaitingReveal);
 
   const mode = useNarrationStore((s) => s.mode);
+
+  const predictEnabled = usePredictStore((s) => s.predictEnabled);
+  const togglePredict = usePredictStore((s) => s.togglePredict);
 
   const totalSteps = stepsLength || 1;
   const currentIndex = currentStep + 1;
   const pad3 = (n: number) => String(n).padStart(3, "0");
-  const status = isPlaying ? "Playing" : paused ? "Paused" : "Stopped";
+  const status = awaitingReveal
+    ? "Predict"
+    : isPlaying
+      ? "Playing"
+      : paused
+        ? "Paused"
+        : "Stopped";
 
-  const forceTwoLines = mode === "explain";
+  const forceTwoLines = mode === "explain" || predictEnabled;
 
   return (
     <div className="pt-3">
@@ -38,13 +50,26 @@ export default function PlayerBar({ description }: Props) {
         border border-tn-border
         bg-tn-surface/85
         pl-3
-        pr-6   /* reserve space for top-right control */
+        pr-6   /* reserve space for top-right controls */
         pt-5   /* reserve vertical space */
         pb-2
       "
         >
-          {/* Narration mode */}
-          <div className="absolute top-0 right-1">
+          {/* Narration controls */}
+          <div className="absolute top-0 right-1 flex items-center">
+            <div className="opacity-40 group-hover:opacity-100 transition-opacity duration-150">
+              <button
+                type="button"
+                onClick={togglePredict}
+                className={[
+                  "p-1.5 rounded transition-colors",
+                  predictEnabled ? "text-tn-accent" : "text-tn-muted",
+                ].join(" ")}
+                title={predictEnabled ? "Disable predict mode" : "Enable predict mode"}
+              >
+                <Brain size={14} />
+              </button>
+            </div>
             <div className="opacity-40 group-hover:opacity-100 transition-opacity duration-150">
               <NarrationModeSwitch />
             </div>
@@ -57,6 +82,7 @@ export default function PlayerBar({ description }: Props) {
                 "line-clamp-2 text-[0.8rem] font-mono tracking-widest text-tn-text",
                 "leading-[1.3rem]",
                 forceTwoLines ? "min-h-[2.6rem]" : "",
+                awaitingReveal ? "invisible" : "",
               ].join(" ")}
             >
               {description ?? "Ready."}

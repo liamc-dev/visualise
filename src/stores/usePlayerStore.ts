@@ -8,6 +8,7 @@ export type PlayerState = {
   isPlaying: boolean;
   paused: boolean;
   speedMs: number;
+  awaitingReveal: boolean;
 
   // ----- derived state (functions instead of getters!)
   atFirstStep: () => boolean;
@@ -24,18 +25,20 @@ export type PlayerState = {
   setPlaying: (value: boolean) => void;
   setPaused: (value: boolean) => void;
   setSpeed: (ms: number) => void;
+  setAwaitingReveal: (value: boolean) => void;
   reset: () => void;
 };
 
 export const usePlayerStore = create<PlayerState>()((set, get) => ({
-  
+
   stepsLength: 0,
   currentStep: 0,
   isPlaying: false,
   paused: false,
   speedMs: 800,
+  awaitingReveal: false,
 
-  
+
   atFirstStep: () => get().currentStep <= 0,
 
   atLastStep: () =>
@@ -52,13 +55,13 @@ export const usePlayerStore = create<PlayerState>()((set, get) => ({
   activeLeds: () =>
     Math.round(get().progress() * get().ledCount()),
 
-  
+
   setStepsLength: (stepsLength) => set({ stepsLength }),
 
   setStep: (step) => {
     const max = get().stepsLength - 1;
     const clamped = Math.max(0, Math.min(step, max));
-    set({ currentStep: clamped });
+    set({ currentStep: clamped, awaitingReveal: false });
   },
 
   nextStep: () => {
@@ -88,6 +91,7 @@ export const usePlayerStore = create<PlayerState>()((set, get) => ({
         currentStep: 0,
         isPlaying: true,
         paused: false,
+        awaitingReveal: false,
       });
       return;
     }
@@ -99,11 +103,14 @@ export const usePlayerStore = create<PlayerState>()((set, get) => ({
 
   setSpeed: (speedMs) => set({ speedMs }),
 
+  setAwaitingReveal: (awaitingReveal) => set({ awaitingReveal }),
+
   reset: () => {
     set({
       currentStep: 0,
       isPlaying: false,
       paused: false,
+      awaitingReveal: false,
     });
   },
 }));

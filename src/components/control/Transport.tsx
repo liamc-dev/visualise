@@ -1,7 +1,8 @@
 // src/components/player/Transport.tsx
 import { memo, useCallback } from "react";
-import { SkipBack, SkipForward, Play, Pause, Square } from "lucide-react";
+import { SkipBack, SkipForward, Play, Pause, Square, Eye } from "lucide-react";
 import { usePlayerStore } from "../../stores/usePlayerStore";
+import { usePredictStore } from "../../stores/usePredictStore";
 import { useHoldRepeat } from "../../hooks/use-hold-repeat";
 
 type TransportButtonProps = {
@@ -39,7 +40,7 @@ function TransportButton({
 }
 
 function Transport() {
- 
+
   const currentStep = usePlayerStore((s) => s.currentStep);
   const stepsLength = usePlayerStore((s) => s.stepsLength);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
@@ -50,6 +51,10 @@ function Transport() {
   const setPlaying = usePlayerStore((s) => s.setPlaying);
   const setPaused = usePlayerStore((s) => s.setPaused);
   const reset = usePlayerStore((s) => s.reset);
+  const awaitingReveal = usePlayerStore((s) => s.awaitingReveal);
+  const setAwaitingReveal = usePlayerStore((s) => s.setAwaitingReveal);
+
+  const predictEnabled = usePredictStore((s) => s.predictEnabled);
 
   const isFirst = currentStep <= 0;
   const isLast = stepsLength > 0 && currentStep >= stepsLength - 1;
@@ -66,14 +71,20 @@ function Transport() {
 
   const holdNext = useHoldRepeat(
     () => {
-      if (!isLast) nextStep();
+      if (!isLast) {
+        nextStep();
+        if (predictEnabled) setAwaitingReveal(true);
+      }
     },
-    { enabled: !isLast, delay: 400, interval: 90 }
+    { enabled: !isLast && !awaitingReveal, delay: 400, interval: 90 }
   );
 
   const holdPrev = useHoldRepeat(
     () => {
-      if (!isFirst) prevStep();
+      if (!isFirst) {
+        prevStep();
+        if (predictEnabled) setAwaitingReveal(true);
+      }
     },
     { enabled: !isFirst, delay: 400, interval: 90 }
   );
@@ -100,6 +111,7 @@ function Transport() {
   return (
     <div className={groupClass}>
       <TransportButton
+        key="prev"
         disabled={isFirst}
         title="Previous"
         ariaLabel="Previous"
@@ -110,6 +122,7 @@ function Transport() {
       </TransportButton>
 
       <TransportButton
+        key="play"
         title={playTitle}
         ariaLabel={playTitle}
         onClick={togglePlayPause}
@@ -119,6 +132,7 @@ function Transport() {
       </TransportButton>
 
       <TransportButton
+        key="stop"
         title="Stop"
         ariaLabel="Stop"
         onClick={reset}
@@ -127,15 +141,28 @@ function Transport() {
         <Square size={14} />
       </TransportButton>
 
-      <TransportButton
-        disabled={isLast}
-        title="Next"
-        ariaLabel="Next"
-        buttonProps={holdNext}
-        className={btnBase}
-      >
-        <SkipForward size={14} />
-      </TransportButton>
+      {awaitingReveal ? (
+        <TransportButton
+          key="reveal"
+          title="Reveal"
+          ariaLabel="Reveal"
+          onClick={() => setAwaitingReveal(false)}
+          className={`${btnBase} text-tn-accent`}
+        >
+          <Eye size={14} />
+        </TransportButton>
+      ) : (
+        <TransportButton
+          key="next"
+          disabled={isLast}
+          title="Next"
+          ariaLabel="Next"
+          buttonProps={holdNext}
+          className={btnBase}
+        >
+          <SkipForward size={14} />
+        </TransportButton>
+      )}
     </div>
   );
 }

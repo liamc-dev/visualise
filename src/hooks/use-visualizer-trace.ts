@@ -4,6 +4,7 @@ import { usePlayerStore } from "../stores/usePlayerStore";
 import { useCodeLangStore } from "../stores/useCodeLangStore";
 import { useNarrationStore } from "../stores/useNarrationStore";
 import { ALGORITHMS, type Algorithm } from "../generators/algorithms/registry";
+import { usePlaybackLoop } from "./use-playback-loop";
 import type { TraceFrame } from "../types/trace-types";
 import type { CodeRef } from "../types/algo-types";
 import type { NarrationCtx } from "../types/algo-types";
@@ -51,8 +52,6 @@ export function useVisualizerTrace(
   const {
     setStepsLength,
     currentStep,
-    isPlaying,
-    nextStep,
     setPlaying,
     setPaused,
     setStep,
@@ -94,18 +93,7 @@ export function useVisualizerTrace(
     return { frame, description, codeRef };
   }, [traceEnabled, frames, currentStep, def, lang, mode]);
 
-  useEffect(() => {
-    if (!traceEnabled) return;
-    if (!isPlaying) return;
-
-    if (currentStep >= frames.length - 1) {
-      setPlaying(false);
-      return;
-    }
-
-    const id = setTimeout(() => nextStep(), 1000 - speedMs);
-    return () => clearTimeout(id);
-  }, [traceEnabled, isPlaying, currentStep, frames.length, nextStep, setPlaying, speedMs]);
+  usePlaybackLoop({ enabled: traceEnabled, frameCount: frames.length });
 
   return {
     traceEnabled,
