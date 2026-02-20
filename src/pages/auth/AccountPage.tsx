@@ -33,7 +33,7 @@ function LinkRow({
     >
       <div className="text-ui text-tn-link group-hover:underline">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-[12px] text-tn-muted leading-snug">
+        <div className="mt-1 text-button text-tn-muted leading-snug">
           {subtitle}
         </div>
       ) : null}
@@ -53,7 +53,7 @@ function SectionTitle({
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <h2 className="text-[15px] font-semibold text-tn-text">{title}</h2>
+        <h2 className="text-body font-semibold text-tn-text">{title}</h2>
         {subtitle ? (
           <p className="mt-1 text-body text-tn-muted max-w-[760px]">{subtitle}</p>
         ) : null}
@@ -66,10 +66,10 @@ function SectionTitle({
 function StatPill({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-full border border-tn-border bg-tn-surfaceSoft/50 px-3 py-1">
-      <div className="text-[10px] tracking-[0.18em] uppercase text-tn-subtle/70">
+      <div className="text-micro tracking-[0.18em] uppercase text-tn-subtle/70">
         {label}
       </div>
-      <div className="text-[13px] font-semibold text-tn-text">{value}</div>
+      <div className="text-ui font-semibold text-tn-text">{value}</div>
     </div>
   );
 }
@@ -153,7 +153,7 @@ export default function AccountPage() {
               Account
             </div>
 
-            <h1 className="mt-2 text-[28px] font-semibold tracking-tight leading-tight">
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight leading-tight">
               Profile, playback, and recall settings
             </h1>
 
@@ -193,16 +193,16 @@ export default function AccountPage() {
             />
 
             <div className="mt-4 rounded-2xl border border-tn-border bg-tn-surface/60 p-4">
-              <div className="text-[12px] text-tn-muted">Signed in</div>
+              <div className="text-button text-tn-muted">Signed in</div>
               <div className="mt-1 text-ui font-medium">
                 {me?.email ?? "Unknown"}
               </div>
               {me?.username ? (
-                <div className="mt-1 text-[12px] text-tn-muted">
+                <div className="mt-1 text-button text-tn-muted">
                   Username: <span className="text-tn-text/90">{me.username}</span>
                 </div>
               ) : null}
-              <div className="mt-1 text-[12px] text-tn-muted">
+              <div className="mt-1 text-button text-tn-muted">
                 Role: <span className="text-tn-text/90">{me?.role ?? "USER"}</span>
               </div>
 

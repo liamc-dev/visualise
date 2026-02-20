@@ -53,7 +53,7 @@ function renderLineWithSpans(line: string, spans: CodeSpan[], lineNo: number) {
           "before:absolute",
           "before:inset-[-1px_-3px]",
           "before:bg-tn-accent/20",
-          "before:rounded-[4px]",
+          "before:rounded",
           "before:-z-10",
         ].join(" ")}
       >

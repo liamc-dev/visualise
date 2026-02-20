@@ -42,6 +42,13 @@ html[data-theme="dark"] {
   color-scheme: dark;
 }
 
+/* Ember elevation */
+html[data-theme="ember"] {
+  --card-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+  --panel-glow: 0 0 24px rgba(225, 160, 60, 0.06);
+  color-scheme: dark;
+}
+
 /* Tokyo elevation + glow */
 html[data-theme="tokyo-night"] {
   --card-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
@@ -138,6 +145,53 @@ html[data-theme="tokyo-night"] {
 }
 
 
+/* EMBER (warm charcoal + amber gold) */
+:root[data-theme="ember"] {
+
+  /* Base layers — warm charcoal */
+  --tn-bg: 20 18 16;
+  --tn-surface: 30 27 24;
+  --tn-card: 42 38 34;
+  --tn-surfaceSoft: 52 47 42;
+
+  /* Borders */
+  --tn-border: 65 58 50;
+
+  /* Text — warm whites */
+  --tn-text: 235 228 218;
+  --tn-muted: 182 172 160;
+  --tn-subtle: 128 118 106;
+
+  /* Accent — amber gold */
+  --tn-accent: 225 160 60;
+  --tn-accentSoft: 58 44 22;
+
+  /* Supporting colors */
+  --tn-cyan: 85 195 175;
+  --tn-magenta: 215 140 165;
+
+  --tn-success: 140 195 85;
+  --tn-warning: 240 190 90;
+  --tn-danger: 240 100 95;
+
+  /* Overlays */
+  --tn-overlay-inset: inset 0 0 6px rgba(0,0,0,0.5);
+  --tn-overlay-textshadow: 0 0 6px rgba(0,0,0,0.8);
+
+  --font-scale: 1.02;
+
+  --tn-slider-accent: var(--tn-accentSoft);
+
+  --tn-link: 225 160 60;
+  --tn-divider: 255 255 255;
+
+  /* Grid */
+  --tn-grid-fill-alpha: 0.4;
+  --tn-grid-line-alpha: 0.02;
+  --tn-grid-rgb: 225 160 60;
+  --tn-grid-bg: 32 28 24;
+}
+
 /* LIGHT */
 :root[data-theme="light"] {
   --tn-bg: 248 250 252;
@@ -211,6 +265,7 @@ html[data-theme="tokyo-night"] {
   --tracking-wide: var(--tn-tr-wide);
 
   --text-button: var(--tn-fs-button);
+  --text-micro: var(--tn-fs-micro);
 
   --shadow-tn-1: var(--tn-elev-1);
   --shadow-tn-2: var(--tn-elev-2);

@@ -24,7 +24,7 @@ export default function IconSelect<T extends string>({
       showChevron={false}
       buttonClassName={`px-0 py-0 rounded-sm leading-none focus-visible:ring-0 ${className}`}
       menuClassName="rounded-md"
-      itemClassName="px-2 py-1 text-[12px]"
+      itemClassName="px-2 py-1 text-button"
       activeItemClassName="bg-tn-surfaceSoft"
       buttonLabel={(current) => (
         <div className="flex items-center leading-none">

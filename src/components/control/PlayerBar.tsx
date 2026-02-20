@@ -64,7 +64,7 @@ export default function PlayerBar({ description }: Props) {
           <div className="text-center">
             <div
               className={[
-                "line-clamp-2 text-[0.8rem] font-mono tracking-widest text-tn-text",
+                "line-clamp-2 text-ui font-mono tracking-widest text-tn-text",
                 "leading-[1.3rem]",
                 forceTwoLines ? "min-h-[2.6rem]" : "",
                 awaitingReveal ? "invisible" : "",

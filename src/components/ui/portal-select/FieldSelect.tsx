@@ -47,7 +47,7 @@ export default function FieldSelect<T extends string>({
         inline-flex items-center justify-between gap-2
         rounded-xl border border-tn-border
         bg-tn-surfaceSoft/55 px-3
-        text-[12px] text-tn-text
+        text-button text-tn-text
         hover:bg-tn-surfaceSoft/65
         focus-visible:ring-2 focus-visible:ring-tn-accent/35
         ${className}
@@ -56,7 +56,7 @@ export default function FieldSelect<T extends string>({
       chevronClassName="h-4 w-4"
       menuClassName={menuClassName}
       itemClassName={`
-        text-[12px] px-3 py-1.5
+        text-button px-3 py-1.5
       `}
       activeItemClassName="bg-tn-surfaceSoft"
     />
