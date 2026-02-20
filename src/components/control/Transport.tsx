@@ -1,6 +1,6 @@
 // src/components/player/Transport.tsx
 import { memo, useCallback } from "react";
-import { SkipBack, SkipForward, Play, Pause, Square, Eye } from "lucide-react";
+import { SkipBack, SkipForward, Play, Pause, Square, Eye, Brain } from "lucide-react";
 import { usePlayerStore } from "../../stores/usePlayerStore";
 import { usePredictStore } from "../../stores/usePredictStore";
 import { useHoldRepeat } from "../../hooks/use-hold-repeat";
@@ -55,6 +55,7 @@ function Transport() {
   const setAwaitingReveal = usePlayerStore((s) => s.setAwaitingReveal);
 
   const predictEnabled = usePredictStore((s) => s.predictEnabled);
+  const togglePredict = usePredictStore((s) => s.togglePredict);
 
   const isFirst = currentStep <= 0;
   const isLast = stepsLength > 0 && currentStep >= stepsLength - 1;
@@ -163,6 +164,22 @@ function Transport() {
           <SkipForward size={14} />
         </TransportButton>
       )}
+
+      <TransportButton
+        key="predict"
+        title={predictEnabled ? "Disable predict mode" : "Enable predict mode"}
+        ariaLabel={predictEnabled ? "Disable predict mode" : "Enable predict mode"}
+        onClick={togglePredict}
+        className={[
+          btnBase,
+          "border transition",
+          predictEnabled
+            ? "border-tn-accent/25 bg-tn-accent/10 text-tn-accent hover:bg-tn-accent/15"
+            : "border-transparent text-tn-muted hover:text-tn-text",
+        ].join(" ")}
+      >
+        <Brain size={14} />
+      </TransportButton>
     </div>
   );
 }

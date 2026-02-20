@@ -6,7 +6,6 @@ import { usePlayerStore } from "../../stores/usePlayerStore";
 import { usePredictStore } from "../../stores/usePredictStore";
 import NarrationModeSwitch from "../control/NarrationModeSwitch";
 import { useNarrationStore } from "../../stores/useNarrationStore";
-import { Brain } from "lucide-react";
 
 type Props = { description?: ReactNode };
 
@@ -22,7 +21,6 @@ export default function PlayerBar({ description }: Props) {
   const mode = useNarrationStore((s) => s.mode);
 
   const predictEnabled = usePredictStore((s) => s.predictEnabled);
-  const togglePredict = usePredictStore((s) => s.togglePredict);
 
   const totalSteps = stepsLength || 1;
   const currentIndex = currentStep + 1;
@@ -55,21 +53,8 @@ export default function PlayerBar({ description }: Props) {
         pb-2
       "
         >
-          {/* Narration controls */}
-          <div className="absolute top-0 right-1 flex items-center">
-            <div className="opacity-40 group-hover:opacity-100 transition-opacity duration-150">
-              <button
-                type="button"
-                onClick={togglePredict}
-                className={[
-                  "p-1.5 rounded transition-colors",
-                  predictEnabled ? "text-tn-accent" : "text-tn-muted",
-                ].join(" ")}
-                title={predictEnabled ? "Disable predict mode" : "Enable predict mode"}
-              >
-                <Brain size={14} />
-              </button>
-            </div>
+          {/* Narration mode */}
+          <div className="absolute top-0 right-1">
             <div className="opacity-40 group-hover:opacity-100 transition-opacity duration-150">
               <NarrationModeSwitch />
             </div>
