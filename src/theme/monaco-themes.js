@@ -168,7 +168,7 @@ export function defineDarkTn(monaco) {
     const muted = cssRgbVarToHex("--tn-muted", "#b2acbc");
     const subtle = cssRgbVarToHex("--tn-subtle", "#807a8e");
     const border = cssRgbVarToHex("--tn-border", "#3a3442");
-    const accent = cssRgbVarToHex("--tn-accent", "#a078ff");
+    const accent = cssRgbVarToHex("--tn-accent", "#917dd2");
     const cyan = cssRgbVarToHex("--tn-cyan", "#6ed2c8");
     const magenta = cssRgbVarToHex("--tn-magenta", "#d28cdc");
     const success = cssRgbVarToHex("--tn-success", "#82be64");

@@ -107,9 +107,9 @@ html[data-theme="tokyo-night"] {
   --tn-muted: 178 172 188;
   --tn-subtle: 128 122 142;
 
-  /* Accent — vivid purple */
-  --tn-accent: 160 120 255;
-  --tn-accentSoft: 55 40 90;
+  /* Accent — softened purple (less saturated for UI elements) */
+  --tn-accent: 145 125 210;
+  --tn-accentSoft: 50 42 72;
 
   /* Supporting colors */
   --tn-cyan: 110 210 200;
@@ -127,7 +127,7 @@ html[data-theme="tokyo-night"] {
 
   --tn-slider-accent: var(--tn-accentSoft);
 
-  --tn-link: 160 120 255;
+  --tn-link: 145 125 210;
   --tn-divider: 255 255 255;
 
   /* Grid — visible but subtle */

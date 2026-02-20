@@ -41,7 +41,7 @@ export default function ArrayInputBar() {
   const size = array.length;
 
   return (
-    <Panel tone="soft" radius="xl" className="@container px-3 py-2.5">
+    <Panel tone="glass" radius="xl" className="@container px-3 py-2.5">
       {/* Header row */}
       <div className="flex items-center justify-between mb-1.5">
         <span className="text-label tracking-[0.18em] uppercase text-tn-subtle/70 font-semibold">

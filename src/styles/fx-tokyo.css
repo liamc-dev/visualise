@@ -134,8 +134,8 @@
         text-transform: uppercase;
         -webkit-font-smoothing: none;
         text-shadow:
-            0 0 2px rgba(124, 164, 247, 0.35),
-            0 0 4px rgba(124, 164, 247, 0.18);
+            0 0 2px rgba(122, 162, 247, 0.35),
+            0 0 4px rgba(122, 162, 247, 0.18);
     }
 
     html[data-theme="tokyo-night"] .tn-desc-em {
