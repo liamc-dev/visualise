@@ -6,6 +6,7 @@ import { useField } from "../../hooks/use-field";
 import { AuthInput } from "../../components/ui/AuthInput";
 import { emailValidator, passwordValidator } from "../../validation/auth";
 import { ApiError } from "../../api/api-error";
+import { Eye, EyeOff } from "lucide-react";
 import { Panel } from "../../components/ui/Panel";
 import { Btn } from "../../components/ui/Btn";
 
@@ -87,7 +88,7 @@ export default function LoginPage() {
               className={[
                 "rounded-xl border px-3 py-3 text-sm transition",
                 serverErr
-                  ? "border-red-500/30 bg-red-500/10 text-red-200"
+                  ? "border-tn-danger/30 bg-tn-danger/10 text-tn-danger"
                   : "border-transparent bg-transparent text-transparent",
               ].join(" ")}
               role="alert"
@@ -115,15 +116,16 @@ export default function LoginPage() {
               disabled={submitting}
               field={password}
               rightSlot={
-                <Btn
-                  variant="ghost"
-                  size="sm"
+                <button
+                  type="button"
+                  tabIndex={-1}
                   onClick={() => setShowPw((v) => !v)}
                   disabled={submitting}
-                  className="text-tn-muted hover:text-tn-text"
+                  aria-label={showPw ? "Hide password" : "Show password"}
+                  className="flex items-center justify-center h-6 w-6 rounded text-tn-muted hover:text-tn-text transition-colors disabled:opacity-60"
                 >
-                  {showPw ? "Hide" : "Show"}
-                </Btn>
+                  {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               }
             />
 

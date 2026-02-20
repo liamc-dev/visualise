@@ -17,7 +17,7 @@ type Props = {
 
 export function AuthInput({ label, type = "text", placeholder, autoComplete, disabled, field, rightSlot }: Props) {
   const borderClass = field.showError
-    ? "border-red-500/40 focus:ring-red-500/25"
+    ? "border-tn-danger/40 focus:ring-tn-danger/25"
     : field.isValid
       ? "border-tn-success/35 focus:ring-tn-success/20"
       : "border-tn-border focus:ring-tn-accent/40";
@@ -52,7 +52,7 @@ export function AuthInput({ label, type = "text", placeholder, autoComplete, dis
 
       <div className="min-h-[16px] text-label">
         {field.showError ? (
-          <span className="text-red-200">{field.error}</span>
+          <span className="text-tn-danger">{field.error}</span>
         ) : field.isValid ? (
           <span className="text-tn-success/90">Looks good.</span>
         ) : (

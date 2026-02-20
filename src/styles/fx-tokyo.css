@@ -220,22 +220,3 @@
     }
 
 } */
-
-
-/* =====================
-   TOKYO NIGHT SCROLLBARS
-   ===================== */
-
-html[data-theme="tokyo-night"] *::-webkit-scrollbar-track {
-    background: rgb(var(--tn-surfaceSoft) / 0.55);
-}
-
-html[data-theme="tokyo-night"] *::-webkit-scrollbar-thumb {
-    background: rgb(var(--tn-magenta) / 0.25);
-    border-radius: 999px;
-    border: 2px solid rgb(var(--tn-surfaceSoft) / 0.75);
-}
-
-html[data-theme="tokyo-night"] *::-webkit-scrollbar-thumb:hover {
-    background: rgb(var(--tn-magenta) / 0.35);
-}

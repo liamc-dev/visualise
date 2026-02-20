@@ -205,6 +205,12 @@ export default function AlgoCodeMonacoHost({
         lineHeight: 18,
         fontFamily:
             "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+        scrollbar: {
+            vertical: "auto" as const,
+            horizontal: "hidden" as const,
+            verticalScrollbarSize: 8,
+            useShadows: false,
+        },
     } as const;
 
     return (

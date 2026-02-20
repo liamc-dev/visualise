@@ -1,10 +1,9 @@
 // src/components/control/ArrayInputBar.tsx
 
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useLayoutEffect } from "react";
 import { Shuffle, Dices, RotateCcw } from "lucide-react";
 import { Panel } from "../ui/Panel";
 import { Btn } from "../ui/Btn";
-import { TextInput } from "../ui/TextInput";
 import { useArrayInputStore } from "../../stores/useArrayInputStore";
 
 export default function ArrayInputBar() {
@@ -17,13 +16,23 @@ export default function ArrayInputBar() {
   const generateRandom = useArrayInputStore((s) => s.generateRandom);
   const reset = useArrayInputStore((s) => s.reset);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const autoResize = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "0";
+    el.style.height = `${el.scrollHeight}px`;
+  }, []);
+
+  useLayoutEffect(autoResize, [rawInput, autoResize]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter") {
+        e.preventDefault();
         commitInput();
-        inputRef.current?.blur();
+        textareaRef.current?.blur();
       }
     },
     [commitInput]
@@ -32,68 +41,14 @@ export default function ArrayInputBar() {
   const size = array.length;
 
   return (
-    <Panel tone="soft" radius="xl" className="px-3 py-2.5">
+    <Panel tone="soft" radius="xl" className="@container px-3 py-2.5">
       {/* Header row */}
       <div className="flex items-center justify-between mb-1.5">
         <span className="text-label tracking-[0.18em] uppercase text-tn-subtle/70 font-semibold">
           Input Array
         </span>
-        <span className="text-xs font-mono text-tn-muted">
-          {array.length} elements
-        </span>
-      </div>
 
-      {/* Controls row */}
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Text input */}
-        <TextInput
-          ref={inputRef}
-          size="sm"
-          value={rawInput}
-          onChange={(e) => setRawInput(e.target.value)}
-          onBlur={commitInput}
-          onKeyDown={handleKeyDown}
-          spellCheck={false}
-          error={!!error}
-          className="flex-1 min-w-0 font-mono"
-          placeholder="e.g. 5, 3, 8, 1, 12"
-        />
-
-        {/* Action buttons */}
-        <div className="flex items-center gap-1">
-          <Btn
-            variant="ghost"
-            size="sm"
-            onClick={shuffle}
-            title="Shuffle"
-          >
-            <Shuffle className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Shuffle</span>
-          </Btn>
-
-          <Btn
-            variant="ghost"
-            size="sm"
-            onClick={() => generateRandom(size)}
-            title="Random"
-          >
-            <Dices className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Random</span>
-          </Btn>
-
-          <Btn
-            variant="ghost"
-            size="sm"
-            onClick={reset}
-            title="Reset"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Reset</span>
-          </Btn>
-        </div>
-
-        {/* Size slider */}
-        <div className="hidden sm:flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <span className="text-label text-tn-subtle/70 whitespace-nowrap">Size</span>
           <input
             type="range"
@@ -110,9 +65,68 @@ export default function ArrayInputBar() {
         </div>
       </div>
 
+      {/* Controls row */}
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Text input */}
+        <textarea
+          id="array-input"
+          ref={textareaRef}
+          rows={1}
+          value={rawInput}
+          onChange={(e) => { setRawInput(e.target.value); }}
+          onBlur={commitInput}
+          onKeyDown={handleKeyDown}
+          spellCheck={false}
+          className={[
+            "flex-1 min-w-0 font-mono resize-none",
+            "min-h-7 px-2 py-1 rounded-lg text-xs leading-snug",
+            "w-full border text-tn-text bg-tn-surfaceSoft/55",
+            "focus:outline-none focus:ring-2",
+            "placeholder:text-tn-muted/60 transition",
+            error
+              ? "border-tn-danger/70 focus:ring-tn-danger/30"
+              : "border-tn-border focus:ring-tn-accent/30",
+          ].join(" ")}
+          placeholder="e.g. 5, 3, 8, 1, 12"
+        />
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-1">
+          <Btn
+            variant="ghost"
+            size="sm"
+            onClick={shuffle}
+            title="Shuffle"
+          >
+            <Shuffle className="w-3.5 h-3.5" />
+            <span className="hidden @lg:inline">Shuffle</span>
+          </Btn>
+
+          <Btn
+            variant="ghost"
+            size="sm"
+            onClick={() => generateRandom(size)}
+            title="Random"
+          >
+            <Dices className="w-3.5 h-3.5" />
+            <span className="hidden @lg:inline">Random</span>
+          </Btn>
+
+          <Btn
+            variant="ghost"
+            size="sm"
+            onClick={reset}
+            title="Reset"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span className="hidden @lg:inline">Reset</span>
+          </Btn>
+        </div>
+      </div>
+
       {/* Error message */}
       {error && (
-        <p className="mt-1 text-xs text-red-500/90 font-mono">{error}</p>
+        <p className="mt-1 text-xs text-tn-danger/90 font-mono">{error}</p>
       )}
     </Panel>
   );

@@ -75,6 +75,8 @@ html[data-theme="tokyo-night"] {
 
   --font-scale: 1.05;
 
+  --tn-slider-accent: var(--tn-accentSoft);
+
   --tn-link: 62 166 255;       /* #3EA6FF-ish */
   --tn-divider: 255 255 255;   /* use with low alpha */
 

@@ -163,44 +163,91 @@ export function defineLightTn(monaco) {
 }
 
 export function defineDarkTn(monaco) {
-    // Keep vs-dark, only soften diff visuals
+    const surface = cssRgbVarToHex("--tn-surface", "#1e1b24");
+    const text = cssRgbVarToHex("--tn-text", "#e4e0ea");
+    const muted = cssRgbVarToHex("--tn-muted", "#b2acbc");
+    const subtle = cssRgbVarToHex("--tn-subtle", "#807a8e");
+    const border = cssRgbVarToHex("--tn-border", "#3a3442");
+    const accent = cssRgbVarToHex("--tn-accent", "#a078ff");
+    const cyan = cssRgbVarToHex("--tn-cyan", "#6ed2c8");
+    const magenta = cssRgbVarToHex("--tn-magenta", "#d28cdc");
+    const success = cssRgbVarToHex("--tn-success", "#82be64");
+    const warning = cssRgbVarToHex("--tn-warning", "#e6c382");
+    const danger = cssRgbVarToHex("--tn-danger", "#fa7882");
+
     monaco.editor.defineTheme("tn-dark", {
         base: "vs-dark",
         inherit: true,
-        rules: [],
+        rules: [
+            { token: "", foreground: hex6(text).slice(1) },
+            { token: "comment", foreground: hex6(subtle).slice(1), fontStyle: "italic" },
+            { token: "string", foreground: hex6(success).slice(1) },
+            { token: "keyword", foreground: hex6(accent).slice(1) },
+            { token: "number", foreground: hex6(warning).slice(1) },
+            { token: "delimiter", foreground: hex6(muted).slice(1) },
+            { token: "type.identifier", foreground: hex6(magenta).slice(1) },
+            { token: "identifier", foreground: hex6(text).slice(1) },
+            { token: "annotation", foreground: hex6(cyan).slice(1) },
+            { token: "class", foreground: hex6(magenta).slice(1) },
+            { token: "interface", foreground: hex6(magenta).slice(1) },
+            { token: "method", foreground: hex6(accent).slice(1) },
+            { token: "field", foreground: hex6(text).slice(1) },
+        ],
         colors: {
-            // ----------------------------
-            // Diff editor
-            // ----------------------------
-            "diffEditor.insertedLineBackground": "#2e7d320c",
-            "diffEditor.insertedTextBackground": "#2e7d3212",
-            "diffEditor.removedLineBackground": "#c6282805",
-            "diffEditor.removedTextBackground": "#c6282804",
+            "editor.background": surface,
+            "editor.foreground": text,
+            "editorLineNumber.foreground": withAlpha(muted, 0.55),
+            "editorLineNumber.activeForeground": withAlpha(muted, 0.95),
 
-            // Borders / hatch
+            "editorCursor.foreground": withAlpha(text, 0.85),
+            "editor.selectionBackground": withAlpha(accent, 0.18),
+            "editor.inactiveSelectionBackground": withAlpha(accent, 0.10),
+            "editor.selectionHighlightBackground": withAlpha(accent, 0.10),
+
+            "editor.lineHighlightBackground": withAlpha(accent, 0.08),
+            "editor.wordHighlightBackground": withAlpha(accent, 0.14),
+            "editor.wordHighlightStrongBackground": withAlpha(accent, 0.18),
+
+            "editor.findMatchBackground": withAlpha(warning, 0.25),
+            "editor.findMatchHighlightBackground": withAlpha(warning, 0.16),
+            "editor.findRangeHighlightBackground": withAlpha(warning, 0.12),
+
+            "editorBracketMatch.background": withAlpha(accent, 0.10),
+            "editorBracketMatch.border": withAlpha(accent, 0.25),
+
+            "editorIndentGuide.background1": withAlpha(border, 0.6),
+            "editorIndentGuide.activeBackground1": withAlpha(border, 0.9),
+
+            "editorGutter.background": surface,
+            "editorRuler.foreground": withAlpha(border, 0.7),
+
+            "editorHoverWidget.background": surface,
+            "editorHoverWidget.border": withAlpha(border, 0.9),
+            "editorWidget.background": surface,
+            "editorWidget.border": withAlpha(border, 0.9),
+
+            "editorError.foreground": danger,
+            "editorWarning.foreground": warning,
+            "editorInfo.foreground": accent,
+
+            // Scrollbar
+            "scrollbar.shadow": "#00000025",
+            "scrollbarSlider.background": withAlpha(accent, 0.18),
+            "scrollbarSlider.hoverBackground": withAlpha(accent, 0.26),
+            "scrollbarSlider.activeBackground": withAlpha(accent, 0.34),
+
+            // Diff editor
+            "diffEditor.insertedLineBackground": withAlpha(success, 0.06),
+            "diffEditor.insertedTextBackground": withAlpha(success, 0.12),
+            "diffEditor.removedLineBackground": withAlpha(danger, 0.05),
+            "diffEditor.removedTextBackground": withAlpha(danger, 0.10),
             "diffEditor.diagonalFill": "#00000000",
             "diffEditor.border": "#00000000",
-
-
             "diffEditor.insertedLineBorder": "#00000000",
             "diffEditor.removedLineBorder": "#00000000",
-
-
             "diffEditor.move.border": "#00000000",
-
-
             "diffEditor.unchangedRegionBackground": "#00000000",
-            "diffEditor.unchangedRegionForeground": "#9ca3af80",
-
-            "scrollbar.shadow": "#00000025",
-            "scrollbarSlider.background": "rgba(255,255,255,0.08)",
-            "scrollbarSlider.hoverBackground": "rgba(255,255,255,0.12)",
-            "scrollbarSlider.activeBackground": "rgba(255,255,255,0.18)",
-
-            // // Overview ruler diff markers
-            // "editorOverviewRuler.addedForeground": "#00000000",
-            // "editorOverviewRuler.deletedForeground": "#00000000",
-            // "editorOverviewRuler.modifiedForeground": "#00000000",
+            "diffEditor.unchangedRegionForeground": withAlpha(muted, 0.50),
         },
     });
 }

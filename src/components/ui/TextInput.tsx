@@ -32,7 +32,7 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
         : "h-10 px-3 rounded-xl text-sm";
 
     const borderCls = error
-      ? "border-red-500/70 focus:ring-red-500/30"
+      ? "border-tn-danger/70 focus:ring-tn-danger/30"
       : "border-tn-border focus:ring-tn-accent/30";
 
     const showClear = onClear && value;

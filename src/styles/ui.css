@@ -109,6 +109,8 @@
         width: 100%;
         height: 20px;
         background: transparent;
+        outline: none;
+        border: none;
     }
 
     .tn-range-modern::-webkit-slider-runnable-track {
@@ -125,6 +127,7 @@
     .tn-range-modern::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
+        box-sizing: border-box;
         margin-top: -6px;
         width: 18px;
         height: 18px;
@@ -154,6 +157,7 @@
     }
 
     .tn-range-modern::-moz-range-thumb {
+        box-sizing: border-box;
         width: 18px;
         height: 18px;
         border-radius: 9999px;
@@ -309,6 +313,7 @@ html *::-webkit-scrollbar {
 /* LIGHT */
 html[data-theme="light"] *::-webkit-scrollbar-track {
     background: rgb(var(--tn-surfaceSoft));
+    border-radius: 999px;
 }
 
 html[data-theme="light"] *::-webkit-scrollbar-thumb {
@@ -324,6 +329,7 @@ html[data-theme="light"] *::-webkit-scrollbar-thumb:hover {
 /* DARK */
 html[data-theme="dark"] *::-webkit-scrollbar-track {
     background: rgb(var(--tn-surfaceSoft));
+    border-radius: 999px;
 }
 
 html[data-theme="dark"] *::-webkit-scrollbar-thumb {
@@ -336,29 +342,36 @@ html[data-theme="dark"] *::-webkit-scrollbar-thumb:hover {
     background: rgb(var(--tn-accent) / 0.14);
 }
 
+/* TOKYO NIGHT */
+html[data-theme="tokyo-night"] *::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: rgb(var(--tn-surfaceSoft) / 0.55);
+}
+
+html[data-theme="tokyo-night"] *::-webkit-scrollbar-thumb {
+    background: rgb(var(--tn-accent) / 0.18);
+    border-radius: 999px;
+    border: 2px solid rgb(var(--tn-surfaceSoft) / 0.75);
+}
+
+html[data-theme="tokyo-night"] *::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--tn-accent) / 0.26);
+}
+
 /* Corner */
 html *::-webkit-scrollbar-corner {
     background: rgb(var(--tn-surfaceSoft));
 }
 
 /* =============================================================================
-   MONACO SCROLLBAR VISIBILITY (hover-only)
+   MONACO SCROLLBAR — vertical only, fade on hover
    ============================================================================= */
 
-.tn-monaco .monaco-scrollable-element .scrollbar,
-.tn-monaco .monaco-scrollable-element .slider,
-.tn-monaco .monaco-scrollable-element .scrollbar .slider {
+.tn-monaco .monaco-scrollable-element .scrollbar {
     opacity: 0 !important;
     transition: opacity 140ms ease;
 }
 
-.tn-monaco .monaco-scrollable-element .scrollbar {
-    pointer-events: none;
-}
-
-.tn-monaco.is-scrollbars-on .monaco-scrollable-element .scrollbar,
-.tn-monaco.is-scrollbars-on .monaco-scrollable-element .slider,
-.tn-monaco.is-scrollbars-on .monaco-scrollable-element .scrollbar .slider {
+.tn-monaco:hover .monaco-scrollable-element .scrollbar.vertical {
     opacity: 1 !important;
-    pointer-events: auto;
 }
