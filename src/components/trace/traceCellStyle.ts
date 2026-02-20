@@ -39,7 +39,7 @@ function toneBorderColor(tone: unknown) {
   if (tone === "danger") return "rgb(var(--tn-danger) / 0.55)";
   if (tone === "info") return "rgb(var(--tn-cyan) / 0.55)";
   if (tone === "accent") return "rgb(var(--tn-accent) / 0.55)";
-  if (tone === "muted") return "rgba(148,163,184,0.28)";
+  if (tone === "muted") return "rgb(var(--tn-subtle) / 0.28)";
   return null; // neutral: fall back to styleUtil
 }
 
@@ -100,7 +100,7 @@ export function getTraceCellStyle(args: {
   const scaleVal = isTemp ? 1 : scale(flags);
 
   const baseBorder = isTemp
-    ? "rgba(148,163,184,0.45)"
+    ? "rgb(var(--tn-subtle) / 0.45)"
     : backgroundColor(flags);
 
   const toneBorder = isTemp ? null : toneBorderColor(tone);
@@ -161,7 +161,7 @@ export function getTraceCellStyle(args: {
   };
 
   if (isTemp) {
-    style.backgroundColor = "rgba(15,23,42,0.15)";
+    style.backgroundColor = "rgb(var(--tn-bg) / 0.15)";
   }
 
   return {

@@ -21,8 +21,7 @@ const AlgoInfoPanel = ({
     <Panel
       as="aside"
       tone="base"
-      className="p-4 md:p-5 flex flex-col gap-4 mb-20"
-      style={{ boxShadow: "var(--card-shadow)" }}
+      className="p-4 md:p-5 flex flex-col gap-4 mb-20 shadow-card"
     >
       <div className="space-y-3">
         {/* Logo */}

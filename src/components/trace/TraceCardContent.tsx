@@ -43,11 +43,7 @@ export default function TraceCardContent({ meta }: { meta: any }) {
           {lines.map((l, i) => (
             <div
               key={i}
-              className="text-label text-tn-muted truncate opacity-90"
-              style={{
-                fontFamily:
-                  "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-              }}
+              className="text-label text-tn-muted truncate opacity-90 font-mono"
             >
               {l}
             </div>

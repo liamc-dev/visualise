@@ -92,10 +92,9 @@ export function TraceOverlayLayer({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "flex-end",
-                fontSize: 11,
-                color: "rgba(148,163,184,0.95)",
-                fontFamily:
-                  "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+                fontSize: "var(--tn-fs-label)",
+                color: "rgb(var(--tn-subtle) / 0.95)",
+                fontFamily: "var(--font-mono)",
                 pointerEvents: "none",
                 zIndex: 1,
               }}

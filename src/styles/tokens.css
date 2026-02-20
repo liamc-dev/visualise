@@ -267,6 +267,7 @@ html[data-theme="tokyo-night"] {
   --text-button: var(--tn-fs-button);
   --text-micro: var(--tn-fs-micro);
 
+  --shadow-card: var(--card-shadow);
   --shadow-tn-1: var(--tn-elev-1);
   --shadow-tn-2: var(--tn-elev-2);
   

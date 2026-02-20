@@ -70,9 +70,8 @@ export default function MemoriseSessionPage() {
               bg-tn-surface/70 backdrop-blur-[2px]
               border border-tn-border
               flex items-center justify-center
-              pointer-events-auto
+              pointer-events-auto shadow-card
             "
-                        style={{ boxShadow: "var(--card-shadow)" }}
                     >
                         <div className="max-w-[46ch] text-center px-4">
                             <div className="text-label tracking-[0.18em] uppercase text-tn-subtle/70">

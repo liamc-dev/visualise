@@ -82,9 +82,8 @@ export default function Visualizer({
           className="
             relative block w-full max-w-full rounded-2xl
             border border-tn-border bg-tn-grid backdrop-blur-sm
-            p-3 sm:p-4
+            p-3 sm:p-4 shadow-card
           "
-          style={{ boxShadow: "var(--card-shadow)" }}
         >
           <div className="w-full max-w-full overflow-hidden">
             <div className="w-full">
