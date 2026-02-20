@@ -88,34 +88,34 @@ html[data-theme="tokyo-night"] {
   --grid-bright: #8f962f;
 }
 
-/* (balanced dark) */
+/* (dark plum) */
 :root[data-theme="dark"] {
 
-  /* Base layers */
-  --tn-bg: 24 24 24;          /* main canvas */
-  --tn-surface: 34 36 38;     /* panels */
-  --tn-card: 42 45 50;        /* raised elements */
-  --tn-surfaceSoft: 48 52 58; /* hover / active */
+  /* Base layers — subtle purple-tinted blacks */
+  --tn-bg: 22 19 27;          /* main canvas */
+  --tn-surface: 30 27 36;     /* panels */
+  --tn-card: 40 36 47;        /* raised elements */
+  --tn-surfaceSoft: 48 44 56; /* hover / active */
 
   /* Borders */
-  --tn-border: 62 66 74;
+  --tn-border: 58 52 66;
 
-  /* Text — neutral */
-  --tn-text: 220 223 228;
-  --tn-muted: 170 174 182;
-  --tn-subtle: 130 134 142;
+  /* Text — light lavender tint */
+  --tn-text: 228 224 234;
+  --tn-muted: 178 172 188;
+  --tn-subtle: 128 122 142;
 
-  /* Accent — like blue */
-  --tn-accent: 88 140 255;
-  --tn-accentSoft: 40 52 78;
+  /* Accent — vivid purple */
+  --tn-accent: 160 120 255;
+  --tn-accentSoft: 55 40 90;
 
   /* Supporting colors */
-  --tn-cyan: 86 201 176;
-  --tn-magenta: 197 134 192;
+  --tn-cyan: 110 210 200;
+  --tn-magenta: 210 140 220;
 
-  --tn-success: 106 153 85;
-  --tn-warning: 220 220 170;
-  --tn-danger: 244 135 113;
+  --tn-success: 130 190 100;
+  --tn-warning: 230 195 130;
+  --tn-danger: 250 120 130;
 
   /* Overlays */
   --tn-overlay-inset: inset 0 0 8px rgba(0,0,0,0.55);
@@ -123,14 +123,16 @@ html[data-theme="tokyo-night"] {
 
   --font-scale: 1.02;
 
-  --tn-link: 88 140 255;
+  --tn-slider-accent: var(--tn-accentSoft);
+
+  --tn-link: 160 120 255;
   --tn-divider: 255 255 255;
 
   /* Grid — visible but subtle */
   --tn-grid-fill-alpha: 0.5;
-  --tn-grid-line-alpha: 0.015;
-  --tn-grid-rgb: 255 255 255;
-  --tn-grid-bg: 34 36 38;
+  --tn-grid-line-alpha: 0.02;
+  --tn-grid-rgb: 200 180 255;
+  --tn-grid-bg: 28 24 36;
 }
 
 

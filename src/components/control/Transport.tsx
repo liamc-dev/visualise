@@ -92,8 +92,8 @@ function Transport() {
   `;
 
   const playVisual = isPlaying
-    ? "border-tn-danger/35 bg-tn-danger/15 text-tn-danger hover:bg-tn-danger/20"
-    : "border-tn-success/35 bg-tn-success/15 text-tn-success hover:bg-tn-success/20";
+    ? "border-tn-accent/25 bg-tn-accent/10 text-tn-accent hover:bg-tn-accent/15"
+    : "border-tn-accent/35 bg-tn-accent/15 text-tn-accent hover:bg-tn-accent/20";
 
   const playTitle = isPlaying ? "Pause" : "Play";
 
