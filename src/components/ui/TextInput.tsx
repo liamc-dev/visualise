@@ -42,7 +42,7 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
         <input
           ref={ref}
           value={value}
-          className={cx(base, sizeCls, borderCls, "bg-tn-surfaceSoft/55", showClear && "pr-7", className)}
+          className={cx(base, sizeCls, borderCls, "bg-tn-surfaceSoft/55", showClear ? "pr-7" : '', className)}
           {...rest}
         />
         {showClear && (

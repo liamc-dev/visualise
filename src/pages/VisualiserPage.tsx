@@ -65,20 +65,24 @@ export default function VisualiserPage() {
   const codeBundle = def.codeBundle;
   const codeRef = trace.codeRef;
 
+  const isSorting = def.category === "Sorting";
+
   const leftNode = (
     <div className="min-w-0 flex flex-col gap-2">
-      {arrayInputCollapsed ? (
-        <div className="flex justify-end px-1">
-          <IconBtn
-            onClick={toggleArrayInput}
-            title="Show input array"
-            className="w-7 h-7"
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-tn-muted" />
-          </IconBtn>
-        </div>
-      ) : (
-        <ArrayInputBar />
+      {isSorting && (
+        arrayInputCollapsed ? (
+          <div className="flex justify-end px-1">
+            <IconBtn
+              onClick={toggleArrayInput}
+              title="Show input array"
+              className="w-7 h-7"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-tn-muted" />
+            </IconBtn>
+          </div>
+        ) : (
+          <ArrayInputBar />
+        )
       )}
 
       {visualNode}
