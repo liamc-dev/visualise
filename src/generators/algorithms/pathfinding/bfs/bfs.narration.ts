@@ -194,10 +194,10 @@ export const BFS_NARRATION: NarrationBundle = {
         return pickMode(mode, {
           explain:
             totalVisited !== undefined
-              ? `Queue empty \u2014 BFS complete. ${totalVisited} cells visited.`
-              : "Queue empty \u2014 BFS complete.",
+              ? `BFS complete \u2014 ${totalVisited} cells reached. Each cell shows its shortest distance from the source.`
+              : "BFS complete. Each cell shows its shortest distance from the source.",
           code: "return level",
-          minimal: "done",
+          minimal: `done \u2014 ${totalVisited ?? "?"} reached`,
         });
 
       default: {

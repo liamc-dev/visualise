@@ -48,8 +48,10 @@ Algorithms support different input modes based on category:
 - **BFS** uses `GridInputBar` with an unweighted grid (cells are 0=wall or 1=open)
 - **Dijkstra** uses `DijkstraInputBar` with a Graph/Grid mode toggle:
   - **Graph mode**: 6-node weighted graph (input length 16, via `useGraphInputStore`)
-  - **Grid mode**: weighted grid with cells 0–9 (via `useDijkstraGridStore` + `weighted-grid-utils.ts`)
+  - **Grid mode**: weighted grid with cells 0–9 (via `useDijkstraGridStore` + `weighted-grid-utils.ts`). Grid trace has: `curCell` (warning tone), `activeNb` (accent tone for neighbor being examined), secondary display below grid showing `cur/cost` and `nb/wt`, conclusive result frame
   - Input format detection: length 16 → graph mode, otherwise → grid mode
+  - Narration is grid/graph-aware via `isGrid()` helper (detects coordinate format)
+  - Code bundles are grid-oriented (shared with graph mode); helper functions unmarked
 - Other pathfinding algorithms use `GraphInputBar` for weighted graphs
 
 ### UI Components (`src/components/ui/`)
@@ -66,7 +68,7 @@ Reusable themed primitives — always use these instead of raw HTML elements:
 
 ### Code Highlighting with Marker Spans
 
-Code sources use `[[token.name]]...[[/token.name]]` markers inline. `parseMarkerSpans()` in `src/generators/algorithms/sorting/markerSpans.ts` strips markers and produces `spansByToken` maps. When a trace frame's `codeToken` matches a token name, the corresponding code spans get highlighted in the Monaco editor.
+Code sources use `[[token.name]]...[[/token.name]]` markers inline. `parseMarkerSpans()` in `src/generators/algorithms/sorting/markerSpans.ts` strips markers and produces `spansByToken` maps. When a trace frame's `codeToken` matches a token name, the corresponding code spans get highlighted in the Monaco editor. Each token should highlight at most 3 lines (prefer 1–2). Helper functions defined in code bundles are not wrapped in markers — only the call site is marked.
 
 ### State Management
 

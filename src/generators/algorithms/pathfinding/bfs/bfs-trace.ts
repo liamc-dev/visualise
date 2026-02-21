@@ -60,6 +60,7 @@ export function bfsTrace(input: number[]): TraceFrame[] {
 
   const queue: [number, number][] = [];
   let curCell: [number, number] | null = null;
+  let showResult = false;
 
   const frames: TraceFrame[] = [];
   let stepNo = 0;
@@ -75,9 +76,10 @@ export function bfsTrace(input: number[]): TraceFrame[] {
         const isVisited = visited[r][c];
         const isDiscovered = discovered[r][c];
         const isStart = r === startRow && c === startCol;
+        const isCur = curCell !== null && curCell[0] === r && curCell[1] === c;
         const lv = level[r][c];
 
-        let tone: "muted" | "info" | "neutral" | "accent";
+        let tone: "muted" | "info" | "neutral" | "accent" | "warning";
         let emphasis: "faint" | "soft" | undefined;
         let opacityMul: number | undefined;
         let value: string | number | undefined;
@@ -87,6 +89,18 @@ export function bfsTrace(input: number[]): TraceFrame[] {
           emphasis = "faint";
           opacityMul = 0.15;
           value = undefined;
+        } else if (showResult && isStart) {
+          tone = "warning";
+          emphasis = undefined;
+          value = lv;
+        } else if (showResult && isVisited) {
+          tone = "accent";
+          emphasis = undefined;
+          value = lv;
+        } else if (isCur) {
+          tone = "warning";
+          emphasis = undefined;
+          value = lv;
         } else if (isVisited) {
           tone = "neutral";
           emphasis = "soft";
@@ -120,7 +134,7 @@ export function bfsTrace(input: number[]): TraceFrame[] {
       }
     }
 
-    // Cur node (dequeued cell shown left of queue)
+    // Cur node (dequeued cell shown left of queue — warning tone matches the grid highlight)
     if (curCell) {
       const [cr, cc] = curCell;
       nodes.push({
@@ -129,7 +143,7 @@ export function bfsTrace(input: number[]): TraceFrame[] {
         pos: { x: CUR_NODE_X, y: QUEUE_Y },
         meta: {
           value: `${cr},${cc}`,
-          tone: "accent" as const,
+          tone: "warning" as const,
         },
       });
     }
@@ -245,16 +259,6 @@ export function bfsTrace(input: number[]): TraceFrame[] {
   }
 
   /* Pointer helpers */
-  function curPointer(r: number, c: number): TracePointer {
-    return {
-      id: "cur",
-      label: "cur",
-      target: { kind: "node", nodeId: cellId(r, c) },
-      lane: "above",
-      color: "var(--color-tn-warning)",
-    };
-  }
-
   function nbPointer(nr: number, nc: number, dir: string): TracePointer {
     const lane =
       dir === "UP" ? "above" :
@@ -346,7 +350,6 @@ export function bfsTrace(input: number[]): TraceFrame[] {
       codeToken: "bfs.dequeue",
       narrationToken: "bfs.dequeue",
       focusNodes: [cellId(r, c), "bfs:cur"],
-      pointers: [curPointer(r, c)],
       meta: { r, c, level: level[r][c] },
     });
 
@@ -361,7 +364,6 @@ export function bfsTrace(input: number[]): TraceFrame[] {
         codeToken: "bfs.check",
         narrationToken: "bfs.check",
         focusNodes: [cellId(r, c)],
-        pointers: [curPointer(r, c)],
         meta: { r, c, nr, nc, dir: dirLabel },
       });
 
@@ -372,7 +374,7 @@ export function bfsTrace(input: number[]): TraceFrame[] {
         codeToken: "bfs.oob",
         narrationToken: "bfs.oob",
         focusNodes: oob ? [cellId(r, c)] : [cellId(r, c), cellId(nr, nc)],
-        pointers: oob ? [curPointer(r, c)] : [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        pointers: oob ? undefined : [nbPointer(nr, nc, dirLabel)],
         meta: { r, c, nr, nc, dir: dirLabel, result: oob ? "fail" : "pass" },
       });
       if (oob) continue;
@@ -384,7 +386,7 @@ export function bfsTrace(input: number[]): TraceFrame[] {
         codeToken: "bfs.wall",
         narrationToken: "bfs.wall",
         focusNodes: [cellId(r, c), cellId(nr, nc)],
-        pointers: [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        pointers: [nbPointer(nr, nc, dirLabel)],
         meta: { r, c, nr, nc, dir: dirLabel, result: isWall ? "fail" : "pass" },
       });
       if (isWall) continue;
@@ -396,7 +398,7 @@ export function bfsTrace(input: number[]): TraceFrame[] {
         codeToken: "bfs.visited",
         narrationToken: "bfs.visited",
         focusNodes: [cellId(r, c), cellId(nr, nc)],
-        pointers: [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        pointers: [nbPointer(nr, nc, dirLabel)],
         meta: { r, c, nr, nc, dir: dirLabel, result: alreadyVisited ? "fail" : "pass" },
       });
       if (alreadyVisited) continue;
@@ -411,7 +413,7 @@ export function bfsTrace(input: number[]): TraceFrame[] {
         codeToken: "bfs.mark",
         narrationToken: "bfs.mark",
         focusNodes: [cellId(r, c), cellId(nr, nc)],
-        pointers: [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        pointers: [nbPointer(nr, nc, dirLabel)],
         meta: { r, c, nr, nc, dir: dirLabel },
       });
 
@@ -422,7 +424,7 @@ export function bfsTrace(input: number[]): TraceFrame[] {
         codeToken: "bfs.setlevel",
         narrationToken: "bfs.setlevel",
         focusNodes: [cellId(r, c), cellId(nr, nc)],
-        pointers: [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        pointers: [nbPointer(nr, nc, dirLabel)],
         meta: { r, c, nr, nc, dir: dirLabel, level: newLevel },
       });
 
@@ -434,7 +436,7 @@ export function bfsTrace(input: number[]): TraceFrame[] {
         codeToken: "bfs.enqueue",
         narrationToken: "bfs.enqueue",
         focusNodes: [cellId(r, c), cellId(nr, nc), queueNodeId(lastQueueIdx)],
-        pointers: [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        pointers: [nbPointer(nr, nc, dirLabel)],
         meta: { r, c, nr, nc, dir: dirLabel, level: newLevel },
       });
     }
@@ -446,16 +448,37 @@ export function bfsTrace(input: number[]): TraceFrame[] {
 
   // --- Done ---
   let totalVisited = 0;
+  const reachableIds: string[] = [];
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      if (visited[r][c]) totalVisited++;
+      if (visited[r][c]) {
+        totalVisited++;
+        reachableIds.push(cellId(r, c));
+      }
     }
   }
 
-  push({
+  showResult = true;
+  const doneScene = buildScene();
+  // Add summary caption above the grid
+  doneScene.overlays.push({
+    kind: "caption" as const,
+    id: "bfs:result-label",
+    x: GRID_X0 + cols / 2 - 0.5,
+    y: GRID_Y0 - 0.6,
+    text: `Shortest distances from (${startRow},${startCol})`,
+    emphasis: "soft" as const,
+  });
+
+  frames.push({
+    id: `bfs.done.${stepNo++}`,
     kind: "done",
     codeToken: "bfs.done",
     narrationToken: "bfs.done",
+    scene: doneScene,
+    focus: {
+      nodes: reachableIds,
+    },
     meta: { totalVisited },
   });
 

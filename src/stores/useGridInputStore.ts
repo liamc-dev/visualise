@@ -33,7 +33,7 @@ export const useGridInputStore = create<GridInputState>()(
       array: DEFAULT_BFS_GRID,
       rows: DEFAULT_GRID_ROWS,
       cols: DEFAULT_GRID_COLS,
-      wallDensity: 0.15,
+      wallDensity: 0,
 
       setRows(n: number) {
         const clamped = Math.max(MIN_GRID_SIZE, Math.min(MAX_GRID_SIZE, n));
