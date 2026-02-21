@@ -113,7 +113,7 @@ export function getTraceCellStyle(args: {
 
   // z-index / border width are now purely generic:
   // highlight beats weight; then weight beats normal.
-  const zIndex = isTemp ? 1 : highlight ? 30 : 2 + weight * 5;
+  const zIndex = isTemp ? 1 : highlight ? 6 : 2 + weight;
   const borderWidth = isTemp ? 1 : highlight || weight >= 2 ? 3 : 1;
 
   const isCard = node.kind === "card";

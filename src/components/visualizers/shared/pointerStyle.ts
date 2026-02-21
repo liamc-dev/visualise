@@ -12,7 +12,7 @@ export function getPointerStyle(x: number, y: number, color: string, cellSize: n
     position: "absolute",
     transform: `translate(${x}px, ${y}px) translateX(-50%)`,
     pointerEvents: "none",
-    zIndex: 40,
+    zIndex: 8,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
