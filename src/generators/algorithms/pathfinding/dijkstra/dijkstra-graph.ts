@@ -18,8 +18,18 @@ export type Graph = {
   source: string;
 };
 
+/** Fixed node positions — same layout regardless of which edges exist. */
+export const NODE_POSITIONS: readonly GraphNode[] = [
+  { label: "A", x: 3, y: 1 },
+  { label: "B", x: 9, y: 1 },
+  { label: "C", x: 1, y: 5 },
+  { label: "D", x: 6, y: 5 },
+  { label: "E", x: 11, y: 5 },
+  { label: "F", x: 6, y: 9 },
+];
+
 /**
- * 6-node, 9-edge undirected weighted graph.
+ * 6-node, 9-edge undirected weighted graph (kept for reference).
  *
  *          A ----3---- B
  *         / \           \
@@ -36,14 +46,7 @@ export type Graph = {
  */
 export const DEFAULT_GRAPH: Graph = {
   source: "A",
-  nodes: [
-    { label: "A", x: 3, y: 1 },
-    { label: "B", x: 9, y: 1 },
-    { label: "C", x: 1, y: 5 },
-    { label: "D", x: 6, y: 5 },
-    { label: "E", x: 11, y: 5 },
-    { label: "F", x: 6, y: 9 },
-  ],
+  nodes: [...NODE_POSITIONS],
   edges: [
     { from: "A", to: "B", weight: 3 },
     { from: "A", to: "C", weight: 1 },
@@ -56,6 +59,18 @@ export const DEFAULT_GRAPH: Graph = {
     { from: "D", to: "F", weight: 5 },
   ],
 };
+
+/** Build a Graph from decoded input data. */
+export function buildGraphFromInput(
+  source: string,
+  edges: { from: string; to: string; weight: number }[],
+): Graph {
+  return {
+    source,
+    nodes: [...NODE_POSITIONS],
+    edges: edges.map((e) => ({ from: e.from, to: e.to, weight: e.weight })),
+  };
+}
 
 /** Build adjacency list from the edge list (undirected). */
 export function buildAdj(graph: Graph): Map<string, { to: string; weight: number }[]> {

@@ -5,21 +5,37 @@ function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
-export function getPointerStyle(x: number, y: number, color: string, cellSize: number) {
+export function getPointerStyle(
+  x: number,
+  y: number,
+  color: string,
+  cellSize: number,
+  lane: "above" | "on" | "below" | "left" | "right" = "above",
+) {
   const fontSize = clamp(Math.round(cellSize * 0.34), 10, 16);
+  const isHorizontal = lane === "left" || lane === "right";
+
+  // Horizontal: row layout, vertical centering
+  // Vertical: column layout, horizontal centering
+  const transform = isHorizontal
+    ? lane === "left"
+      ? `translate(${x}px, ${y}px) translate(-100%, -50%)`
+      : `translate(${x}px, ${y}px) translateY(-50%)`
+    : `translate(${x}px, ${y}px) translateX(-50%)`;
 
   return {
     position: "absolute",
-    transform: `translate(${x}px, ${y}px) translateX(-50%)`,
+    transform,
     pointerEvents: "none",
     zIndex: 8,
     display: "flex",
-    flexDirection: "column",
+    flexDirection: isHorizontal ? "row" : "column",
     alignItems: "center",
+    gap: isHorizontal ? 2 : 0,
     fontSize,
     fontWeight: 600,
-    lineHeight: 1,              
-    whiteSpace: "nowrap",       
+    lineHeight: 1,
+    whiteSpace: "nowrap",
     color,
     textShadow: "var(--tn-overlay-textshadow)",
     transition: `
@@ -31,13 +47,32 @@ export function getPointerStyle(x: number, y: number, color: string, cellSize: n
 
 export function getPointerArrowStyle(
   color: string,
-  dir: "down" | "up" = "down",
+  dir: "down" | "up" | "left" | "right" = "down",
   cellSize: number
 ) {
   const halfBase = cellSize * 0.22;
   const height = cellSize * 0.32;
   const offset = cellSize * 0.12;
 
+  const isHorizontal = dir === "left" || dir === "right";
+
+  if (isHorizontal) {
+    const common: React.CSSProperties = {
+      width: 0,
+      height: 0,
+      borderTop: `${halfBase}px solid transparent`,
+      borderBottom: `${halfBase}px solid transparent`,
+      filter: "drop-shadow(var(--tn-overlay-inset))",
+      transform: `translateX(${dir === "left" ? -offset : offset}px)`,
+    };
+
+    if (dir === "left") {
+      return { ...common, borderRight: `${height}px solid ${color}` };
+    }
+    return { ...common, borderLeft: `${height}px solid ${color}` };
+  }
+
+  // Vertical arrows (existing)
   const common: React.CSSProperties = {
     width: 0,
     height: 0,
@@ -48,14 +83,7 @@ export function getPointerArrowStyle(
   };
 
   if (dir === "up") {
-    return {
-      ...common,
-      borderBottom: `${height}px solid ${color}`,
-    };
+    return { ...common, borderBottom: `${height}px solid ${color}` };
   }
-
-  return {
-    ...common,
-    borderTop: `${height}px solid ${color}`,
-  };
+  return { ...common, borderTop: `${height}px solid ${color}` };
 }

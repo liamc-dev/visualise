@@ -1,29 +1,44 @@
 export const DIJKSTRA_JS =
-` [[dj.init]]function dijkstra(graph, source) {[[/dj.init]]
-   [[dj.init]]const dist = {};[[/dj.init]]
-   [[dj.init]]const prev = {};[[/dj.init]]
-   [[dj.init]]const visited = new Set();[[/dj.init]]
-   [[dj.init]]for (const v of graph.nodes) dist[v] = Infinity;[[/dj.init]]
-   [[dj.init]]dist[source] = 0;[[/dj.init]]
+`const dirs = [
+  [0, 1], [1, 0], [0, -1], [-1, 0],
+];
 
-   [[dj.pick]]while (visited.size < graph.nodes.length) {[[/dj.pick]]
-     [[dj.pick]]const u = minDist(dist, visited);[[/dj.pick]]
+function dijkstra(graph, source) {
+  const nodes = graph.nodes;
+  const n = nodes.length;
 
-     [[dj.relax]]for (const { to: v, weight: w } of adj[u]) {[[/dj.relax]]
-       [[dj.relax]]if (dist[u] + w < dist[v]) {[[/dj.relax]]
-         [[dj.update]]dist[v] = dist[u] + w;[[/dj.update]]
-         [[dj.update]]prev[v] = u;[[/dj.update]]
-       }
-     }
+  [[dj.init.dist]]const dist = {};[[/dj.init.dist]]
+  [[dj.init.dist]]for (const v of nodes) {[[/dj.init.dist]]
+    [[dj.init.dist]]dist[v] = Infinity;[[/dj.init.dist]]
+  [[dj.init.dist]]}[[/dj.init.dist]]
+  [[dj.init.prev]]const prev = {};[[/dj.init.prev]]
+  [[dj.init.visited]]const visited = new Set();[[/dj.init.visited]]
+  [[dj.init.setdist]]dist[source] = 0;[[/dj.init.setdist]]
 
-     [[dj.visit]]visited.add(u);[[/dj.visit]]
-   }
+  [[dj.loop]]while (visited.size < n) {[[/dj.loop]]
+    [[dj.pick]]const u = minDist(dist, visited);[[/dj.pick]]
 
-   [[dj.done]]return { dist, prev };[[/dj.done]]
- }`;
+    [[dj.neighbors]]for (const { to: v, weight: w } of adj[u]) {[[/dj.neighbors]]
+      [[dj.check.visited]]if (visited.has(v)) {[[/dj.check.visited]]
+        [[dj.check.visited]]continue;[[/dj.check.visited]]
+      [[dj.check.visited]]}[[/dj.check.visited]]
+      [[dj.relax]]if (dist[u] + w < dist[v]) {[[/dj.relax]]
+        [[dj.update]]dist[v] = dist[u] + w;[[/dj.update]]
+        [[dj.update]]prev[v] = u;[[/dj.update]]
+      }
+    }
+
+    [[dj.visit]]visited.add(u);[[/dj.visit]]
+  }
+
+  [[dj.done]]return { dist, prev };[[/dj.done]]
+}`;
 
 export const DIJKSTRA_JS_POINTER_HINTS = {
+  "dj.loop": ["u"],
   "dj.pick": ["u"],
+  "dj.neighbors": ["u", "v"],
+  "dj.check.visited": ["u", "v"],
   "dj.relax": ["u", "v"],
   "dj.update": ["u", "v"],
   "dj.skip": ["u", "v"],

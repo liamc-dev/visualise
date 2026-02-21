@@ -1,14 +1,16 @@
 export const DIJKSTRA_PSEUDO =
-` [[dj.init]]function dijkstra(graph, source):[[/dj.init]]
-   [[dj.init]]dist = {v: \u221e for v in graph}[[/dj.init]]
-   [[dj.init]]dist[source] = 0[[/dj.init]]
-   [[dj.init]]prev = {v: null for v in graph}[[/dj.init]]
-   [[dj.init]]visited = {}[[/dj.init]]
+`function dijkstra(graph, source):
+   [[dj.init.dist]]dist = {v: \u221e for v in graph}[[/dj.init.dist]]
+   [[dj.init.prev]]prev = {v: null for v in graph}[[/dj.init.prev]]
+   [[dj.init.visited]]visited = {}[[/dj.init.visited]]
+   [[dj.init.setdist]]dist[source] = 0[[/dj.init.setdist]]
 
-   [[dj.pick]]while visited.size < n:[[/dj.pick]]
+   [[dj.loop]]while visited.size < n:[[/dj.loop]]
      [[dj.pick]]u = vertex with min dist not in visited[[/dj.pick]]
 
-     [[dj.relax]]for each neighbor v of u with weight w:[[/dj.relax]]
+     [[dj.neighbors]]for each neighbor v of u with weight w:[[/dj.neighbors]]
+       [[dj.check.visited]]if v in visited:[[/dj.check.visited]]
+         [[dj.check.visited]]continue[[/dj.check.visited]]
        [[dj.relax]]if dist[u] + w < dist[v]:[[/dj.relax]]
          [[dj.update]]dist[v] = dist[u] + w[[/dj.update]]
          [[dj.update]]prev[v] = u[[/dj.update]]
@@ -19,7 +21,10 @@ export const DIJKSTRA_PSEUDO =
 `;
 
 export const DIJKSTRA_PSEUDO_POINTER_HINTS = {
+  "dj.loop": ["u"],
   "dj.pick": ["u"],
+  "dj.neighbors": ["u", "v"],
+  "dj.check.visited": ["u", "v"],
   "dj.relax": ["u", "v"],
   "dj.update": ["u", "v"],
   "dj.skip": ["u", "v"],

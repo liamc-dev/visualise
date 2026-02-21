@@ -1,36 +1,59 @@
 export const BFS_JAVA =
-` [[bfs.init]]void bfs(List<List<Integer>> adj, int src) {[[/bfs.init]]
-   [[bfs.init]]boolean[] visited = new boolean[n];[[/bfs.init]]
-   [[bfs.init]]int[] level = new int[n];[[/bfs.init]]
-   [[bfs.init]]Arrays.fill(level, -1);[[/bfs.init]]
-   [[bfs.init]]Queue<Integer> queue = new LinkedList<>();[[/bfs.init]]
-   [[bfs.init]]visited[src] = true;[[/bfs.init]]
-   [[bfs.init]]level[src] = 0;[[/bfs.init]]
-   [[bfs.init]]queue.add(src);[[/bfs.init]]
+`public class BFS {
+  private static final int[][] DIRS = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 
-   [[bfs.dequeue]]while (!queue.isEmpty()) {[[/bfs.dequeue]]
-     [[bfs.dequeue]]int u = queue.poll();[[/bfs.dequeue]]
+  public static int[][] bfs(int[][] grid, int sr, int sc) {
+    int rows = grid.length;
+    int cols = grid[0].length;
 
-     [[bfs.explore]]for (int v : adj.get(u)) {[[/bfs.explore]]
-       [[bfs.explore]]if (!visited[v]) {[[/bfs.explore]]
-         [[bfs.discover]]visited[v] = true;[[/bfs.discover]]
-         [[bfs.discover]]level[v] = level[u] + 1;[[/bfs.discover]]
-         [[bfs.discover]]queue.add(v);[[/bfs.discover]]
-       }
-     }
-   }
+    [[bfs.init.queue]]Queue<int[]> queue = new LinkedList<>();[[/bfs.init.queue]]
+    [[bfs.init.visited]]boolean[][] visited = new boolean[rows][cols];[[/bfs.init.visited]]
+    [[bfs.init.level]]int[][] level = new int[rows][cols];[[/bfs.init.level]]
+    [[bfs.init.level]]for (int[] row : level) Arrays.fill(row, -1);[[/bfs.init.level]]
+    [[bfs.init.mark]]visited[sr][sc] = true;[[/bfs.init.mark]]
+    [[bfs.init.setlevel]]level[sr][sc] = 0;[[/bfs.init.setlevel]]
+    [[bfs.init.enqueue]]queue.add(new int[]{sr, sc});[[/bfs.init.enqueue]]
 
-   [[bfs.done]]// level[] is populated[[/bfs.done]]
- }`;
+    [[bfs.loop]]while (!queue.isEmpty()) {[[/bfs.loop]]
+      [[bfs.dequeue]]int[] cell = queue.poll();[[/bfs.dequeue]]
+      [[bfs.dequeue]]int r = cell[0], c = cell[1];[[/bfs.dequeue]]
+
+      [[bfs.check]]for (int[] d : DIRS) {[[/bfs.check]]
+        [[bfs.check]]int nr = r + d[0];[[/bfs.check]]
+        [[bfs.check]]int nc = c + d[1];[[/bfs.check]]
+
+        [[bfs.oob]]if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) {[[/bfs.oob]]
+          [[bfs.oob]]continue;[[/bfs.oob]]
+        [[bfs.oob]]}[[/bfs.oob]]
+        [[bfs.wall]]if (grid[nr][nc] == 1) {[[/bfs.wall]]
+          [[bfs.wall]]continue;[[/bfs.wall]]
+        [[bfs.wall]]}[[/bfs.wall]]
+        [[bfs.visited]]if (visited[nr][nc]) {[[/bfs.visited]]
+          [[bfs.visited]]continue;[[/bfs.visited]]
+        [[bfs.visited]]}[[/bfs.visited]]
+
+        [[bfs.mark]]visited[nr][nc] = true;[[/bfs.mark]]
+        [[bfs.setlevel]]level[nr][nc] = level[r][c] + 1;[[/bfs.setlevel]]
+        [[bfs.enqueue]]queue.add(new int[]{nr, nc});[[/bfs.enqueue]]
+      }
+    }
+
+    [[bfs.done]]return level;[[/bfs.done]]
+  }
+}`;
 
 export const BFS_JAVA_POINTER_HINTS = {
-  "bfs.dequeue": ["u"],
-  "bfs.explore": ["u", "v"],
-  "bfs.discover": ["u", "v"],
-  "bfs.skip": ["u", "v"],
+  "bfs.dequeue": ["cur"],
+  "bfs.check": ["cur"],
+  "bfs.oob": ["cur"],
+  "bfs.wall": ["cur", "nb"],
+  "bfs.visited": ["cur", "nb"],
+  "bfs.mark": ["cur", "nb"],
+  "bfs.setlevel": ["cur", "nb"],
+  "bfs.enqueue": ["cur", "nb"],
 } as const satisfies Record<string, string[]>;
 
 export const BFS_JAVA_POINTER_LABELS = {
-  u: "u",
-  v: "v",
+  cur: "(r,c)",
+  nb: "(nr,nc)",
 } as const satisfies Record<string, string>;

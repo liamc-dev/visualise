@@ -1,32 +1,61 @@
 export const BFS_TS =
-` [[bfs.init]]function bfs(graph: Graph, source: string) {[[/bfs.init]]
-   [[bfs.init]]const visited = new Set<string>([source]);[[/bfs.init]]
-   [[bfs.init]]const queue: string[] = [source];[[/bfs.init]]
-   [[bfs.init]]const level: Record<string, number> = { [source]: 0 };[[/bfs.init]]
+`const dirs = [
+  [0, 1], [1, 0], [0, -1], [-1, 0],
+];
 
-   [[bfs.dequeue]]while (queue.length > 0) {[[/bfs.dequeue]]
-     [[bfs.dequeue]]const u = queue.shift()!;[[/bfs.dequeue]]
+function bfs(grid: number[][], sr: number, sc: number): number[][] {
+  const rows = grid.length;
+  const cols = grid[0].length;
 
-     [[bfs.explore]]for (const v of adj[u]) {[[/bfs.explore]]
-       [[bfs.explore]]if (!visited.has(v)) {[[/bfs.explore]]
-         [[bfs.discover]]visited.add(v);[[/bfs.discover]]
-         [[bfs.discover]]level[v] = level[u] + 1;[[/bfs.discover]]
-         [[bfs.discover]]queue.push(v);[[/bfs.discover]]
-       }
-     }
-   }
+  [[bfs.init.queue]]const queue: [number, number][] = [];[[/bfs.init.queue]]
+  [[bfs.init.visited]]const visited: boolean[][] = Array.from(
+    { length: rows }, () => Array(cols).fill(false)
+  );[[/bfs.init.visited]]
+  [[bfs.init.level]]const level: number[][] = Array.from(
+    { length: rows }, () => Array(cols).fill(-1)
+  );[[/bfs.init.level]]
+  [[bfs.init.mark]]visited[sr][sc] = true;[[/bfs.init.mark]]
+  [[bfs.init.setlevel]]level[sr][sc] = 0;[[/bfs.init.setlevel]]
+  [[bfs.init.enqueue]]queue.push([sr, sc]);[[/bfs.init.enqueue]]
 
-   [[bfs.done]]return level;[[/bfs.done]]
- }`;
+  [[bfs.loop]]while (queue.length > 0) {[[/bfs.loop]]
+    [[bfs.dequeue]]const [r, c] = queue.shift()!;[[/bfs.dequeue]]
+
+    [[bfs.check]]for (const [dr, dc] of dirs) {[[/bfs.check]]
+      [[bfs.check]]const nr = r + dr;[[/bfs.check]]
+      [[bfs.check]]const nc = c + dc;[[/bfs.check]]
+
+      [[bfs.oob]]if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) {[[/bfs.oob]]
+        [[bfs.oob]]continue;[[/bfs.oob]]
+      [[bfs.oob]]}[[/bfs.oob]]
+      [[bfs.wall]]if (grid[nr][nc] === 1) {[[/bfs.wall]]
+        [[bfs.wall]]continue;[[/bfs.wall]]
+      [[bfs.wall]]}[[/bfs.wall]]
+      [[bfs.visited]]if (visited[nr][nc]) {[[/bfs.visited]]
+        [[bfs.visited]]continue;[[/bfs.visited]]
+      [[bfs.visited]]}[[/bfs.visited]]
+
+      [[bfs.mark]]visited[nr][nc] = true;[[/bfs.mark]]
+      [[bfs.setlevel]]level[nr][nc] = level[r][c] + 1;[[/bfs.setlevel]]
+      [[bfs.enqueue]]queue.push([nr, nc]);[[/bfs.enqueue]]
+    }
+  }
+
+  [[bfs.done]]return level;[[/bfs.done]]
+}`;
 
 export const BFS_TS_POINTER_HINTS = {
-  "bfs.dequeue": ["u"],
-  "bfs.explore": ["u", "v"],
-  "bfs.discover": ["u", "v"],
-  "bfs.skip": ["u", "v"],
+  "bfs.dequeue": ["cur"],
+  "bfs.check": ["cur"],
+  "bfs.oob": ["cur"],
+  "bfs.wall": ["cur", "nb"],
+  "bfs.visited": ["cur", "nb"],
+  "bfs.mark": ["cur", "nb"],
+  "bfs.setlevel": ["cur", "nb"],
+  "bfs.enqueue": ["cur", "nb"],
 } as const satisfies Record<string, string[]>;
 
 export const BFS_TS_POINTER_LABELS = {
-  u: "u",
-  v: "v",
+  cur: "(r,c)",
+  nb: "(nr,nc)",
 } as const satisfies Record<string, string>;

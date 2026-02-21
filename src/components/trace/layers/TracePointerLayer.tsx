@@ -35,14 +35,31 @@ export default function TracePointerLayer({
         const triHeight = cellSize * 0.32;
         const triOffset = cellSize * 0.12;
 
-        const x = anchorPt.x;
+        let x: number;
+        let y: number;
 
-        const y =
-          lane === "below"
-            ? anchorPt.y + triOffset
-            : lane === "on"
-              ? anchorPt.y - textHeight / 2
-              : anchorPt.y - (textHeight + triOffset + triHeight);
+        switch (lane) {
+          case "below":
+            x = anchorPt.x;
+            y = anchorPt.y + triOffset;
+            break;
+          case "left":
+            x = anchorPt.x - triOffset;
+            y = anchorPt.y;
+            break;
+          case "right":
+            x = anchorPt.x + triOffset;
+            y = anchorPt.y;
+            break;
+          case "on":
+            x = anchorPt.x;
+            y = anchorPt.y - textHeight / 2;
+            break;
+          default: // "above"
+            x = anchorPt.x;
+            y = anchorPt.y - (textHeight + triOffset + triHeight);
+            break;
+        }
 
         return (
           <Pointer

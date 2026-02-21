@@ -1,6 +1,7 @@
 // src/components/player/PlayerBar.tsx
 import type { ReactNode } from "react";
 import NarrationModeSwitch from "../control/NarrationModeSwitch";
+import { Panel } from "../ui/Panel";
 import { usePlayerStore } from "../../stores/usePlayerStore";
 import { usePredictStore } from "../../stores/usePredictStore";
 import { useNarrationStore } from "../../stores/useNarrationStore";
@@ -18,19 +19,10 @@ export default function PlayerBar({ description }: Props) {
     <div className="pt-3">
       {/* Description row */}
       <div className="flex items-center gap-3">
-        <div
-          className="
-        group
-        relative
-        flex-1
-        rounded-sm
-        border border-tn-border
-        bg-tn-surface/85
-        pl-3
-        pr-6   /* reserve space for top-right controls */
-        pt-5   /* reserve vertical space */
-        pb-2
-      "
+        <Panel
+          tone="glass"
+          radius="lg"
+          className="group relative flex-1 pl-3 pr-6 pt-5 pb-2"
         >
           {/* Narration mode */}
           <div className="absolute top-0 right-1">
@@ -52,7 +44,7 @@ export default function PlayerBar({ description }: Props) {
               {description ?? "Ready."}
             </div>
           </div>
-        </div>
+        </Panel>
       </div>
     </div>
   );

@@ -68,10 +68,12 @@ export type TracePointerTarget =
   | { kind: "node"; nodeId: string; anchor?: TraceAnchor }
   | { kind: "pos"; x: number; y: number; anchor?: TraceAnchor };
 
+export type TracePointerLane = "above" | "on" | "below" | "left" | "right";
+
 export type TracePointer = {
   id: string;
   label?: string;
   target: TracePointerTarget;
-  lane?: "above" | "on" | "below";
+  lane?: TracePointerLane;
   color?: string;
 };

@@ -14,11 +14,18 @@ import { useLastAlgorithm, getLastAlgorithm } from "../hooks/use-last-algorithm"
 
 import { useBrand } from "../brand/useBrand";
 import { useArrayInputStore } from "../stores/useArrayInputStore";
+import { useGraphInputStore } from "../stores/useGraphInputStore";
+import { useGridInputStore } from "../stores/useGridInputStore";
+import { useDijkstraGridStore } from "../stores/useDijkstraGridStore";
 import { useLayoutStore } from "../stores/useLayoutStore";
 import ArrayInputBar from "../components/control/ArrayInputBar";
+import GraphInputBar from "../components/control/GraphInputBar";
+import GridInputBar from "../components/control/GridInputBar";
+import DijkstraInputBar from "../components/control/DijkstraInputBar";
 import { Panel } from "../components/ui/Panel";
 import { IconBtn } from "../components/ui/IconBtn";
 import { SlidersHorizontal } from "lucide-react";
+import { DEFAULT_DIJKSTRA_INPUT } from "../lib/graph-utils";
 
 const AlgoCodePanelDesktop = React.lazy(
   () => import("../components/code/AlgoCodePanelDesktop")
@@ -35,10 +42,35 @@ export default function VisualiserPage() {
   const { getAlgoLogoSrc } = useBrand();
   const logoSrc = getAlgoLogoSrc(algoKey);
 
-  const inputArray = useArrayInputStore((s) => s.array);
+  const isSorting = def.category === "Sorting";
+  const isBfsGrid = algoKey === "bfs";
+  const isDijkstra = algoKey === "dijkstra";
+  const isOtherGraphPathfinding = def.category === "Pathfinding" && !isBfsGrid && !isDijkstra;
+
+  const dijkstraMode = useLayoutStore((s) => s.dijkstraMode);
+
+  const arrayInput = useArrayInputStore((s) => s.array);
+  const graphInput = useGraphInputStore((s) => s.array);
+  const gridInput = useGridInputStore((s) => s.array);
+  const dijkstraGridInput = useDijkstraGridStore((s) => s.array);
+  const inputArray = isBfsGrid
+    ? gridInput
+    : isDijkstra
+      ? (dijkstraMode === "graph" ? graphInput : dijkstraGridInput)
+      : isOtherGraphPathfinding
+        ? graphInput
+        : arrayInput;
+
   const trace = useVisualizerTrace(inputArray, algoKey);
+
   const arrayInputCollapsed = useLayoutStore((s) => s.arrayInputCollapsed);
   const toggleArrayInput = useLayoutStore((s) => s.toggleArrayInput);
+  const graphInputCollapsed = useLayoutStore((s) => s.graphInputCollapsed);
+  const toggleGraphInput = useLayoutStore((s) => s.toggleGraphInput);
+  const gridInputCollapsed = useLayoutStore((s) => s.gridInputCollapsed);
+  const toggleGridInput = useLayoutStore((s) => s.toggleGridInput);
+  const dijkstraInputCollapsed = useLayoutStore((s) => s.dijkstraInputCollapsed);
+  const toggleDijkstraInput = useLayoutStore((s) => s.toggleDijkstraInput);
 
   if (!algorithm || !(algorithm in ALGORITHMS)) {
     return <Navigate to={`/visualiser/${getLastAlgorithm()}`} replace />;
@@ -65,8 +97,6 @@ export default function VisualiserPage() {
   const codeBundle = def.codeBundle;
   const codeRef = trace.codeRef;
 
-  const isSorting = def.category === "Sorting";
-
   const leftNode = (
     <div className="min-w-0 flex flex-col gap-2">
       {isSorting && (
@@ -82,6 +112,54 @@ export default function VisualiserPage() {
           </div>
         ) : (
           <ArrayInputBar />
+        )
+      )}
+
+      {isDijkstra && (
+        dijkstraInputCollapsed ? (
+          <div className="flex justify-end px-1">
+            <IconBtn
+              onClick={toggleDijkstraInput}
+              title="Show Dijkstra input"
+              className="w-7 h-7"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-tn-muted" />
+            </IconBtn>
+          </div>
+        ) : (
+          <DijkstraInputBar />
+        )
+      )}
+
+      {isOtherGraphPathfinding && (
+        graphInputCollapsed ? (
+          <div className="flex justify-end px-1">
+            <IconBtn
+              onClick={toggleGraphInput}
+              title="Show graph input"
+              className="w-7 h-7"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-tn-muted" />
+            </IconBtn>
+          </div>
+        ) : (
+          <GraphInputBar weighted={true} defaults={DEFAULT_DIJKSTRA_INPUT} />
+        )
+      )}
+
+      {isBfsGrid && (
+        gridInputCollapsed ? (
+          <div className="flex justify-end px-1">
+            <IconBtn
+              onClick={toggleGridInput}
+              title="Show grid input"
+              className="w-7 h-7"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-tn-muted" />
+            </IconBtn>
+          </div>
+        ) : (
+          <GridInputBar />
         )
       )}
 

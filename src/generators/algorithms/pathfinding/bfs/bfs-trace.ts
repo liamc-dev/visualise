@@ -1,157 +1,234 @@
+// src/generators/algorithms/pathfinding/bfs/bfs-trace.ts
+
 import type {
   TraceFrame,
   TraceScene,
   TraceNode,
-  TraceEdge,
   TraceOverlay,
   TracePointer,
 } from "../../../../types/trace-types";
 import {
-  DEFAULT_BFS_GRAPH,
-  buildAdj,
-  edgeId,
-  nodeId,
-  type Graph,
-  type GraphNode,
-} from "./bfs-graph";
+  decodeGridInput,
+  DEFAULT_BFS_GRID,
+  DIRECTIONS,
+} from "../../../../lib/grid-utils";
 
-const BOUNDS = { minX: 0, minY: 0, maxX: 12, maxY: 10 };
-const NODE_RADIUS = 0.5;
-const EDGE_GAP = 0.1;
+/* Grid cell layout: x starts at GRID_X0, y starts at GRID_Y0 */
+const GRID_X0 = 2;
+const GRID_Y0 = 1;
+
+/* Queue visualization layout (horizontal offsets are fixed) */
+const CUR_NODE_X = 1.5;
+const QUEUE_LABEL_X = 3;
+const QUEUE_START_X = 4;
+const QUEUE_SPACING = 1.2;
+const QUEUE_MAX_VISIBLE = 6;
 
 /* Helpers */
 
-function edgeEndpoint(
-  from: { x: number; y: number },
-  to: { x: number; y: number },
-) {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const len = Math.hypot(dx, dy) || 1;
-  const offset = NODE_RADIUS + EDGE_GAP;
-  const rr = Math.min(offset, Math.max(0, len / 2 - 0.01));
-  return { x: from.x + (dx / len) * rr, y: from.y + (dy / len) * rr };
-}
-
-function posOf(graph: Graph, label: string): GraphNode {
-  return graph.nodes.find((n) => n.label === label)!;
-}
+function cellX(c: number): number { return GRID_X0 + c; }
+function cellY(r: number): number { return GRID_Y0 + r; }
+function cellId(r: number, c: number): string { return `bfs:${r}:${c}`; }
+function queueNodeId(i: number): string { return `bfs:q:${i}`; }
 
 /* Trace generator */
 
-export function bfsTrace(_input: number[]): TraceFrame[] {
-  const graph = DEFAULT_BFS_GRAPH;
-  const adj = buildAdj(graph);
+export function bfsTrace(input: number[]): TraceFrame[] {
+  // Decode input or fall back to defaults
+  const encoded = input.length >= 4 || input.length === 66 ? input : DEFAULT_BFS_GRID;
+  const { rows, cols, startRow, startCol, walls } = decodeGridInput(encoded);
 
-  const labels = graph.nodes.map((n) => n.label);
+  // Dynamic layout values
+  const QUEUE_Y = GRID_Y0 + rows + 1;
+  const BOUNDS = {
+    minX: 0,
+    minY: 0,
+    maxX: GRID_X0 + cols + 2,
+    maxY: QUEUE_Y + 2,
+  };
 
-  const level: Record<string, number> = {};
-  const discovered = new Set<string>();
-  const visited = new Set<string>();
-  const parent: Record<string, string | null> = {};
-  const treeEdges = new Set<string>();
+  // BFS state
+  const level: number[][] = Array.from({ length: rows }, () =>
+    Array(cols).fill(-1),
+  );
+  const visited: boolean[][] = Array.from({ length: rows }, () =>
+    Array(cols).fill(false),
+  );
+  const discovered: boolean[][] = Array.from({ length: rows }, () =>
+    Array(cols).fill(false),
+  );
 
-  for (const l of labels) {
-    level[l] = -1;
-    parent[l] = null;
-  }
-
-  level[graph.source] = 0;
-  discovered.add(graph.source);
-
-  const queue: string[] = [graph.source];
+  const queue: [number, number][] = [];
+  let curCell: [number, number] | null = null;
 
   const frames: TraceFrame[] = [];
   let stepNo = 0;
 
-  /* scene builder */
+  /* Scene builder */
   function buildScene(): TraceScene {
-    const nodes: TraceNode[] = graph.nodes.map((gn) => {
-      const lv = level[gn.label];
-      const isVisited = visited.has(gn.label);
-      const isDiscovered = discovered.has(gn.label);
+    const nodes: TraceNode[] = [];
 
-      let tone: TraceNode["meta"] extends { tone?: infer T } ? T : never;
-      let emphasis: TraceNode["meta"] extends { emphasis?: infer E }
-        ? E
-        : never;
+    // Grid cells
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const isWall = walls[r][c];
+        const isVisited = visited[r][c];
+        const isDiscovered = discovered[r][c];
+        const isStart = r === startRow && c === startCol;
+        const lv = level[r][c];
 
-      if (isVisited) {
-        tone = "neutral";
-        emphasis = "soft";
-      } else if (isDiscovered) {
-        tone = "info";
-        emphasis = undefined;
-      } else {
-        tone = "muted";
-        emphasis = undefined;
+        let tone: "muted" | "info" | "neutral" | "accent";
+        let emphasis: "faint" | "soft" | undefined;
+        let opacityMul: number | undefined;
+        let value: string | number | undefined;
+
+        if (isWall) {
+          tone = "muted";
+          emphasis = "faint";
+          opacityMul = 0.15;
+          value = undefined;
+        } else if (isVisited) {
+          tone = "neutral";
+          emphasis = "soft";
+          value = lv;
+        } else if (isDiscovered) {
+          tone = "info";
+          emphasis = undefined;
+          value = lv;
+        } else if (isStart && !isDiscovered) {
+          tone = "accent";
+          emphasis = undefined;
+          value = 0;
+        } else {
+          tone = "muted";
+          emphasis = undefined;
+          opacityMul = 0.3;
+          value = "\u2014";
+        }
+
+        nodes.push({
+          id: cellId(r, c),
+          kind: "cell",
+          pos: { x: cellX(c), y: cellY(r) },
+          meta: {
+            value,
+            tone,
+            emphasis,
+            ...(opacityMul !== undefined ? { opacityMul } : undefined),
+          },
+        });
       }
+    }
 
-      return {
-        id: nodeId(gn.label),
+    // Cur node (dequeued cell shown left of queue)
+    if (curCell) {
+      const [cr, cc] = curCell;
+      nodes.push({
+        id: "bfs:cur",
         kind: "cell",
-        pos: { x: gn.x, y: gn.y },
+        pos: { x: CUR_NODE_X, y: QUEUE_Y },
         meta: {
-          value: lv < 0 ? "\u2014" : lv,
-          tone,
-          emphasis,
-          ...(tone === "muted" ? { opacityMul: 0.5 } : undefined),
-          label: gn.label,
+          value: `${cr},${cc}`,
+          tone: "accent" as const,
         },
-      };
-    });
+      });
+    }
 
-    const edges: TraceEdge[] = graph.edges.map((ge) => {
-      const fromPos = posOf(graph, ge.from);
-      const toPos = posOf(graph, ge.to);
-      const eid = edgeId(ge.from, ge.to);
-      const inTree = treeEdges.has(eid);
-
-      return {
-        id: eid,
-        from: nodeId(ge.from),
-        to: nodeId(ge.to),
-        kind: "graph",
+    // Queue nodes (show up to QUEUE_MAX_VISIBLE)
+    const visibleQueue = queue.slice(0, QUEUE_MAX_VISIBLE);
+    for (let i = 0; i < visibleQueue.length; i++) {
+      const [qr, qc] = visibleQueue[i];
+      nodes.push({
+        id: queueNodeId(i),
+        kind: "cell",
+        pos: { x: QUEUE_START_X + i * QUEUE_SPACING, y: QUEUE_Y },
         meta: {
-          arrow: inTree,
-          fromPt: edgeEndpoint(fromPos, toPos),
-          toPt: edgeEndpoint(toPos, fromPos),
-          color: inTree
-            ? "rgb(var(--tn-accent) / 0.70)"
-            : "rgb(var(--tn-accent) / 0.35)",
-          opacity: inTree ? 0.7 : 0.25,
+          value: `${qr},${qc}`,
+          tone: "info" as const,
         },
-      };
-    });
+      });
+    }
 
-    // Node label captions (above each node)
-    const labelOverlays: TraceOverlay[] = graph.nodes.map((gn) => ({
+    // Captions
+    const overlays: TraceOverlay[] = [];
+
+    if (curCell) {
+      overlays.push({
+        kind: "caption" as const,
+        id: "bfs:cur-label",
+        x: 0.5,
+        y: QUEUE_Y,
+        text: "cur",
+        emphasis: "soft" as const,
+      });
+    }
+
+    overlays.push({
       kind: "caption" as const,
-      id: `bfs:label:${gn.label}`,
-      x: gn.x,
-      y: gn.y - 0.8,
-      text: gn.label,
-    }));
+      id: "bfs:queue-label",
+      x: QUEUE_LABEL_X,
+      y: QUEUE_Y,
+      text: "Queue",
+      emphasis: "soft" as const,
+    });
+
+    // If queue is longer than visible, show "..." indicator
+    if (queue.length > QUEUE_MAX_VISIBLE) {
+      overlays.push({
+        kind: "caption" as const,
+        id: "bfs:queue-overflow",
+        x: QUEUE_START_X + QUEUE_MAX_VISIBLE * QUEUE_SPACING,
+        y: QUEUE_Y,
+        text: `+${queue.length - QUEUE_MAX_VISIBLE}`,
+        emphasis: "soft" as const,
+      });
+    }
 
     return {
       nodes,
-      edges,
-      overlays: labelOverlays,
+      edges: [],
+      overlays,
       bounds: BOUNDS,
     };
   }
 
-  /* frame pusher */
+  /* Frame pusher */
   function push(args: {
     kind: string;
-    codeToken?: string;
-    narrationToken?: string;
+    codeToken: string;
+    narrationToken: string;
     focusNodes?: string[];
-    focusEdges?: string[];
     pointers?: TracePointer[];
     meta?: Record<string, unknown>;
   }) {
     const scene = buildScene();
+
+    // Hide values on cells physically behind pointer badges.
+    // The badge overlaps the adjacent cell in the pointer's lane direction.
+    if (args.pointers?.length) {
+      const behindIds = new Set<string>();
+      for (const p of args.pointers) {
+        if (p.target.kind !== "node") continue;
+        const m = p.target.nodeId.match(/^bfs:(\d+):(\d+)$/);
+        if (!m) continue;
+        const tr = parseInt(m[1]);
+        const tc = parseInt(m[2]);
+        const lane = p.lane ?? "above";
+        if (lane === "above" && tr > 0)
+          behindIds.add(cellId(tr - 1, tc));
+        else if (lane === "below" && tr < rows - 1)
+          behindIds.add(cellId(tr + 1, tc));
+        else if (lane === "left" && tc > 0)
+          behindIds.add(cellId(tr, tc - 1));
+        else if (lane === "right" && tc < cols - 1)
+          behindIds.add(cellId(tr, tc + 1));
+      }
+      for (const node of scene.nodes) {
+        if (behindIds.has(node.id) && node.meta) {
+          node.meta = { ...node.meta, value: "" };
+        }
+      }
+    }
 
     frames.push({
       id: `bfs.${args.kind}.${stepNo++}`,
@@ -161,142 +238,225 @@ export function bfsTrace(_input: number[]): TraceFrame[] {
       scene,
       focus: {
         nodes: args.focusNodes?.length ? args.focusNodes : undefined,
-        edges: args.focusEdges?.length ? args.focusEdges : undefined,
         pointers: args.pointers?.length ? args.pointers : undefined,
       },
       meta: args.meta,
     });
   }
 
-  /* pointer helpers */
-  function uPointer(label: string): TracePointer {
+  /* Pointer helpers */
+  function curPointer(r: number, c: number): TracePointer {
     return {
-      id: "u",
-      label: "u",
-      target: { kind: "node", nodeId: nodeId(label) },
+      id: "cur",
+      label: "cur",
+      target: { kind: "node", nodeId: cellId(r, c) },
       lane: "above",
       color: "var(--color-tn-warning)",
     };
   }
 
-  function vPointer(label: string): TracePointer {
+  function nbPointer(nr: number, nc: number, dir: string): TracePointer {
+    const lane =
+      dir === "UP" ? "above" :
+      dir === "DOWN" ? "below" :
+      dir === "LEFT" ? "left" :
+      "right";
     return {
-      id: "v",
-      label: "v",
-      target: { kind: "node", nodeId: nodeId(label) },
-      lane: "below",
+      id: "nb",
+      label: "nb",
+      target: { kind: "node", nodeId: cellId(nr, nc) },
+      lane,
       color: "var(--color-tn-cyan)",
     };
   }
 
-  /* Algorithm execution with frame emissions */
 
-  // bfs.init
+  /* ========== Algorithm execution with fine-grained frame emissions ========== */
+
+  // --- Init phase (6 frames) ---
+
+  // bfs.init.queue — Create queue
   push({
-    kind: "init",
-    codeToken: "bfs.init",
-    narrationToken: "bfs.init",
-    focusNodes: [nodeId(graph.source)],
-    meta: { source: graph.source, queue: [...queue] },
+    kind: "init.queue",
+    codeToken: "bfs.init.queue",
+    narrationToken: "bfs.init.queue",
+    meta: { sr: startRow, sc: startCol },
   });
 
-  // main loop
-  while (queue.length > 0) {
-    const u = queue.shift()!;
+  // bfs.init.visited — Create visited array
+  push({
+    kind: "init.visited",
+    codeToken: "bfs.init.visited",
+    narrationToken: "bfs.init.visited",
+  });
 
-    // bfs.dequeue
+  // bfs.init.level — Create level array
+  push({
+    kind: "init.level",
+    codeToken: "bfs.init.level",
+    narrationToken: "bfs.init.level",
+  });
+
+  // bfs.init.mark — Mark source as visited
+  discovered[startRow][startCol] = true;
+  push({
+    kind: "init.mark",
+    codeToken: "bfs.init.mark",
+    narrationToken: "bfs.init.mark",
+    focusNodes: [cellId(startRow, startCol)],
+    meta: { sr: startRow, sc: startCol },
+  });
+
+  // bfs.init.setlevel — Set source level to 0
+  level[startRow][startCol] = 0;
+  push({
+    kind: "init.setlevel",
+    codeToken: "bfs.init.setlevel",
+    narrationToken: "bfs.init.setlevel",
+    focusNodes: [cellId(startRow, startCol)],
+    meta: { sr: startRow, sc: startCol },
+  });
+
+  // bfs.init.enqueue — Enqueue source
+  queue.push([startRow, startCol]);
+  push({
+    kind: "init.enqueue",
+    codeToken: "bfs.init.enqueue",
+    narrationToken: "bfs.init.enqueue",
+    focusNodes: [cellId(startRow, startCol), queueNodeId(0)],
+    meta: { sr: startRow, sc: startCol },
+  });
+
+  // --- Main loop ---
+  while (queue.length > 0) {
+    // bfs.loop — "Queue has N elements"
+    push({
+      kind: "loop",
+      codeToken: "bfs.loop",
+      narrationToken: "bfs.loop",
+      focusNodes: queue.slice(0, QUEUE_MAX_VISIBLE).map((_, i) => queueNodeId(i)),
+      meta: { queueSize: queue.length },
+    });
+
+    // bfs.dequeue — Dequeue front cell
+    const [r, c] = queue.shift()!;
+    curCell = [r, c];
     push({
       kind: "dequeue",
       codeToken: "bfs.dequeue",
       narrationToken: "bfs.dequeue",
-      focusNodes: [nodeId(u)],
-      pointers: [uPointer(u)],
-      meta: { u, level: level[u], queue: [...queue] },
+      focusNodes: [cellId(r, c), "bfs:cur"],
+      pointers: [curPointer(r, c)],
+      meta: { r, c, level: level[r][c] },
     });
 
-    const neighbors = adj.get(u)!;
-    for (const v of neighbors) {
-      const eid = edgeId(u, v);
+    // Check each direction
+    for (const [dr, dc, dirLabel] of DIRECTIONS) {
+      const nr = r + dr;
+      const nc = c + dc;
 
-      // bfs.explore
+      // bfs.check — Compute neighbor coordinates
       push({
-        kind: "explore",
-        codeToken: "bfs.explore",
-        narrationToken: "bfs.explore",
-        focusNodes: [nodeId(u), nodeId(v)],
-        focusEdges: [eid],
-        pointers: [uPointer(u), vPointer(v)],
-        meta: { u, v },
+        kind: "check",
+        codeToken: "bfs.check",
+        narrationToken: "bfs.check",
+        focusNodes: [cellId(r, c)],
+        pointers: [curPointer(r, c)],
+        meta: { r, c, nr, nc, dir: dirLabel },
       });
 
-      if (!discovered.has(v)) {
-        level[v] = level[u] + 1;
-        parent[v] = u;
-        discovered.add(v);
-        queue.push(v);
-        treeEdges.add(eid);
+      // Bounds check — always emit frame
+      const oob = nr < 0 || nr >= rows || nc < 0 || nc >= cols;
+      push({
+        kind: "oob",
+        codeToken: "bfs.oob",
+        narrationToken: "bfs.oob",
+        focusNodes: oob ? [cellId(r, c)] : [cellId(r, c), cellId(nr, nc)],
+        pointers: oob ? [curPointer(r, c)] : [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        meta: { r, c, nr, nc, dir: dirLabel, result: oob ? "fail" : "pass" },
+      });
+      if (oob) continue;
 
-        // bfs.discover
-        push({
-          kind: "discover",
-          codeToken: "bfs.discover",
-          narrationToken: "bfs.discover",
-          focusNodes: [nodeId(v)],
-          focusEdges: [eid],
-          pointers: [uPointer(u), vPointer(v)],
-          meta: { u, v, level: level[v], queue: [...queue] },
-        });
-      } else {
-        // bfs.skip
-        push({
-          kind: "skip",
-          codeToken: "bfs.explore",
-          narrationToken: "bfs.skip",
-          focusNodes: [nodeId(u), nodeId(v)],
-          focusEdges: [eid],
-          pointers: [uPointer(u), vPointer(v)],
-          meta: { u, v },
-        });
-      }
+      // Wall check — always emit frame
+      const isWall = walls[nr][nc];
+      push({
+        kind: "wall",
+        codeToken: "bfs.wall",
+        narrationToken: "bfs.wall",
+        focusNodes: [cellId(r, c), cellId(nr, nc)],
+        pointers: [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        meta: { r, c, nr, nc, dir: dirLabel, result: isWall ? "fail" : "pass" },
+      });
+      if (isWall) continue;
+
+      // Visited check — always emit frame
+      const alreadyVisited = discovered[nr][nc];
+      push({
+        kind: "visited",
+        codeToken: "bfs.visited",
+        narrationToken: "bfs.visited",
+        focusNodes: [cellId(r, c), cellId(nr, nc)],
+        pointers: [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        meta: { r, c, nr, nc, dir: dirLabel, result: alreadyVisited ? "fail" : "pass" },
+      });
+      if (alreadyVisited) continue;
+
+      // Discover: 3 separate frames (mark → setlevel → enqueue)
+      const newLevel = level[r][c] + 1;
+
+      // bfs.mark — Mark neighbor as visited
+      discovered[nr][nc] = true;
+      push({
+        kind: "mark",
+        codeToken: "bfs.mark",
+        narrationToken: "bfs.mark",
+        focusNodes: [cellId(r, c), cellId(nr, nc)],
+        pointers: [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        meta: { r, c, nr, nc, dir: dirLabel },
+      });
+
+      // bfs.setlevel — Set neighbor level
+      level[nr][nc] = newLevel;
+      push({
+        kind: "setlevel",
+        codeToken: "bfs.setlevel",
+        narrationToken: "bfs.setlevel",
+        focusNodes: [cellId(r, c), cellId(nr, nc)],
+        pointers: [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        meta: { r, c, nr, nc, dir: dirLabel, level: newLevel },
+      });
+
+      // bfs.enqueue — Enqueue neighbor
+      queue.push([nr, nc]);
+      const lastQueueIdx = Math.min(queue.length - 1, QUEUE_MAX_VISIBLE - 1);
+      push({
+        kind: "enqueue",
+        codeToken: "bfs.enqueue",
+        narrationToken: "bfs.enqueue",
+        focusNodes: [cellId(r, c), cellId(nr, nc), queueNodeId(lastQueueIdx)],
+        pointers: [curPointer(r, c), nbPointer(nr, nc, dirLabel)],
+        meta: { r, c, nr, nc, dir: dirLabel, level: newLevel },
+      });
     }
 
-    visited.add(u);
+    // Mark cell as visited (processed) after exploring all neighbors
+    visited[r][c] = true;
+    curCell = null;
   }
 
-  // bfs.done — show final BFS tree
-  // Override node styling: all nodes accent, all tree edges highlighted
-  const doneScene = buildScene();
-  for (const node of doneScene.nodes) {
-    node.meta = {
-      ...node.meta,
-      tone: "accent",
-      emphasis: undefined,
-      opacityMul: undefined,
-    };
-  }
-  // Dim cross edges further
-  for (const edge of doneScene.edges) {
-    const inTree = treeEdges.has(edge.id);
-    edge.meta = {
-      ...edge.meta,
-      color: inTree
-        ? "rgb(var(--tn-accent) / 0.70)"
-        : "rgb(var(--tn-accent) / 0.20)",
-      opacity: inTree ? 0.7 : 0.2,
-    };
+  // --- Done ---
+  let totalVisited = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (visited[r][c]) totalVisited++;
+    }
   }
 
-  frames.push({
-    id: `bfs.done.${stepNo++}`,
+  push({
     kind: "done",
     codeToken: "bfs.done",
     narrationToken: "bfs.done",
-    scene: doneScene,
-    focus: {
-      nodes: labels.map(nodeId),
-      edges: Array.from(treeEdges),
-    },
-    meta: { level: { ...level } },
+    meta: { totalVisited },
   });
 
   return frames;

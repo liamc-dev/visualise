@@ -11,19 +11,19 @@ const def: AlgorithmDef = {
 
   description: (
     <>
-      <strong>Breadth-First Search (BFS)</strong> explores a graph layer by
-      layer, visiting all neighbors at the current depth before moving to the
-      next level. It uses a FIFO queue and finds the shortest path (in number
-      of hops) from the source to every reachable node. Time complexity is{" "}
-      <strong>O(V + E)</strong>.
+      <strong>Breadth-First Search (BFS)</strong> explores a grid cell by cell,
+      expanding outward from the source in concentric diamond wavefronts. It
+      uses a FIFO queue to process all cells at distance <em>k</em> before any
+      at distance <em>k+1</em>, guaranteeing shortest paths on unweighted
+      grids. Time complexity is <strong>O(R &times; C)</strong>.
     </>
   ),
 
   bullets: [
-    "Layer-by-layer exploration using a FIFO queue",
-    "Finds shortest paths in unweighted graphs",
-    "Discovers all nodes at distance k before distance k+1",
-    "Produces a BFS tree from the source",
+    "Wavefront expands as concentric diamonds on a grid",
+    "Uses a FIFO queue \u2014 first in, first out",
+    "Visits all cells at distance k before distance k+1",
+    "Guarantees shortest paths on unweighted grids",
   ],
 
   codeBundle: BFS_BUNDLE,

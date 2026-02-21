@@ -5,10 +5,18 @@ import { persist } from "zustand/middleware";
 type LayoutState = {
   splitRatio: number;
   arrayInputCollapsed: boolean;
+  graphInputCollapsed: boolean;
+  gridInputCollapsed: boolean;
+  dijkstraMode: "graph" | "grid";
+  dijkstraInputCollapsed: boolean;
 
   setSplitRatio: (ratio: number) => void;
   resetSplitRatio: () => void;
   toggleArrayInput: () => void;
+  toggleGraphInput: () => void;
+  toggleGridInput: () => void;
+  setDijkstraMode: (mode: "graph" | "grid") => void;
+  toggleDijkstraInput: () => void;
   hasHydrated: boolean;
   setHasHydrated: (v: boolean) => void;
 };
@@ -24,6 +32,10 @@ export const useLayoutStore = create<LayoutState>()(
     (set) => ({
       splitRatio: DEFAULT_RATIO,
       arrayInputCollapsed: false,
+      graphInputCollapsed: false,
+      gridInputCollapsed: false,
+      dijkstraMode: "graph",
+      dijkstraInputCollapsed: false,
 
       setSplitRatio: (ratio) =>
         set(() => ({
@@ -34,6 +46,17 @@ export const useLayoutStore = create<LayoutState>()(
 
       toggleArrayInput: () =>
         set((s) => ({ arrayInputCollapsed: !s.arrayInputCollapsed })),
+
+      toggleGraphInput: () =>
+        set((s) => ({ graphInputCollapsed: !s.graphInputCollapsed })),
+
+      toggleGridInput: () =>
+        set((s) => ({ gridInputCollapsed: !s.gridInputCollapsed })),
+
+      setDijkstraMode: (mode) => set({ dijkstraMode: mode }),
+
+      toggleDijkstraInput: () =>
+        set((s) => ({ dijkstraInputCollapsed: !s.dijkstraInputCollapsed })),
 
       hasHydrated: false,
       setHasHydrated: (v) => set({ hasHydrated: v }),

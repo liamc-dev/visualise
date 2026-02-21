@@ -3,16 +3,24 @@ import type { TracePointerTarget } from "../../../types/trace-types";
 
 export function resolveTargetPx(args: {
   target: TracePointerTarget;
-  lane: "above" | "on" | "below";
+  lane: "above" | "on" | "below" | "left" | "right";
   nodePx: Map<string, { x: number; y: number }>;
   cellSize: number;
   colOffset: number;
 }) {
   const { target, lane, nodePx, cellSize, colOffset } = args;
 
-  const anchor =
-    target.anchor ??
-    (lane === "below" ? "bottom" : lane === "above" ? "top" : "center");
+  const defaultAnchor = (): string => {
+    switch (lane) {
+      case "below": return "bottom";
+      case "above": return "top";
+      case "left": return "left";
+      case "right": return "right";
+      default: return "center";
+    }
+  };
+
+  const anchor = target.anchor ?? defaultAnchor();
 
   const applyAnchor = (baseX: number, baseY: number) => {
     let x = baseX;

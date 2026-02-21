@@ -1,29 +1,41 @@
 export const BFS_PSEUDO =
-` [[bfs.init]]function bfs(graph, source):[[/bfs.init]]
-   [[bfs.init]]visited = {source}[[/bfs.init]]
-   [[bfs.init]]queue = [source][[/bfs.init]]
-   [[bfs.init]]level = {source: 0}[[/bfs.init]]
+`function bfs(grid, rows, cols, sr, sc):
+   [[bfs.init.queue]]queue = new Queue()[[/bfs.init.queue]]
+   [[bfs.init.visited]]visited = array(rows, cols, false)[[/bfs.init.visited]]
+   [[bfs.init.level]]level = array(rows, cols, -1)[[/bfs.init.level]]
+   [[bfs.init.mark]]visited[sr][sc] = true[[/bfs.init.mark]]
+   [[bfs.init.setlevel]]level[sr][sc] = 0[[/bfs.init.setlevel]]
+   [[bfs.init.enqueue]]queue.enqueue((sr, sc))[[/bfs.init.enqueue]]
 
-   [[bfs.dequeue]]while queue is not empty:[[/bfs.dequeue]]
-     [[bfs.dequeue]]u = queue.dequeue()[[/bfs.dequeue]]
+   [[bfs.loop]]while queue is not empty:[[/bfs.loop]]
+     [[bfs.dequeue]](row, col) = queue.dequeue()[[/bfs.dequeue]]
 
-     [[bfs.explore]]for each neighbor v of u:[[/bfs.explore]]
-       [[bfs.explore]]if v not in visited:[[/bfs.explore]]
-         [[bfs.discover]]visited.add(v)[[/bfs.discover]]
-         [[bfs.discover]]level[v] = level[u] + 1[[/bfs.discover]]
-         [[bfs.discover]]queue.enqueue(v)[[/bfs.discover]]
+     [[bfs.check]]for (dr, dc) in [UP, RIGHT, DOWN, LEFT]:[[/bfs.check]]
+       [[bfs.check]]nrow, ncol = row + dr, col + dc[[/bfs.check]]
+
+       [[bfs.oob]]if out of bounds: continue[[/bfs.oob]]
+       [[bfs.wall]]if grid[nrow][ncol] is wall: continue[[/bfs.wall]]
+       [[bfs.visited]]if visited[nrow][ncol]: continue[[/bfs.visited]]
+
+       [[bfs.mark]]visited[nrow][ncol] = true[[/bfs.mark]]
+       [[bfs.setlevel]]level[nrow][ncol] = level[row][col] + 1[[/bfs.setlevel]]
+       [[bfs.enqueue]]queue.enqueue((nrow, ncol))[[/bfs.enqueue]]
 
    [[bfs.done]]return level[[/bfs.done]]
 `;
 
 export const BFS_PSEUDO_POINTER_HINTS = {
-  "bfs.dequeue": ["u"],
-  "bfs.explore": ["u", "v"],
-  "bfs.discover": ["u", "v"],
-  "bfs.skip": ["u", "v"],
+  "bfs.dequeue": ["cur"],
+  "bfs.check": ["cur"],
+  "bfs.oob": ["cur"],
+  "bfs.wall": ["cur", "nb"],
+  "bfs.visited": ["cur", "nb"],
+  "bfs.mark": ["cur", "nb"],
+  "bfs.setlevel": ["cur", "nb"],
+  "bfs.enqueue": ["cur", "nb"],
 } as const satisfies Record<string, string[]>;
 
 export const BFS_PSEUDO_POINTER_LABELS = {
-  u: "u",
-  v: "v",
+  cur: "(row,col)",
+  nb: "(nrow,ncol)",
 } as const satisfies Record<string, string>;
