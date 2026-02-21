@@ -1,5 +1,5 @@
 // src/components/visualizers/Visualizer.tsx
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import Grid from "../grid/GridCanvas";
 import PlayerBar from "../control/PlayerBar";
 import ControlsOverlay from "../control/ControlsOverlay";
@@ -12,7 +12,6 @@ import TraceRenderer from "../trace/TraceRenderer";
 import type { TraceScene, TraceFocus } from "../../types/trace-types";
 
 type VisualizerProps = {
-  id?: string;
   scene: TraceScene;
   focus?: TraceFocus;
   description: string;
@@ -49,7 +48,6 @@ function computeBoundsCenteringColOffset(scene: TraceScene, gridWidthCols: numbe
 }
 
 export default function Visualizer({
-  id,
   scene,
   focus,
   speedMs,
@@ -68,10 +66,6 @@ export default function Visualizer({
 
   // Panel rows — stored as rows so it scales with cellSize on viewport resize
   const [panelRows, setPanelRows] = useState(DEFAULT_PANEL_ROWS);
-
-  useEffect(() => {
-    setPanelRows(DEFAULT_PANEL_ROWS);
-  }, [id]);
 
   // We only need cellSize, gridWidth, colOffset from the layout hook
   const { gridWidth, cellSize, colOffset } = useGridLayout({

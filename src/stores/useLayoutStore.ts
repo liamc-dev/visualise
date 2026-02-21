@@ -4,9 +4,11 @@ import { persist } from "zustand/middleware";
 
 type LayoutState = {
   splitRatio: number;
+  arrayInputCollapsed: boolean;
 
   setSplitRatio: (ratio: number) => void;
   resetSplitRatio: () => void;
+  toggleArrayInput: () => void;
   hasHydrated: boolean;
   setHasHydrated: (v: boolean) => void;
 };
@@ -21,6 +23,7 @@ export const useLayoutStore = create<LayoutState>()(
   persist(
     (set) => ({
       splitRatio: DEFAULT_RATIO,
+      arrayInputCollapsed: false,
 
       setSplitRatio: (ratio) =>
         set(() => ({
@@ -28,6 +31,9 @@ export const useLayoutStore = create<LayoutState>()(
         })),
 
       resetSplitRatio: () => set(() => ({ splitRatio: DEFAULT_RATIO })),
+
+      toggleArrayInput: () =>
+        set((s) => ({ arrayInputCollapsed: !s.arrayInputCollapsed })),
 
       hasHydrated: false,
       setHasHydrated: (v) => set({ hasHydrated: v }),

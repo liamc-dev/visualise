@@ -14,8 +14,11 @@ import { useLastAlgorithm, getLastAlgorithm } from "../hooks/use-last-algorithm"
 
 import { useBrand } from "../brand/useBrand";
 import { useArrayInputStore } from "../stores/useArrayInputStore";
+import { useLayoutStore } from "../stores/useLayoutStore";
 import ArrayInputBar from "../components/control/ArrayInputBar";
 import { Panel } from "../components/ui/Panel";
+import { IconBtn } from "../components/ui/IconBtn";
+import { SlidersHorizontal } from "lucide-react";
 
 const AlgoCodePanelDesktop = React.lazy(
   () => import("../components/code/AlgoCodePanelDesktop")
@@ -34,6 +37,8 @@ export default function VisualiserPage() {
 
   const inputArray = useArrayInputStore((s) => s.array);
   const trace = useVisualizerTrace(inputArray, algoKey);
+  const arrayInputCollapsed = useLayoutStore((s) => s.arrayInputCollapsed);
+  const toggleArrayInput = useLayoutStore((s) => s.toggleArrayInput);
 
   if (!algorithm || !(algorithm in ALGORITHMS)) {
     return <Navigate to={`/visualiser/${getLastAlgorithm()}`} replace />;
@@ -42,7 +47,6 @@ export default function VisualiserPage() {
   const visualNode =
     def.trace && trace.traceEnabled && trace.scene ? (
       <VisualizerZ
-        id={algoKey}
         scene={trace.scene}
         focus={trace.focus}
         description={trace.description}
@@ -63,9 +67,21 @@ export default function VisualiserPage() {
 
   const leftNode = (
     <div className="min-w-0 flex flex-col gap-2">
-      {visualNode}
+      {arrayInputCollapsed ? (
+        <div className="flex justify-end px-1">
+          <IconBtn
+            onClick={toggleArrayInput}
+            title="Show input array"
+            className="w-7 h-7"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5 text-tn-muted" />
+          </IconBtn>
+        </div>
+      ) : (
+        <ArrayInputBar />
+      )}
 
-      <ArrayInputBar />
+      {visualNode}
 
       <AlgoInfoPanel
         logoSrc={logoSrc ?? ""}

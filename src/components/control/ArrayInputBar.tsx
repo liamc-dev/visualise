@@ -1,10 +1,10 @@
 // src/components/control/ArrayInputBar.tsx
 
 import { useCallback, useRef, useLayoutEffect } from "react";
-import { Shuffle, Dices, RotateCcw } from "lucide-react";
-import { Panel } from "../ui/Panel";
-import { Btn } from "../ui/Btn";
+import { Shuffle, Dices, RotateCcw, ChevronUp } from "lucide-react";
+import { IconBtn } from "../ui/IconBtn";
 import { useArrayInputStore } from "../../stores/useArrayInputStore";
+import { useLayoutStore } from "../../stores/useLayoutStore";
 
 export default function ArrayInputBar() {
   const rawInput = useArrayInputStore((s) => s.rawInput);
@@ -22,7 +22,9 @@ export default function ArrayInputBar() {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "0";
-    el.style.height = `${el.scrollHeight}px`;
+    // Cap at 2 visible rows — scroll beyond that
+    const maxH = parseFloat(getComputedStyle(el).lineHeight) * 2 + 8; // 8 = py-1 top+bottom
+    el.style.height = `${Math.min(el.scrollHeight, maxH)}px`;
   }, []);
 
   useLayoutEffect(autoResize, [rawInput, autoResize]);
@@ -39,95 +41,64 @@ export default function ArrayInputBar() {
   );
 
   const size = array.length;
+  const toggleArrayInput = useLayoutStore((s) => s.toggleArrayInput);
 
   return (
-    <Panel tone="glass" radius="xl" className="@container px-3 py-2.5">
-      {/* Header row */}
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-label tracking-[0.18em] uppercase text-tn-subtle/70 font-[var(--st-fw-semibold)]">
-          Input Array
-        </span>
+    <div className="flex items-center gap-1.5 px-1">
+      {/* Text input */}
+      <textarea
+        id="array-input"
+        ref={textareaRef}
+        rows={1}
+        value={rawInput}
+        onChange={(e) => { setRawInput(e.target.value); }}
+        onBlur={commitInput}
+        onKeyDown={handleKeyDown}
+        spellCheck={false}
+        className={[
+          "flex-1 min-w-0 font-mono resize-none overflow-y-auto",
+          "min-h-7 px-2 py-1 rounded-st-sm text-xs leading-snug",
+          "border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] text-tn-text bg-tn-surfaceSoft/55",
+          "focus:outline-none focus:ring-2",
+          "placeholder:text-tn-muted/60 transition",
+          error
+            ? "border-tn-danger/70 focus:ring-tn-danger/30"
+            : "border-tn-border focus:ring-tn-accent/30",
+        ].join(" ")}
+        placeholder="e.g. 5, 3, 8, 1, 12"
+      />
 
-        {/* Action buttons */}
-        <div className="flex items-center gap-1">
-          <Btn
-            variant="ghost"
-            size="sm"
-            onClick={shuffle}
-            title="Shuffle"
-          >
-            <Shuffle className="w-3.5 h-3.5" />
-            <span className="hidden @lg:inline">Shuffle</span>
-          </Btn>
-
-          <Btn
-            variant="ghost"
-            size="sm"
-            onClick={() => generateRandom(size)}
-            title="Random"
-          >
-            <Dices className="w-3.5 h-3.5" />
-            <span className="hidden @lg:inline">Random</span>
-          </Btn>
-
-          <Btn
-            variant="ghost"
-            size="sm"
-            onClick={reset}
-            title="Reset"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span className="hidden @lg:inline">Reset</span>
-          </Btn>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="text-label text-tn-subtle/70 whitespace-nowrap">Size</span>
-          <input
-            type="range"
-            min={3}
-            max={24}
-            value={size}
-            onChange={(e) => generateRandom(Number(e.target.value))}
-            className="tn-range-modern w-20 cursor-pointer"
-            style={{ ["--p" as string]: `${((size - 3) / 21) * 100}%` }}
-          />
-          <span className="text-xs font-mono text-tn-muted w-5 text-right">
-            {size}
-          </span>
-        </div>
-      </div>
-
-      {/* Controls row */}
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Text input */}
-        <textarea
-          id="array-input"
-          ref={textareaRef}
-          rows={1}
-          value={rawInput}
-          onChange={(e) => { setRawInput(e.target.value); }}
-          onBlur={commitInput}
-          onKeyDown={handleKeyDown}
-          spellCheck={false}
-          className={[
-            "flex-1 min-w-0 font-mono resize-none",
-            "min-h-7 px-2 py-1 rounded-st-sm text-xs leading-snug",
-            "w-full border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] text-tn-text bg-tn-surfaceSoft/55",
-            "focus:outline-none focus:ring-2",
-            "placeholder:text-tn-muted/60 transition",
-            error
-              ? "border-tn-danger/70 focus:ring-tn-danger/30"
-              : "border-tn-border focus:ring-tn-accent/30",
-          ].join(" ")}
-          placeholder="e.g. 5, 3, 8, 1, 12"
-        />
-      </div>
-
-      {/* Error message */}
       {error && (
-        <p className="mt-1 text-xs text-tn-danger/90 font-mono">{error}</p>
+        <span className="text-xs text-tn-danger/90 font-mono whitespace-nowrap">{error}</span>
       )}
-    </Panel>
+
+      {/* Action icons */}
+      <IconBtn onClick={shuffle} title="Shuffle" className="w-7 h-7">
+        <Shuffle className="w-3.5 h-3.5 text-tn-muted" />
+      </IconBtn>
+      <IconBtn onClick={() => generateRandom(size)} title="Random" className="w-7 h-7">
+        <Dices className="w-3.5 h-3.5 text-tn-muted" />
+      </IconBtn>
+      <IconBtn onClick={reset} title="Reset" className="w-7 h-7">
+        <RotateCcw className="w-3.5 h-3.5 text-tn-muted" />
+      </IconBtn>
+
+      {/* Size slider */}
+      <input
+        type="range"
+        min={3}
+        max={24}
+        value={size}
+        onChange={(e) => generateRandom(Number(e.target.value))}
+        className="tn-range-modern w-16 cursor-pointer"
+        style={{ ["--p" as string]: `${((size - 3) / 21) * 100}%` }}
+      />
+      <span className="text-xs font-mono text-tn-muted w-5 text-right">{size}</span>
+
+      {/* Collapse */}
+      <IconBtn onClick={toggleArrayInput} title="Collapse input" className="w-7 h-7">
+        <ChevronUp className="w-3.5 h-3.5 text-tn-muted" />
+      </IconBtn>
+    </div>
   );
 }
