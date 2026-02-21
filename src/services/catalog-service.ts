@@ -95,5 +95,17 @@ const mockData = [
                 "name": "Sorting"
             }
         ]
+    },
+    {
+        "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "key": "radix-sort",
+        "name": "Radix Sort",
+        "categories": [
+            {
+                "id": "4472b151-6b88-4508-b2e4-b6cb8ecdb7ea",
+                "key": "sorting",
+                "name": "Sorting"
+            }
+        ]
     }
 ]
