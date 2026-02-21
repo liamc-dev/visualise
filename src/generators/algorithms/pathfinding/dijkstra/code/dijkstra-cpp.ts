@@ -1,37 +1,58 @@
 export const DIJKSTRA_CPP =
-`#include <vector>
+`// grid[r][c] = cost to enter cell (0 = wall)
+#include <vector>
 #include <climits>
+using namespace std;
 
-class Dijkstra {
-public:
-  static void dijkstra(
-      std::vector<std::vector<std::pair<int,int>>>& adj, int src) {
-    int n = adj.size();
+int DIRS[4][2] = {{0,1},{1,0},{0,-1},{-1,0}};
 
-    [[dj.init.dist]]std::vector<int> dist(n, INT_MAX);[[/dj.init.dist]]
-    [[dj.init.prev]]std::vector<int> prev(n, -1);[[/dj.init.prev]]
-    [[dj.init.visited]]std::vector<bool> visited(n, false);[[/dj.init.visited]]
-    [[dj.init.setdist]]dist[src] = 0;[[/dj.init.setdist]]
+pair<int,int> minDistCell(
+    vector<vector<int>>& dist,
+    vector<vector<bool>>& visited,
+    int rows, int cols) {
+  int r = -1, c = -1, best = INT_MAX;
+  for (int ri = 0; ri < rows; ri++)
+    for (int ci = 0; ci < cols; ci++)
+      if (!visited[ri][ci] && dist[ri][ci] < best)
+        { r = ri; c = ci; best = dist[ri][ci]; }
+  return {r, c};
+}
 
-    [[dj.loop]]for (int i = 0; i < n; i++) {[[/dj.loop]]
-      [[dj.pick]]int u = minDist(dist, visited);[[/dj.pick]]
 
-      [[dj.neighbors]]for (auto& [v, w] : adj[u]) {[[/dj.neighbors]]
-        [[dj.check.visited]]if (visited[v]) {[[/dj.check.visited]]
-          [[dj.check.visited]]continue;[[/dj.check.visited]]
-        [[dj.check.visited]]}[[/dj.check.visited]]
-        [[dj.relax]]if (dist[u] + w < dist[v]) {[[/dj.relax]]
-          [[dj.update]]dist[v] = dist[u] + w;[[/dj.update]]
-          [[dj.update]]prev[v] = u;[[/dj.update]]
-        }
+void dijkstra(vector<vector<int>>& grid,
+              int sr, int sc) {
+  int rows = grid.size();
+  int cols = grid[0].size();
+
+  [[dj.init.dist]]vector<vector<int>> dist(
+    rows, vector<int>(cols, INT_MAX));[[/dj.init.dist]]
+  [[dj.init.visited]]vector<vector<bool>> visited(
+    rows, vector<bool>(cols, false));[[/dj.init.visited]]
+  [[dj.init.setdist]]dist[sr][sc] = 0;[[/dj.init.setdist]]
+
+  [[dj.loop]]for (int i = 0; i < rows * cols; i++) {[[/dj.loop]]
+    [[dj.pick]]auto [r, c] = minDistCell(dist, visited, rows, cols);[[/dj.pick]]
+    [[dj.pick]]if (dist[r][c] == INT_MAX) break;[[/dj.pick]]
+
+    [[dj.neighbors]]for (auto& d : DIRS) {[[/dj.neighbors]]
+      [[dj.neighbors]]int nr = r + d[0], nc = c + d[1];[[/dj.neighbors]]
+      if (nr < 0 || nr >= rows ||
+          nc < 0 || nc >= cols) continue;
+      if (grid[nr][nc] == 0) continue;
+
+      [[dj.check.visited]]if (visited[nr][nc]) continue;[[/dj.check.visited]]
+
+      [[dj.relax]]int tentative = dist[r][c] + grid[nr][nc];[[/dj.relax]]
+      [[dj.relax]]if (tentative < dist[nr][nc]) {[[/dj.relax]]
+        [[dj.update]]dist[nr][nc] = tentative;[[/dj.update]]
       }
-
-      [[dj.visit]]visited[u] = true;[[/dj.visit]]
     }
 
-    [[dj.done]]// dist[] and prev[] are populated[[/dj.done]]
+    [[dj.visit]]visited[r][c] = true;[[/dj.visit]]
   }
-};`;
+
+  [[dj.done]]// dist[][] = shortest distances[[/dj.done]]
+}`;
 
 export const DIJKSTRA_CPP_POINTER_HINTS = {
   "dj.loop": ["u"],
@@ -45,6 +66,6 @@ export const DIJKSTRA_CPP_POINTER_HINTS = {
 } as const satisfies Record<string, string[]>;
 
 export const DIJKSTRA_CPP_POINTER_LABELS = {
-  u: "u",
-  v: "v",
+  u: "(r,c)",
+  v: "(nr,nc)",
 } as const satisfies Record<string, string>;

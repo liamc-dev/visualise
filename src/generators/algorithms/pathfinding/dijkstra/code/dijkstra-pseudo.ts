@@ -1,23 +1,37 @@
 export const DIJKSTRA_PSEUDO =
-`function dijkstra(graph, source):
-   [[dj.init.dist]]dist = {v: \u221e for v in graph}[[/dj.init.dist]]
-   [[dj.init.prev]]prev = {v: null for v in graph}[[/dj.init.prev]]
-   [[dj.init.visited]]visited = {}[[/dj.init.visited]]
-   [[dj.init.setdist]]dist[source] = 0[[/dj.init.setdist]]
+`// grid[r][c] = cost to enter cell (0 = wall)
 
-   [[dj.loop]]while visited.size < n:[[/dj.loop]]
-     [[dj.pick]]u = vertex with min dist not in visited[[/dj.pick]]
+function minDistCell(dist, visited, rows, cols):
+   r, c, best = -1, -1, \u221e
+   for i in 0..rows:
+     for j in 0..cols:
+       if not visited[i][j] and dist[i][j] < best:
+         r, c, best = i, j, dist[i][j]
+   return (r, c)
 
-     [[dj.neighbors]]for each neighbor v of u with weight w:[[/dj.neighbors]]
-       [[dj.check.visited]]if v in visited:[[/dj.check.visited]]
-         [[dj.check.visited]]continue[[/dj.check.visited]]
-       [[dj.relax]]if dist[u] + w < dist[v]:[[/dj.relax]]
-         [[dj.update]]dist[v] = dist[u] + w[[/dj.update]]
-         [[dj.update]]prev[v] = u[[/dj.update]]
 
-     [[dj.visit]]visited.add(u)[[/dj.visit]]
+function dijkstra(grid, rows, cols, sr, sc):
+   [[dj.init.dist]]dist = array(rows, cols, \u221e)[[/dj.init.dist]]
+   [[dj.init.visited]]visited = array(rows, cols, false)[[/dj.init.visited]]
+   [[dj.init.setdist]]dist[sr][sc] = 0[[/dj.init.setdist]]
 
-   [[dj.done]]return dist, prev[[/dj.done]]
+   [[dj.loop]]for i in 0..rows*cols:[[/dj.loop]]
+     [[dj.pick]](r, c) = minDistCell(dist, visited, rows, cols)[[/dj.pick]]
+     [[dj.pick]]if dist[r][c] == \u221e: break[[/dj.pick]]
+
+     [[dj.neighbors]]for (dr, dc) in [UP, RIGHT, DOWN, LEFT]:[[/dj.neighbors]]
+       [[dj.neighbors]]nr, nc = r + dr, c + dc[[/dj.neighbors]]
+       skip if out of bounds or wall
+
+       [[dj.check.visited]]if visited[nr][nc]: continue[[/dj.check.visited]]
+
+       [[dj.relax]]tentative = dist[r][c] + grid[nr][nc][[/dj.relax]]
+       [[dj.relax]]if tentative < dist[nr][nc]:[[/dj.relax]]
+         [[dj.update]]dist[nr][nc] = tentative[[/dj.update]]
+
+     [[dj.visit]]visited[r][c] = true[[/dj.visit]]
+
+   [[dj.done]]return dist[[/dj.done]]
 `;
 
 export const DIJKSTRA_PSEUDO_POINTER_HINTS = {
@@ -32,6 +46,6 @@ export const DIJKSTRA_PSEUDO_POINTER_HINTS = {
 } as const satisfies Record<string, string[]>;
 
 export const DIJKSTRA_PSEUDO_POINTER_LABELS = {
-  u: "u",
-  v: "v",
+  u: "(r,c)",
+  v: "(nr,nc)",
 } as const satisfies Record<string, string>;

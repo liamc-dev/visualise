@@ -1,35 +1,54 @@
 export const DIJKSTRA_JAVA =
-`public class Dijkstra {
-  public static void dijkstra(
-      List<List<int[]>> adj, int src) {
-    int n = adj.size();
+`// grid[r][c] = cost to enter cell (0 = wall)
+public class Dijkstra {
+  static int[][] DIRS = {{0,1},{1,0},{0,-1},{-1,0}};
 
-    [[dj.init.dist]]int[] dist = new int[n];[[/dj.init.dist]]
-    [[dj.init.dist]]Arrays.fill(dist, Integer.MAX_VALUE);[[/dj.init.dist]]
-    [[dj.init.prev]]int[] prev = new int[n];[[/dj.init.prev]]
-    [[dj.init.prev]]Arrays.fill(prev, -1);[[/dj.init.prev]]
-    [[dj.init.visited]]boolean[] visited = new boolean[n];[[/dj.init.visited]]
-    [[dj.init.setdist]]dist[src] = 0;[[/dj.init.setdist]]
+  static int[] minDistCell(
+      int[][] dist, boolean[][] visited,
+      int rows, int cols) {
+    int r = -1, c = -1, best = Integer.MAX_VALUE;
+    for (int ri = 0; ri < rows; ri++)
+      for (int ci = 0; ci < cols; ci++)
+        if (!visited[ri][ci] && dist[ri][ci] < best)
+          { r = ri; c = ci; best = dist[ri][ci]; }
+    return new int[]{r, c};
+  }
 
-    [[dj.loop]]for (int i = 0; i < n; i++) {[[/dj.loop]]
-      [[dj.pick]]int u = minDist(dist, visited);[[/dj.pick]]
 
-      [[dj.neighbors]]for (int[] edge : adj.get(u)) {[[/dj.neighbors]]
-        [[dj.neighbors]]int v = edge[0];[[/dj.neighbors]]
-        [[dj.neighbors]]int w = edge[1];[[/dj.neighbors]]
-        [[dj.check.visited]]if (visited[v]) {[[/dj.check.visited]]
-          [[dj.check.visited]]continue;[[/dj.check.visited]]
-        [[dj.check.visited]]}[[/dj.check.visited]]
-        [[dj.relax]]if (dist[u] + w < dist[v]) {[[/dj.relax]]
-          [[dj.update]]dist[v] = dist[u] + w;[[/dj.update]]
-          [[dj.update]]prev[v] = u;[[/dj.update]]
+  public static int[][] dijkstra(
+      int[][] grid, int sr, int sc) {
+    int rows = grid.length;
+    int cols = grid[0].length;
+
+    [[dj.init.dist]]int[][] dist = new int[rows][cols];[[/dj.init.dist]]
+    [[dj.init.dist]]for (int[] row : dist)[[/dj.init.dist]]
+      [[dj.init.dist]]Arrays.fill(row, Integer.MAX_VALUE);[[/dj.init.dist]]
+    [[dj.init.visited]]boolean[][] visited = new boolean[rows][cols];[[/dj.init.visited]]
+    [[dj.init.setdist]]dist[sr][sc] = 0;[[/dj.init.setdist]]
+
+    [[dj.loop]]for (int i = 0; i < rows * cols; i++) {[[/dj.loop]]
+      [[dj.pick]]int[] rc = minDistCell(dist, visited, rows, cols);[[/dj.pick]]
+      [[dj.pick]]int r = rc[0], c = rc[1];[[/dj.pick]]
+      [[dj.pick]]if (dist[r][c] == Integer.MAX_VALUE) break;[[/dj.pick]]
+
+      [[dj.neighbors]]for (int[] d : DIRS) {[[/dj.neighbors]]
+        [[dj.neighbors]]int nr = r + d[0], nc = c + d[1];[[/dj.neighbors]]
+        if (nr < 0 || nr >= rows ||
+            nc < 0 || nc >= cols) continue;
+        if (grid[nr][nc] == 0) continue;
+
+        [[dj.check.visited]]if (visited[nr][nc]) continue;[[/dj.check.visited]]
+
+        [[dj.relax]]int tentative = dist[r][c] + grid[nr][nc];[[/dj.relax]]
+        [[dj.relax]]if (tentative < dist[nr][nc]) {[[/dj.relax]]
+          [[dj.update]]dist[nr][nc] = tentative;[[/dj.update]]
         }
       }
 
-      [[dj.visit]]visited[u] = true;[[/dj.visit]]
+      [[dj.visit]]visited[r][c] = true;[[/dj.visit]]
     }
 
-    [[dj.done]]// dist[] and prev[] are populated[[/dj.done]]
+    [[dj.done]]return dist;[[/dj.done]]
   }
 }`;
 
@@ -45,6 +64,6 @@ export const DIJKSTRA_JAVA_POINTER_HINTS = {
 } as const satisfies Record<string, string[]>;
 
 export const DIJKSTRA_JAVA_POINTER_LABELS = {
-  u: "u",
-  v: "v",
+  u: "(r,c)",
+  v: "(nr,nc)",
 } as const satisfies Record<string, string>;

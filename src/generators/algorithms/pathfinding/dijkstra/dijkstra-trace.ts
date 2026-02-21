@@ -436,7 +436,7 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
         focusNodes: [nodeId(u), nodeId(v), `dj:d:${v}`],
         focusEdges: [eid],
         pointers: [uPointer(u), vPointer(v)],
-        meta: { u, v, w, tentative, currentDist: dist[v] },
+        meta: { u, v, w, uDist: dist[u], tentative, currentDist: dist[v] },
       });
 
       if (tentative < dist[v]) {

@@ -17,6 +17,16 @@ import { DIRECTIONS } from "../../../../lib/grid-utils";
 const GRID_X0 = 2;
 const GRID_Y0 = 1;
 
+/* Secondary display layout (below grid) */
+const CUR_LABEL_X = 0.5;
+const CUR_NODE_X = 1.5;
+const COST_LABEL_X = 3;
+const COST_NODE_X = 4;
+const NB_LABEL_X = 5.5;
+const NB_NODE_X = 6.5;
+const WT_LABEL_X = 8;
+const WT_NODE_X = 9;
+
 /* Helpers */
 
 function cellX(c: number): number { return GRID_X0 + c; }
@@ -30,12 +40,13 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
   const encoded = input.length >= 4 ? input : DEFAULT_DIJKSTRA_GRID;
   const { rows, cols, startRow, startCol, weights } = decodeWeightedGrid(encoded);
 
-  // Dynamic bounds
+  // Dynamic layout values
+  const INFO_Y = GRID_Y0 + rows + 1;
   const BOUNDS = {
     minX: 0,
     minY: 0,
     maxX: GRID_X0 + cols + 2,
-    maxY: GRID_Y0 + rows + 2,
+    maxY: INFO_Y + 2,
   };
 
   // Dijkstra state
@@ -47,6 +58,11 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
   );
 
   dist[startRow][startCol] = 0;
+
+  let curCell: [number, number] | null = null;
+  let activeNb: { r: number; c: number; w: number } | null = null;
+  let justUpdated: [number, number] | null = null;
+  let showResult = false;
 
   const frames: TraceFrame[] = [];
   let stepNo = 0;
@@ -65,8 +81,11 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
         const d = dist[r][c];
         const isDiscovered = d < Infinity;
         const isStart = r === startRow && c === startCol;
+        const isCur = curCell !== null && curCell[0] === r && curCell[1] === c;
+        const isActiveNb = activeNb !== null && activeNb.r === r && activeNb.c === c;
+        const isJustUpdated = justUpdated !== null && justUpdated[0] === r && justUpdated[1] === c;
 
-        let tone: "muted" | "info" | "neutral" | "accent";
+        let tone: "muted" | "info" | "neutral" | "accent" | "warning";
         let emphasis: "faint" | "soft" | undefined;
         let opacityMul: number | undefined;
         let value: string | number | undefined;
@@ -76,6 +95,28 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
           emphasis = "faint";
           opacityMul = 0.15;
           value = undefined;
+        } else if (showResult && isStart) {
+          tone = "warning";
+          emphasis = undefined;
+          value = d;
+        } else if (showResult && isVisited) {
+          tone = "accent";
+          emphasis = undefined;
+          value = d;
+        } else if (isCur) {
+          tone = "warning";
+          emphasis = undefined;
+          value = d;
+        } else if (isJustUpdated) {
+          // Flash: cell was just updated with a cheaper cost
+          tone = "accent";
+          emphasis = undefined;
+          value = d;
+        } else if (isActiveNb) {
+          // Neighbor being examined — show current dist (∞ if unreached)
+          tone = "accent";
+          emphasis = undefined;
+          value = isDiscovered ? d : "\u221e";
         } else if (isVisited) {
           tone = "neutral";
           emphasis = "soft";
@@ -106,18 +147,93 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
             ...(opacityMul !== undefined ? { opacityMul } : undefined),
           },
         });
+      }
+    }
 
-        // Weight caption for non-wall cells
-        if (!isWall) {
-          overlays.push({
-            kind: "caption" as const,
-            id: `dj:w:${r}:${c}`,
-            x: cellX(c),
-            y: cellY(r) + 0.35,
-            text: String(w),
+    // Secondary display — current cell info + neighbor info
+    if (curCell) {
+      const [cr, cc] = curCell;
+      const curDist = dist[cr][cc];
+
+      // "cur" label + cell
+      overlays.push({
+        kind: "caption" as const,
+        id: "dj:cur-label",
+        x: CUR_LABEL_X,
+        y: INFO_Y,
+        text: "cur",
+        emphasis: "soft" as const,
+      });
+      nodes.push({
+        id: "dj:cur",
+        kind: "cell",
+        pos: { x: CUR_NODE_X, y: INFO_Y },
+        meta: {
+          value: `${cr},${cc}`,
+          tone: "warning" as const,
+        },
+      });
+
+      // "cost" label + cell
+      overlays.push({
+        kind: "caption" as const,
+        id: "dj:cost-label",
+        x: COST_LABEL_X,
+        y: INFO_Y,
+        text: "cost",
+        emphasis: "soft" as const,
+      });
+      nodes.push({
+        id: "dj:cost",
+        kind: "cell",
+        pos: { x: COST_NODE_X, y: INFO_Y },
+        meta: {
+          value: curDist === Infinity ? "\u221e" : curDist,
+          tone: "warning" as const,
+          emphasis: "soft" as const,
+        },
+      });
+
+      // Neighbor section — only shown during neighbor exploration
+      if (activeNb) {
+        // "nb" label + cell
+        overlays.push({
+          kind: "caption" as const,
+          id: "dj:nb-label",
+          x: NB_LABEL_X,
+          y: INFO_Y,
+          text: "nb",
+          emphasis: "soft" as const,
+        });
+        nodes.push({
+          id: "dj:nb",
+          kind: "cell",
+          pos: { x: NB_NODE_X, y: INFO_Y },
+          meta: {
+            value: `${activeNb.r},${activeNb.c}`,
+            tone: "accent" as const,
+          },
+        });
+
+        // "wt" label + cell (weight = cost to enter neighbor)
+        overlays.push({
+          kind: "caption" as const,
+          id: "dj:wt-label",
+          x: WT_LABEL_X,
+          y: INFO_Y,
+          text: "wt",
+          emphasis: "soft" as const,
+        });
+        nodes.push({
+          id: "dj:wt",
+          kind: "cell",
+          pos: { x: WT_NODE_X, y: INFO_Y },
+          meta: {
+            value: activeNb.w,
+            tone: "accent" as const,
             emphasis: "soft" as const,
-          });
-        }
+          },
+        });
       }
     }
 
@@ -180,17 +296,7 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
     });
   }
 
-  /* Pointer helpers */
-  function uPointer(r: number, c: number): TracePointer {
-    return {
-      id: "u",
-      label: "u",
-      target: { kind: "node", nodeId: cellId(r, c) },
-      lane: "above",
-      color: "var(--color-tn-warning)",
-    };
-  }
-
+  /* Pointer helper — neighbor direction only (no u pointer) */
   function vPointer(nr: number, nc: number, dir: string): TracePointer {
     const lane =
       dir === "UP" ? "above" :
@@ -208,7 +314,7 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
 
   /* ========== Algorithm ========== */
 
-  // --- Init phase (4 frames) ---
+  // --- Init phase (3 frames — no prev in grid mode) ---
 
   // dj.init.dist
   push({
@@ -216,13 +322,6 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
     codeToken: "dj.init.dist",
     narrationToken: "dj.init.dist",
     meta: { source: `(${startRow},${startCol})` },
-  });
-
-  // dj.init.prev
-  push({
-    kind: "init.prev",
-    codeToken: "dj.init.prev",
-    narrationToken: "dj.init.prev",
   });
 
   // dj.init.visited
@@ -262,13 +361,16 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
     if (uR < 0) break; // no more reachable cells
 
     const unvisitedCount = totalCells - visitedCount;
+    curCell = [uR, uC];
+    activeNb = null;
+    justUpdated = null;
 
     // dj.loop
     push({
       kind: "loop",
       codeToken: "dj.loop",
       narrationToken: "dj.loop",
-      pointers: [uPointer(uR, uC)],
+      focusNodes: [cellId(uR, uC)],
       meta: { unvisitedCount },
     });
 
@@ -277,8 +379,7 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
       kind: "pick",
       codeToken: "dj.pick",
       narrationToken: "dj.pick",
-      focusNodes: [cellId(uR, uC)],
-      pointers: [uPointer(uR, uC)],
+      focusNodes: [cellId(uR, uC), "dj:cur", "dj:cost"],
       meta: { u: `(${uR},${uC})`, dist: dist[uR][uC] },
     });
 
@@ -293,13 +394,17 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
 
       const w = weights[nr][nc];
 
+      // Set active neighbor — highlights cell on grid + shows nb/wt in secondary display
+      activeNb = { r: nr, c: nc, w };
+      justUpdated = null;
+
       // dj.neighbors
       push({
         kind: "neighbors",
         codeToken: "dj.neighbors",
         narrationToken: "dj.neighbors",
-        focusNodes: [cellId(uR, uC), cellId(nr, nc)],
-        pointers: [uPointer(uR, uC), vPointer(nr, nc, dirLabel)],
+        focusNodes: [cellId(uR, uC), cellId(nr, nc), "dj:nb", "dj:wt"],
+        pointers: [vPointer(nr, nc, dirLabel)],
         meta: { u: `(${uR},${uC})`, v: `(${nr},${nc})`, w },
       });
 
@@ -310,10 +415,13 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
         codeToken: "dj.check.visited",
         narrationToken: "dj.check.visited",
         focusNodes: [cellId(uR, uC), cellId(nr, nc)],
-        pointers: [uPointer(uR, uC), vPointer(nr, nc, dirLabel)],
+        pointers: [vPointer(nr, nc, dirLabel)],
         meta: { u: `(${uR},${uC})`, v: `(${nr},${nc})`, w, result: isVisited ? "fail" : "pass" },
       });
-      if (isVisited) continue;
+      if (isVisited) {
+        activeNb = null;
+        continue;
+      }
 
       const tentative = dist[uR][uC] + w;
 
@@ -323,13 +431,17 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
         codeToken: "dj.relax",
         narrationToken: "dj.relax",
         focusNodes: [cellId(uR, uC), cellId(nr, nc)],
-        pointers: [uPointer(uR, uC), vPointer(nr, nc, dirLabel)],
-        meta: { u: `(${uR},${uC})`, v: `(${nr},${nc})`, w, tentative, currentDist: dist[nr][nc] === Infinity ? "\u221e" : dist[nr][nc] },
+        pointers: [vPointer(nr, nc, dirLabel)],
+        meta: { u: `(${uR},${uC})`, v: `(${nr},${nc})`, w, uDist: dist[uR][uC], tentative, currentDist: dist[nr][nc] === Infinity ? "\u221e" : dist[nr][nc] },
       });
 
       if (tentative < dist[nr][nc]) {
         const oldDist = dist[nr][nc];
         dist[nr][nc] = tentative;
+
+        // Show the updated cell with accent highlight
+        justUpdated = [nr, nc];
+        activeNb = null;
 
         // dj.update
         push({
@@ -337,7 +449,7 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
           codeToken: "dj.update",
           narrationToken: "dj.update",
           focusNodes: [cellId(nr, nc)],
-          pointers: [uPointer(uR, uC), vPointer(nr, nc, dirLabel)],
+          pointers: [vPointer(nr, nc, dirLabel)],
           meta: {
             u: `(${uR},${uC})`,
             v: `(${nr},${nc})`,
@@ -346,6 +458,8 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
             newDist: tentative,
           },
         });
+
+        justUpdated = null;
       } else {
         // dj.skip
         push({
@@ -353,37 +467,66 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
           codeToken: "dj.relax",
           narrationToken: "dj.skip",
           focusNodes: [cellId(uR, uC), cellId(nr, nc)],
-          pointers: [uPointer(uR, uC), vPointer(nr, nc, dirLabel)],
+          pointers: [vPointer(nr, nc, dirLabel)],
           meta: { u: `(${uR},${uC})`, v: `(${nr},${nc})`, currentDist: dist[nr][nc], tentative },
         });
       }
+
+      activeNb = null;
     }
 
     // dj.visit — mark u as visited
+    activeNb = null;
+    justUpdated = null;
     visited[uR][uC] = true;
     visitedCount++;
     push({
       kind: "visit",
       codeToken: "dj.visit",
       narrationToken: "dj.visit",
-      focusNodes: [cellId(uR, uC)],
-      pointers: [uPointer(uR, uC)],
+      focusNodes: [cellId(uR, uC), "dj:cur"],
       meta: { u: `(${uR},${uC})`, dist: dist[uR][uC] },
     });
+
+    curCell = null;
   }
 
-  // --- Done ---
+  // --- Done — conclusive result frame ---
+  curCell = null;
+  activeNb = null;
+  justUpdated = null;
   let totalVisited = 0;
+  const reachableIds: string[] = [];
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      if (visited[r][c]) totalVisited++;
+      if (visited[r][c]) {
+        totalVisited++;
+        reachableIds.push(cellId(r, c));
+      }
     }
   }
 
-  push({
+  showResult = true;
+  const doneScene = buildScene();
+  // Add summary caption above the grid
+  doneScene.overlays.push({
+    kind: "caption" as const,
+    id: "dj:result-label",
+    x: GRID_X0 + cols / 2 - 0.5,
+    y: GRID_Y0 - 0.6,
+    text: `Shortest distances from (${startRow},${startCol})`,
+    emphasis: "soft" as const,
+  });
+
+  frames.push({
+    id: `dj.done.${stepNo++}`,
     kind: "done",
     codeToken: "dj.done",
     narrationToken: "dj.done",
+    scene: doneScene,
+    focus: {
+      nodes: reachableIds,
+    },
     meta: { totalVisited },
   });
 
