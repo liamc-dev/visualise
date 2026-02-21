@@ -2,6 +2,8 @@
 import React from "react";
 import Grid from "../grid/GridCanvas";
 import PlayerBar from "../control/PlayerBar";
+import ControlsOverlay from "../control/ControlsOverlay";
+import { useControlsVisibility } from "../../hooks/use-controls-visibility";
 import { useMeasure } from "../../hooks/use-measure";
 import { useGridLayout } from "../../hooks/use-grid-layout";
 import { useSettingsStore } from "../../stores/useSettingsStore";
@@ -61,6 +63,7 @@ export default function Visualizer({
   const effectsEnabled = useSettingsStore((s) => s.effectsEnabled);
   const { ref, size } = useMeasure<HTMLDivElement>(8);
   const measured = size.width > 0;
+  const { visible, containerHandlers } = useControlsVisibility();
 
   const layout = useGridLayout({
     viewport: { width: measured ? size.width : 1 },
@@ -69,7 +72,7 @@ export default function Visualizer({
     rootLength: domainSize,
     contentWidthCols,
   });
-  
+
   const { gridHeight, gridWidth, cellSize, height, colOffset } = layout;
 
   const boundsOffset = computeBoundsCenteringColOffset(scene, gridWidth);
@@ -82,12 +85,15 @@ export default function Visualizer({
           className="
             relative block w-full max-w-full rounded-st-xl
             border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-tn-border bg-tn-grid backdrop-blur-[var(--st-blur-sm)]
-            p-3 sm:p-4 shadow-st-card
+            shadow-st-card
           "
+          onMouseEnter={containerHandlers.onMouseEnter}
+          onMouseMove={containerHandlers.onMouseMove}
+          onMouseLeave={containerHandlers.onMouseLeave}
         >
-          <div className="w-full max-w-full overflow-hidden">
+          <div className="p-3 sm:p-4 w-full max-w-full overflow-hidden">
             <div className="w-full">
-              <div className={`relative pb-20${effectsEnabled ? "" : " tn-no-anim"}`} style={{ height }}>
+              <div className={`relative${effectsEnabled ? "" : " tn-no-anim"}`} style={{ height }}>
                 <Grid
                   height={gridHeight}
                   width={gridWidth}
@@ -105,8 +111,10 @@ export default function Visualizer({
             </div>
           </div>
 
-          <PlayerBar description={description} />
+          <ControlsOverlay visible={visible} />
         </section>
+
+        <PlayerBar description={description} />
       </div>
     </div>
   );

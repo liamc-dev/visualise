@@ -92,7 +92,7 @@ function Transport() {
 
   const groupClass = `
     flex items-stretch gap-1
-    w-full h-[40px]
+    w-full h-[40px] md:h-[32px]
   `;
 
   const btnBase = `
