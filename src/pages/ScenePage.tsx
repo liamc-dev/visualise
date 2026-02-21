@@ -36,6 +36,7 @@ export default function ScenePage() {
                     speedMs={trace.speedMs}
                     domainSize={1}
                     contentWidthCols={trace.contentWidthCols}
+                    contentHeightRows={trace.contentHeightRows}
                 />
             ) : null}
 

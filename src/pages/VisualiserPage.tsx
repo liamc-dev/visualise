@@ -48,6 +48,7 @@ export default function VisualiserPage() {
         description={trace.description}
         speedMs={trace.speedMs}
         domainSize={trace.rootLength}
+        contentHeightRows={trace.contentHeightRows}
       />
     ) : (
       <Panel tone="solid" radius="xl" className="w-full min-h-[360px] flex items-center justify-center text-tn-subtle">

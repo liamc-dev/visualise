@@ -4,11 +4,11 @@ import { usePlayerStore } from "../stores/usePlayerStore";
 
 const HIDE_DELAY = 2500;
 
-/** Controls auto-hide when playing OR paused; always visible when stopped. */
+/** YouTube-style: controls hidden by default, visible on hover, auto-hide during playback. */
 export function useControlsVisibility() {
   const isPlaying = usePlayerStore((s) => s.isPlaying);
   const paused = usePlayerStore((s) => s.paused);
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
   const hoveringRef = useRef(false);
 
@@ -17,18 +17,9 @@ export function useControlsVisibility() {
     timerRef.current = setTimeout(() => setVisible(false), HIDE_DELAY);
   }, []);
 
-  const isActive = useCallback(() => {
-    const s = usePlayerStore.getState();
-    return s.isPlaying || s.paused;
-  }, []);
-
+  // On playback state change, flash controls briefly then auto-hide
   useEffect(() => {
-    if (!isPlaying && !paused) {
-      // Stopped — always visible
-      setVisible(true);
-      clearTimeout(timerRef.current);
-    } else {
-      // Playing or paused — show briefly then auto-hide
+    if (isPlaying || paused) {
       setVisible(true);
       startHideTimer();
     }
@@ -49,11 +40,9 @@ export function useControlsVisibility() {
 
   const onMouseLeave = useCallback(() => {
     hoveringRef.current = false;
-    if (isActive()) {
-      clearTimeout(timerRef.current);
-      setVisible(false);
-    }
-  }, [isActive]);
+    clearTimeout(timerRef.current);
+    setVisible(false);
+  }, []);
 
   return {
     visible,

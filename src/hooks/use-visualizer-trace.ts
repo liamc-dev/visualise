@@ -5,6 +5,7 @@ import { useCodeLangStore } from "../stores/useCodeLangStore";
 import { useNarrationStore } from "../stores/useNarrationStore";
 import { ALGORITHMS, type Algorithm } from "../generators/algorithms/registry";
 import { usePlaybackLoop } from "./use-playback-loop";
+import { computeContentHeightRows } from "./trace-height";
 import type { TraceFrame } from "../types/trace-types";
 import type { CodeRef } from "../types/algo-types";
 import type { NarrationCtx } from "../types/algo-types";
@@ -93,6 +94,11 @@ export function useVisualizerTrace(
     return { frame, description, codeRef };
   }, [traceEnabled, frames, currentStep, def, lang, mode]);
 
+  const contentHeightRows = useMemo(
+    () => computeContentHeightRows(frames),
+    [frames],
+  );
+
   usePlaybackLoop({ enabled: traceEnabled, frameCount: frames.length });
 
   return {
@@ -104,6 +110,7 @@ export function useVisualizerTrace(
     description,
     codeRef,
     rootLength: initialArray.length,
+    contentHeightRows,
     speedMs,
   };
 }

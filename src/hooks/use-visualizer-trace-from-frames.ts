@@ -2,6 +2,7 @@
 import { useEffect, useMemo } from "react";
 import { usePlayerStore } from "../stores/usePlayerStore";
 import { usePlaybackLoop } from "./use-playback-loop";
+import { computeContentHeightRows } from "./trace-height";
 import type { TraceFrame } from "../types/trace-types";
 
 /**
@@ -74,6 +75,11 @@ export function useVisualizerTraceFromFrames(frames: TraceFrame[]) {
     return Math.max(1, Math.ceil(maxX - minX + 1));
   }, [frames]);
 
+  const contentHeightRows = useMemo(
+    () => computeContentHeightRows(frames),
+    [frames],
+  );
+
   usePlaybackLoop({ enabled: traceEnabled, frameCount: frames.length });
 
   return {
@@ -86,6 +92,7 @@ export function useVisualizerTraceFromFrames(frames: TraceFrame[]) {
     codeRef,
     rootLength: contentWidthCols,
     contentWidthCols,
+    contentHeightRows,
     speedMs,
   };
 }
