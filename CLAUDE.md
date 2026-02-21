@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Algorithm visualization web app built with React 19, Vite 7, TypeScript, and Tailwind CSS 4. It renders step-by-step animated traces of algorithms (sorting: bubble sort, insertion sort, merge sort, quick sort, heap sort, radix sort; pathfinding: Dijkstra's algorithm, BFS) with synchronized code highlighting, narration, and playback controls. Deployed to GitHub Pages at `/visualise/`.
+Algorithm visualization web app built with React 19, Vite 7, TypeScript, and Tailwind CSS 4. It renders step-by-step animated traces of algorithms (sorting: bubble sort, insertion sort, merge sort, quick sort, heap sort, radix sort; pathfinding: Dijkstra's algorithm with graph/grid modes, BFS with grid mode) with synchronized code highlighting, narration, and playback controls. Deployed to GitHub Pages at `/visualise/`.
 
 ## Commands
 
@@ -39,6 +39,30 @@ Algorithms are auto-registered via `import.meta.glob("./**/*.def.{ts,tsx}")` in 
 - `code/` directory with language-specific code strings and a `.bundle.ts` aggregator
 
 The `.def.tsx` filename suffix is what triggers auto-registration — no manual imports needed.
+
+### Input Modes
+
+Algorithms support different input modes based on category:
+
+- **Sorting algorithms** use `ArrayInputBar` with a number array textarea
+- **BFS** uses `GridInputBar` with an unweighted grid (cells are 0=wall or 1=open)
+- **Dijkstra** uses `DijkstraInputBar` with a Graph/Grid mode toggle:
+  - **Graph mode**: 6-node weighted graph (input length 16, via `useGraphInputStore`)
+  - **Grid mode**: weighted grid with cells 0–9 (via `useDijkstraGridStore` + `weighted-grid-utils.ts`)
+  - Input format detection: length 16 → graph mode, otherwise → grid mode
+- Other pathfinding algorithms use `GraphInputBar` for weighted graphs
+
+### UI Components (`src/components/ui/`)
+
+Reusable themed primitives — always use these instead of raw HTML elements:
+
+- **Panel** — container with themed border, radius, background, blur
+- **Btn** — action button with variants (primary/soft/ghost/danger) and `pressed` state for toggles
+- **IconBtn** — borderless icon button for toolbars
+- **TextInput** — themed `<input>` with error state and optional clear button
+- **TextArea** — themed `<textarea>` with error state (follows TextInput pattern)
+- **PortalSelect** / **IconSelect** — dropdown menus rendered via portal
+- **SegmentedControl** — toggle group for mutually exclusive options
 
 ### Code Highlighting with Marker Spans
 
