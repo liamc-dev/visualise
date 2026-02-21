@@ -1,30 +1,75 @@
 // src/pages/AboutPage.tsx
+import { Panel } from "../components/ui/Panel";
+
+const S = ({ children }: { children: React.ReactNode }) => (
+  <span className="text-tn-text font-[var(--st-fw-medium)]">{children}</span>
+);
+
 const AboutPage = () => {
   return (
-    <div className="rounded-st-md bg-tn-grid backdrop-blur-[var(--st-blur-sm)] p-4 md:p-5">
-      <h2 className="text-title font-[var(--st-fw-semibold)] mb-4 text-tn-text">About</h2>
-
-      <div className="space-y-3 text-body text-tn-muted">
-        <p>
-          <span className="text-tn-text font-[var(--st-fw-medium)]">What it does</span> —
-          Interactive step-by-step visualisation of sorting algorithms with 
-          synchronised code highlighting, tree/array views, and plain-language 
-          explanations.
+    <Panel tone="glass" radius="2xl" className="max-w-2xl mx-auto p-5 md:p-7 space-y-6">
+      <div>
+        <h2 className="text-title font-[var(--st-fw-semibold)] text-tn-text">
+          Algorithm Visualiser
+        </h2>
+        <p className="mt-1 text-body text-tn-muted">
+          Watch algorithms think, one step at a time.
         </p>
-
-        <p>
-          <span className="text-tn-text font-[var(--st-fw-medium)]">How to use it</span> — 
-          Step through manually or adjust playback speed. Switch between Java, 
-          C++, Python, and TypeScript implementations.
-        </p>
-
-        <p>
-          <span className="text-tn-text font-[var(--st-fw-medium)]">What's next</span> — 
-          More algorithms and memorization features coming soon.
-        </p>
-
       </div>
-    </div>
+
+      <div className="space-y-3 text-body text-tn-muted leading-relaxed">
+        <p>
+          Pick an algorithm, hit play, and see exactly what happens at every
+          step — values moving, pointers shifting, trees rebalancing — with
+          matching <S>code highlighting</S> and <S>plain-language narration</S> running
+          in sync.
+        </p>
+
+        <p>
+          Step through at your own pace or let it play automatically.
+          Adjust speed, scrub to any frame, or turn on <S>predict mode</S> to
+          test yourself before each step is revealed.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-tn-muted">
+        <div>
+          <h3 className="text-label tracking-[0.18em] uppercase text-tn-subtle/70 font-[var(--st-fw-semibold)] mb-1.5">
+            Algorithms
+          </h3>
+          <ul className="space-y-0.5">
+            <li>Bubble Sort</li>
+            <li>Insertion Sort</li>
+            <li>Merge Sort</li>
+            <li>Quick Sort</li>
+            <li>Heap Sort</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-label tracking-[0.18em] uppercase text-tn-subtle/70 font-[var(--st-fw-semibold)] mb-1.5">
+            Languages
+          </h3>
+          <ul className="space-y-0.5">
+            <li>Python, TypeScript, JavaScript</li>
+            <li>Java, C++, Pseudocode</li>
+          </ul>
+
+          <h3 className="text-label tracking-[0.18em] uppercase text-tn-subtle/70 font-[var(--st-fw-semibold)] mt-3 mb-1.5">
+            Customise
+          </h3>
+          <ul className="space-y-0.5">
+            <li>4 colour themes, 4 style presets</li>
+            <li>Custom input arrays</li>
+            <li>Resizable visualisation panel</li>
+          </ul>
+        </div>
+      </div>
+
+      <p className="text-xs text-tn-muted/60">
+        Built with React, TypeScript, and Tailwind CSS. More algorithms coming soon.
+      </p>
+    </Panel>
   );
 };
 
