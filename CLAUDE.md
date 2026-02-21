@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Algorithm visualization web app built with React 19, Vite 7, TypeScript, and Tailwind CSS 4. It renders step-by-step animated traces of algorithms (currently sorting: bubble sort, insertion sort, merge sort, quick sort, heap sort) with synchronized code highlighting, narration, and playback controls. Deployed to GitHub Pages at `/visualise/`.
+Algorithm visualization web app built with React 19, Vite 7, TypeScript, and Tailwind CSS 4. It renders step-by-step animated traces of algorithms (sorting: bubble sort, insertion sort, merge sort, quick sort, heap sort, radix sort; pathfinding: Dijkstra's algorithm, BFS) with synchronized code highlighting, narration, and playback controls. Deployed to GitHub Pages at `/visualise/`.
 
 ## Commands
 
@@ -51,7 +51,7 @@ Code sources use `[[token.name]]...[[/token.name]]` markers inline. `parseMarker
 
 ### Theming
 
-Three themes: `light`, `dark`, `tokyo-night`. Applied via `data-theme` attribute on `<html>` and CSS custom properties defined in `src/styles/tokens.css`. The `ThemeApplier` component syncs the store to the DOM.
+Four themes: `light`, `dark`, `tokyo-night`, `ember`. Applied via `data-theme` attribute on `<html>` and CSS custom properties defined in `src/styles/tokens.css`. The `ThemeApplier` component syncs the store to the DOM.
 
 ### Routing
 
