@@ -1,5 +1,5 @@
 // src/hooks/use-grid-layout.ts
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Viewport = { width?: number; height?: number };
 
@@ -44,10 +44,10 @@ export function useGridLayout({
   hardMinCell = 2,
   paddingX = 26,
 }: Params): GridLayout {
-  const lastGoodCellRef = useRef(26);
+  const [lastGoodCell, setLastGoodCell] = useState(26);
   const measuredW = viewport?.width ?? 0;
 
-  return useMemo(() => {
+  const layout = useMemo(() => {
     const contentCols =
       typeof contentWidthCols === "number" && Number.isFinite(contentWidthCols)
         ? Math.max(0, contentWidthCols)
@@ -56,7 +56,7 @@ export function useGridLayout({
     const colOffset = Math.max(0, Math.floor((gridWidth - contentCols) / 2));
 
     if (measuredW <= 1) {
-      const cellSize = lastGoodCellRef.current;
+      const cellSize = lastGoodCell;
 
       return {
         gridHeight,
@@ -78,8 +78,6 @@ export function useGridLayout({
         ? clamp(fitCell, minCell, maxCell)
         : clamp(fitCell, hardMinCell, minCell);
 
-    if (cellSize >= minCell) lastGoodCellRef.current = cellSize;
-
     return {
       gridHeight,
       gridWidth,
@@ -98,5 +96,16 @@ export function useGridLayout({
     minCell,
     hardMinCell,
     paddingX,
+    lastGoodCell,
   ]);
+
+  // Persist lastGoodCell after render when we get a valid measurement
+  useEffect(() => {
+    if (layout.cellSize >= minCell) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLastGoodCell((prev) => (prev === layout.cellSize ? prev : layout.cellSize));
+    }
+  }, [layout.cellSize, minCell]);
+
+  return layout;
 }

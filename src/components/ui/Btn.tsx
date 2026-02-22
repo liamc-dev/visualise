@@ -110,20 +110,20 @@ export function Btn<T extends React.ElementType = "button">({
           tabIndex: disabled ? -1 : tabIndex,
         };
 
-  function handleClick(e: any) {
+  function handleClick(e: React.MouseEvent) {
     if (disabled) {
-      e?.preventDefault?.();
-      e?.stopPropagation?.();
+      e.preventDefault();
+      e.stopPropagation();
       return;
     }
-    (onClick as any)?.(e);
+    (onClick as ((e: React.MouseEvent) => void) | undefined)?.(e);
   }
 
   return (
     <As
       {...maybeType}
       {...maybeDisabled}
-      {...(rest as any)}
+      {...(rest as Record<string, unknown>)}
       onClick={handleClick}
       className={cx(base, sizeCls, variantCls, className, pressedCls)}
     >

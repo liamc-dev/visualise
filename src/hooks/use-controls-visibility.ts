@@ -20,6 +20,7 @@ export function useControlsVisibility() {
   // On playback state change, flash controls briefly then auto-hide
   useEffect(() => {
     if (isPlaying || paused) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVisible(true);
       startHideTimer();
     }

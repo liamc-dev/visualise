@@ -42,7 +42,7 @@ export function mergeSortTrace(input: number[]): TraceFrame[] {
     narrationToken?: string;
     highlight?: number[]; // global indices in arr
     pointers?: TracePointer[];
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
     unified?: boolean;
   }) => {
     const scene = buildScene({
@@ -315,7 +315,7 @@ function mergeSort(
     narrationToken?: string;
     highlight?: number[];
     pointers?: TracePointer[];
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
     unified?: boolean;
   }) => void,
   layout: ReturnType<typeof makeMergeLayout>,
@@ -456,7 +456,7 @@ function merge(
     narrationToken?: string;
     highlight?: number[];
     pointers?: TracePointer[];
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
     unified?: boolean;
   }) => void
 ) {

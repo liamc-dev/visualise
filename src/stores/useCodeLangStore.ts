@@ -20,9 +20,10 @@ export const useCodeLangStore = create<State>()(
     {
       name: "tn-code-lang",
       migrate: (persisted) => {
-        const p = persisted as any;
-        const lang = isCodeLang(p?.state?.lang) ? p.state.lang : "java";
-        return { ...p, state: { ...p.state, lang } };
+        const p = persisted as Record<string, unknown> | null;
+        const state = (p && typeof p === "object" ? p.state : null) as Record<string, unknown> | null;
+        const lang = isCodeLang(state?.lang) ? state.lang : "java";
+        return { ...p, state: { ...state, lang } };
       },
     }
   )

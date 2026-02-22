@@ -19,7 +19,7 @@ export const INSERTION_SORT_NARRATION: NarrationBundle = {
 
   resolve(token, mode, ctx) {
     if (!token) {
-      if ((import.meta as any)?.env?.DEV) {
+      if (import.meta.env.DEV) {
         throw new Error(
           "InsertionSort narration: resolve() called without a token."
         );
@@ -98,7 +98,7 @@ export const INSERTION_SORT_NARRATION: NarrationBundle = {
         });
 
       default: {
-        if ((import.meta as any)?.env?.DEV) {
+        if (import.meta.env.DEV) {
           throw new Error(
             `Missing insertion-sort narration for token: ${token}`
           );

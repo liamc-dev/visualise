@@ -36,8 +36,8 @@ export function computeSceneBounds(scene: TraceScene): TraceScene["bounds"] {
     const x = n.pos.x;
     const y = n.pos.y;
 
-    const wCols = (n.meta as any)?.wCols;
-    const hRows = (n.meta as any)?.hRows;
+    const wCols = n.meta?.wCols;
+    const hRows = n.meta?.hRows;
 
     if (isNum(wCols) && isNum(hRows) && wCols > 0 && hRows > 0) {
       includeRect(x, y, wCols, hRows);

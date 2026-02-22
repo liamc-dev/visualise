@@ -17,10 +17,10 @@ export function heapSortTrace(input: number[]): TraceFrame[] {
   // Meta snapshots for narration
   // ---------------------------------------------------------------------------
   const withHeapMeta = (args: {
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
     ptrs?: { root?: number; child?: number; swapIdx?: number; end?: number };
     heapSize: number;
-  }) => {
+  }): Record<string, unknown> => {
     const { meta, ptrs, heapSize } = args;
 
     const root = ptrs?.root;
@@ -42,7 +42,7 @@ export function heapSortTrace(input: number[]): TraceFrame[] {
       rootVal: typeof root === "number" ? arr[root] : undefined,
       childVal: typeof child === "number" ? arr[child] : undefined,
       swapVal: typeof swapIdx === "number" ? arr[swapIdx] : undefined,
-    } as Record<string, any>;
+    };
   };
 
   const push = (args: {
@@ -54,7 +54,7 @@ export function heapSortTrace(input: number[]): TraceFrame[] {
     highlight?: number[];
     focusEdges?: string[];
     ptrs?: { root?: number; child?: number; swapIdx?: number; end?: number };
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
   }) => {
     const scene = buildHeapScene({
       arr,
@@ -273,7 +273,7 @@ function buildMaxHeap(
     highlight?: number[];
     focusEdges?: string[];
     ptrs?: { root?: number; child?: number; swapIdx?: number; end?: number };
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
   }) => void,
   edgeIdByPair: Map<string, string>
 ) {
@@ -315,7 +315,7 @@ function siftDown(
     highlight?: number[];
     focusEdges?: string[];
     ptrs?: { root?: number; child?: number; swapIdx?: number; end?: number };
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
   }) => void,
   endPtr: number,
   edgeIdByPair: Map<string, string>

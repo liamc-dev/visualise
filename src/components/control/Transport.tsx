@@ -10,7 +10,7 @@ type TransportButtonProps = {
   title: string;
   ariaLabel: string;
   onClick?: () => void;
-  buttonProps?: Record<string, any>;
+  buttonProps?: Record<string, unknown>;
   className: string;
   children: React.ReactNode;
 };

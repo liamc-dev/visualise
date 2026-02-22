@@ -14,8 +14,11 @@ export function ResizeHandle({ onDrag, onCommit, className }: ResizeHandleProps)
   const lastYRef = useRef(0);
   const onDragRef = useRef(onDrag);
   const onCommitRef = useRef(onCommit);
-  onDragRef.current = onDrag;
-  onCommitRef.current = onCommit;
+
+  useEffect(() => {
+    onDragRef.current = onDrag;
+    onCommitRef.current = onCommit;
+  });
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {

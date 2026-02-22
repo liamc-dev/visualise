@@ -33,7 +33,7 @@ export const QUICK_SORT_NARRATION: NarrationBundle = {
 
   resolve(token, mode, ctx) {
     if (!token) {
-      if ((import.meta as any)?.env?.DEV) {
+      if (import.meta.env.DEV) {
         throw new Error("QuickSort narration: resolve() called without a token.");
       }
       return "";
@@ -48,14 +48,14 @@ export const QUICK_SORT_NARRATION: NarrationBundle = {
     const pivotIndex = n(meta, "pivotIndex");
     const pivotValue = n(meta, "pivotValue");
 
-    const i = n(meta, "i");
+    const _i = n(meta, "i");
     const j = n(meta, "j");
     const currentVal = n(meta, "currentVal");
     const relation = s(meta, "relation"); // "≤" | ">"
     const returnPivotIndex = n(meta, "returnPivotIndex");
 
-    const side = s(meta, "side"); // "left" | "right"
-    const from = s(meta, "from"); // "left" | "right"
+    const _side = s(meta, "side"); // "left" | "right"
+    const _from = s(meta, "from"); // "left" | "right"
 
     const alreadyInPlace = b(meta, "alreadyInPlace");
 
@@ -69,7 +69,7 @@ export const QUICK_SORT_NARRATION: NarrationBundle = {
 
     const pivotFrom = n(meta, "pivotFrom");
     const pivotTo = n(meta, "pivotTo");
-    const swappedWith = n(meta, "swappedWith");
+    const _swappedWith = n(meta, "swappedWith");
 
     const recurseLo = n(meta, "recurseLo");
     const recurseHi = n(meta, "recurseHi");
@@ -234,7 +234,7 @@ export const QUICK_SORT_NARRATION: NarrationBundle = {
         });
 
       default: {
-        if ((import.meta as any)?.env?.DEV) {
+        if (import.meta.env.DEV) {
           throw new Error(`Missing quick-sort narration for token: ${token}`);
         }
         return token;

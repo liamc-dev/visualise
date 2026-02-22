@@ -113,8 +113,8 @@ export function getTraceCellStyle(args: {
 
   const isCard = node.kind === "card";
 
-  const wCols = (node.meta as any)?.wCols;
-  const hRows = (node.meta as any)?.hRows;
+  const wCols = node.meta?.wCols;
+  const hRows = node.meta?.hRows;
 
   const widthPx =
     node.meta?.widthPx ??
@@ -139,7 +139,7 @@ export function getTraceCellStyle(args: {
     height: `${heightPx}px`,
 
     zIndex,
-    borderStyle: "var(--st-cell-border-style, solid)" as any,
+    borderStyle: "var(--st-cell-border-style, solid)" as string,
     borderColor,
     borderWidth,
     opacity: opacityVal,

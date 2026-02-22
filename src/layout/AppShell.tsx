@@ -51,6 +51,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsSidebarOpen(false);
   }, [isDesktop]);
 

@@ -1,6 +1,7 @@
 // src/components/code/AlgoCodeMonacoHost.tsx
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Editor, { DiffEditor, useMonaco } from "@monaco-editor/react";
+import type { editor } from "monaco-editor";
 import type { CodeBundle, CodeRef } from "../../types/algo-types";
 import { useCodeLangStore } from "../../stores/useCodeLangStore";
 import { useThemeStore } from "../../stores/useThemeStore";
@@ -70,7 +71,7 @@ export default function AlgoCodeMonacoHost({
     // ----------------------------
     // Reference editor decorations
     // ----------------------------
-    const refEditorRef = useRef<any>(null);
+    const refEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const decorationIdsRef = useRef<string[]>([]);
     const lastRevealRef = useRef<number | null>(null);
 
@@ -85,7 +86,7 @@ export default function AlgoCodeMonacoHost({
         const [start, end] = codeRef?.lines ?? [0, 0];
         const spans = codeRef?.spans ?? [];
 
-        const newDecorations: any[] = [];
+        const newDecorations: editor.IModelDeltaDecoration[] = [];
 
         if (focusMode) {
             const lastLine = model.getLineCount();
@@ -156,7 +157,7 @@ export default function AlgoCodeMonacoHost({
     // ----------------------------
     // Recall editor focus
     // ----------------------------
-    const recallEditorRef = useRef<any>(null);
+    const recallEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
     useEffect(() => {
         if (view !== "recall") return;
@@ -192,10 +193,11 @@ export default function AlgoCodeMonacoHost({
     }, [onRecallReady, recallSkeleton]);
 
     // ----------------------------
-    // Compare
+    // Compare — latch: once view has been "compare", keep the DiffEditor mounted
     // ----------------------------
     const [hasMountedCompare, setHasMountedCompare] = useState(false);
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (view === "compare") setHasMountedCompare(true);
     }, [view]);
 

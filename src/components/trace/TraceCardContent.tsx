@@ -11,7 +11,7 @@ const ICONS: Record<string, React.ComponentType<{ size?: number; className?: str
   edge: Boxes,
 };
 
-export default function TraceCardContent({ meta }: { meta: any }) {
+export default function TraceCardContent({ meta }: { meta: Record<string, unknown> }) {
   const title = meta?.title ?? "";
   const subtitle = meta?.subtitle;
   const lines: string[] = Array.isArray(meta?.lines) ? meta.lines : [];

@@ -1,4 +1,5 @@
 // src/components/grid/GridCanvas.tsx
+import { memo, useMemo } from "react";
 import type { ReactNode } from "react";
 import { useThemeStore } from "../../stores/useThemeStore";
 import TokyoNightGrid from "./TokyoNightGrid";
@@ -10,7 +11,7 @@ type GridProps = {
   sweepSpeed: number;
 };
 
-export default function Grid({
+export default memo(function Grid({
   height,
   width,
   cellSize,
@@ -18,6 +19,16 @@ export default function Grid({
 }: GridProps) {
   const theme = useThemeStore((s) => s.theme);
   const isTokyo = theme === "tokyo-night";
+
+  const cells = useMemo(() => {
+    const out: ReactNode[] = [];
+    for (let r = 0; r < height; r++) {
+      for (let c = 0; c < width; c++) {
+        out.push(<div key={`${r}-${c}`} className="tn-grid-cell" />);
+      }
+    }
+    return out;
+  }, [height, width]);
 
   if (isTokyo) {
     return (
@@ -28,14 +39,6 @@ export default function Grid({
         sweepSpeed={sweepSpeed}
       />
     );
-  }
-
-  
-  const cells: ReactNode[] = [];
-  for (let r = 0; r < height; r++) {
-    for (let c = 0; c < width; c++) {
-      cells.push(<div key={`${r}-${c}`} className="tn-grid-cell" />);
-    }
   }
 
   return (
@@ -49,4 +52,4 @@ export default function Grid({
       {cells}
     </div>
   );
-}
+});

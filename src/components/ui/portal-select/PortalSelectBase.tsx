@@ -1,5 +1,5 @@
 // src/components/ui/portal-select/PortalSelectBase.tsx
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
 
@@ -77,23 +77,24 @@ export default function PortalSelectBase<T extends string>({
     [options, value]
   );
 
-  const updatePos = () => {
+  const updatePos = useCallback(() => {
     const el = btnRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
     setPos({ top: r.bottom + offset, left: r.left, width: r.width });
-  };
+  }, [offset]);
 
   // Seed highlight to the current value when opening
   useEffect(() => {
     if (!open) return;
     const idx = options.findIndex((o) => o.value === value);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHighlight(idx >= 0 ? idx : 0);
   }, [open, options, value]);
 
   useLayoutEffect(() => {
     if (open) updatePos();
-  }, [open]);
+  }, [open, updatePos]);
 
   useEffect(() => {
     if (!open) return;
@@ -150,7 +151,7 @@ export default function PortalSelectBase<T extends string>({
       document.removeEventListener("mousedown", onDocDown);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [open, options, highlight, onChange]);
+  }, [open, options, highlight, onChange, updatePos]);
 
   const labelNode =
     typeof buttonLabel === "function"

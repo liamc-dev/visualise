@@ -120,7 +120,7 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
     showOutput: boolean;
     focusNodes?: string[];
     pointers?: TracePointer[];
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
   }) {
     const { nodes, overlays } = buildScene({
       arr: args.arr,

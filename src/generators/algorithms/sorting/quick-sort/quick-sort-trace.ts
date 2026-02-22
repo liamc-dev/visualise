@@ -42,7 +42,7 @@ export function quickSortTrace(input: number[]): TraceFrame[] {
 
     highlight?: number[]; // global indices (in arr)
     pointers?: TracePointer[];
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
   }) => {
     const scene = buildScene({ arr, stack, layout });
     const focusNodes = buildFocusNodes({ stack, highlight: args.highlight ?? [] });
@@ -248,7 +248,7 @@ function quickSort(
     narrationToken?: string;
     highlight?: number[];
     pointers?: TracePointer[];
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
   }) => void,
   isRoot = false
 ) {
@@ -434,7 +434,7 @@ function partition(
     narrationToken?: string;
     highlight?: number[];
     pointers?: TracePointer[];
-    meta?: Record<string, any>;
+    meta?: Record<string, unknown>;
   }) => void,
   node: QuickSortStackNode,
   baseMeta: () => Record<string, unknown>

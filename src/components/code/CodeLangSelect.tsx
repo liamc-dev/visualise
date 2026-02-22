@@ -21,7 +21,7 @@ export default function CodeLangSelect({ bundle }: { bundle: CodeBundle }) {
     if (!bundle.sources[lang]) {
       setLang((bundle.sources.pseudo ? "pseudo" : options[0]?.value) ?? "pseudo");
     }
-  }, [bundle, lang]);
+  }, [bundle, lang, options, setLang]);
 
   return (
     <ButtonSelect<CodeLang>

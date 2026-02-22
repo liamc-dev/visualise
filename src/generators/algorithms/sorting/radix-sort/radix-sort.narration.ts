@@ -15,7 +15,7 @@ function n(meta: Meta, key: string): number | undefined {
   return typeof v === "number" ? v : undefined;
 }
 
-function s(meta: Meta, key: string): string | undefined {
+function _s(meta: Meta, key: string): string | undefined {
   const v = meta[key];
   return typeof v === "string" ? v : undefined;
 }
@@ -37,7 +37,7 @@ export const RADIX_SORT_NARRATION: NarrationBundle = {
 
   resolve(token, mode, ctx) {
     if (!token) {
-      if ((import.meta as any)?.env?.DEV) {
+      if (import.meta.env.DEV) {
         throw new Error("RadixSort narration: resolve() called without a token.");
       }
       return "";
@@ -131,7 +131,7 @@ export const RADIX_SORT_NARRATION: NarrationBundle = {
         });
 
       default: {
-        if ((import.meta as any)?.env?.DEV) {
+        if (import.meta.env.DEV) {
           throw new Error(`Missing radix-sort narration for token: ${token}`);
         }
         return token;

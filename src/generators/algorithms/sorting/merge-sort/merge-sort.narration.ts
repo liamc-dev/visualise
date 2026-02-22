@@ -30,7 +30,7 @@ export const MERGE_SORT_NARRATION: NarrationBundle = {
 
   resolve(token, mode, ctx) {
     if (!token) {
-      if ((import.meta as any)?.env?.DEV) {
+      if (import.meta.env.DEV) {
         throw new Error("MergeSort narration: resolve() called without a token.");
       }
       return "";
@@ -42,19 +42,19 @@ export const MERGE_SORT_NARRATION: NarrationBundle = {
     const lo = n(meta, "lo");
     const hi = n(meta, "hi");
     const mid = n(meta, "mid");
-    const depth = n(meta, "depth");
-    const phase = s(meta, "phase");
-    const isRoot = b(meta, "isRoot");
-    const isBaseCase = b(meta, "isBaseCase");
-    const side = s(meta, "side"); // "left" | "right"
-    const from = s(meta, "from"); // "left" | "right"
+    const _depth = n(meta, "depth");
+    const _phase = s(meta, "phase");
+    const _isRoot = b(meta, "isRoot");
+    const _isBaseCase = b(meta, "isBaseCase");
+    const _side = s(meta, "side"); // "left" | "right"
+    const _from = s(meta, "from"); // "left" | "right"
 
     // Merge info (from standard meta)
     const mergeLo = n(meta, "mergeLo");
     const mergeMid = n(meta, "mergeMid");
     const mergeHi = n(meta, "mergeHi");
-    const leftSize = n(meta, "leftSize");
-    const totalSize = n(meta, "totalSize");
+    const _leftSize = n(meta, "leftSize");
+    const _totalSize = n(meta, "totalSize");
 
     // Snapshot indices (from meta — do NOT depend on pointer filtering)
     const i = n(meta, "iBefore") ?? n(meta, "i");
@@ -63,8 +63,8 @@ export const MERGE_SORT_NARRATION: NarrationBundle = {
 
     // Write facts
     const written = n(meta, "written");
-    const takeLeft = b(meta, "takeLeft");
-    const remaining = s(meta, "remaining"); // "left" | "right"
+    const _takeLeft = b(meta, "takeLeft");
+    const _remaining = s(meta, "remaining"); // "left" | "right"
 
     const range =
       typeof lo === "number" && typeof hi === "number" ? `${lo}–${hi}` : "?–?";
@@ -208,7 +208,7 @@ export const MERGE_SORT_NARRATION: NarrationBundle = {
         });
 
       default: {
-        if ((import.meta as any)?.env?.DEV) {
+        if (import.meta.env.DEV) {
           throw new Error(`Missing merge-sort narration for token: ${token}`);
         }
         return token;

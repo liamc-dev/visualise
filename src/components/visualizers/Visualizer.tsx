@@ -1,5 +1,5 @@
 // src/components/visualizers/Visualizer.tsx
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import Grid from "../grid/GridCanvas";
 import PlayerBar from "../control/PlayerBar";
 import ControlsOverlay from "../control/ControlsOverlay";
@@ -87,9 +87,11 @@ export default function Visualizer({
   const isDraggingRef = useRef(false);
 
   // Keep ref in sync with committed state — but not while dragging
-  if (!isDraggingRef.current) {
-    dragHeightRef.current = panelHeight;
-  }
+  useEffect(() => {
+    if (!isDraggingRef.current) {
+      dragHeightRef.current = panelHeight;
+    }
+  }, [panelHeight]);
 
   const onDrag = useCallback(
     (deltaY: number) => {

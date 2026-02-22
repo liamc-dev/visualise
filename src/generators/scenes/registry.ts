@@ -45,7 +45,7 @@ function idFromPath(path: string) {
 export const SCENES = (() => {
   const entries = Object.entries(modules).map(([path, mod]) => {
     const id = idFromPath(path);
-    const def = (mod as any).default as Omit<SceneDef, "id">;
+    const def = (mod as Record<string, unknown>).default as Omit<SceneDef, "id">;
     if (!def) throw new Error(`Missing default export in ${path}`);
     return [id, { id, ...def }] as const;
   });

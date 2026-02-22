@@ -25,7 +25,7 @@ export const HEAP_SORT_NARRATION: NarrationBundle = {
 
   resolve(token, mode, ctx) {
     if (!token) {
-      if ((import.meta as any)?.env?.DEV) {
+      if (import.meta.env.DEV) {
         throw new Error("HeapSort narration: resolve() called without a token.");
       }
       return ""; // production fallback
@@ -39,7 +39,7 @@ export const HEAP_SORT_NARRATION: NarrationBundle = {
     // Indices (snapshotted by trace)
     const root = n(meta, "root");
     const child = n(meta, "child");
-    const swapIdx = n(meta, "swapIdx");
+    const _swapIdx = n(meta, "swapIdx");
     const end = n(meta, "end");
 
     // Value snapshots (snapshotted by trace)
@@ -171,7 +171,7 @@ export const HEAP_SORT_NARRATION: NarrationBundle = {
         });
 
       default: {
-        if ((import.meta as any)?.env?.DEV) {
+        if (import.meta.env.DEV) {
           throw new Error(`Missing heap-sort narration for token: ${token}`);
         }
         return token; // production fallback

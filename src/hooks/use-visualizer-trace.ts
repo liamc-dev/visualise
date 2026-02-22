@@ -72,7 +72,7 @@ export function useVisualizerTrace(
   }, [traceEnabled, algorithm, initialArray, setPlaying, setPaused, setStep]);
 
   const { frame, description, codeRef } = useMemo(() => {
-    if (!traceEnabled) return { frame: null as any, description: "", codeRef: undefined as CodeRef | undefined };
+    if (!traceEnabled) return { frame: null as TraceFrame | null, description: "", codeRef: undefined as CodeRef | undefined };
     const safe = Math.min(currentStep, Math.max(frames.length - 1, 0));
     const frame = frames[safe] ?? frames[0];
 

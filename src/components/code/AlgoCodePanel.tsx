@@ -6,8 +6,6 @@ import { useSettingsStore } from "../../stores/useSettingsStore";
 import { Panel } from "../ui/Panel";
 import CodeLangSelect from "./CodeLangSelect";
 import { Minus, Plus } from "lucide-react";
-import { AsciiText } from "../ui/AsciiText";
-import { ASCII_CODE } from "../../ascii-art";
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
@@ -95,7 +93,7 @@ export default function AlgoCodePanel({
   const lines = content ? content.split("\n") : [];
 
   const [start, end] = codeRef?.lines ?? [0, 0];
-  const spans = codeRef?.spans ?? [];
+  const spans = useMemo(() => codeRef?.spans ?? [], [codeRef?.spans]);
 
   // quick lookup: which lines have spans?
   const spanLineSet = useMemo(() => {
@@ -108,16 +106,9 @@ export default function AlgoCodePanel({
     <Panel tone="glass" className="p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-1.5">
-          <AsciiText
-            ascii={ASCII_CODE}
-            cssClass="tn-ascii-label"
-            ariaLabel="Code"
-            fallback={
-              <span className="text-label tracking-[0.18em] uppercase text-tn-subtle/70">
-                Code
-              </span>
-            }
-          />
+          <span className="text-label tracking-[0.18em] uppercase text-tn-subtle/70">
+            Code
+          </span>
 
           <button
             type="button"

@@ -23,7 +23,7 @@ export const BUBBLE_SORT_NARRATION: NarrationBundle = {
 
   resolve(token, mode, ctx) {
     if (!token) {
-      if ((import.meta as any)?.env?.DEV) {
+      if (import.meta.env.DEV) {
         throw new Error("BubbleSort narration: resolve() called without a token.");
       }
       return "";
@@ -35,7 +35,7 @@ export const BUBBLE_SORT_NARRATION: NarrationBundle = {
     const valJ = n(meta, "valJ");
     const valJ1 = n(meta, "valJ1");
     const pass = n(meta, "pass");
-    const swapped = b(meta, "swapped");
+    const _swapped = b(meta, "swapped");
     const sortedIndex = n(meta, "sortedIndex");
     const value = n(meta, "value");
 
@@ -112,7 +112,7 @@ export const BUBBLE_SORT_NARRATION: NarrationBundle = {
         });
 
       default: {
-        if ((import.meta as any)?.env?.DEV) {
+        if (import.meta.env.DEV) {
           throw new Error(`Missing bubble-sort narration for token: ${token}`);
         }
         return token;

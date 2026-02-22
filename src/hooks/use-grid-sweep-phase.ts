@@ -37,6 +37,7 @@ export function useGridSweepPhase(value: number, min = 100, max = 1000, enabled 
 
   useEffect(() => {
     if (!enabled) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPhase(0);
       lastTimeRef.current = null;
       return;

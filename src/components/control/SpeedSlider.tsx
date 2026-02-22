@@ -47,7 +47,7 @@ export function SpeedSlider({
         onChange={(e) => onChange(Number(e.target.value))}
         className="tn-range-modern cursor-pointer"
         style={{
-          ["--p" as any]: `${p}%`,
+          ["--p" as string]: `${p}%`,
           pointerEvents: "auto",
         }}
       />

@@ -9,7 +9,7 @@ export type TraceFrame = {
   narrationToken?: string;
   scene: TraceScene;
   focus?: TraceFocus;
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
 };
 
 export type TraceScene = {
@@ -38,7 +38,7 @@ export type TraceNode = {
     heightPx?: number;
 
     // algorithm-specific stuff still allowed (renderer should NOT branch on these)
-    [k: string]: any;
+    [k: string]: unknown;
   };
 };
 
@@ -47,7 +47,7 @@ export type TraceEdge = {
   from: string;
   to: string;
   kind?: string;
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
 };
 
 export type TraceOverlay =

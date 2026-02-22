@@ -30,7 +30,7 @@ export const DIJKSTRA_NARRATION: NarrationBundle = {
 
   resolve(token, mode, ctx) {
     if (!token) {
-      if ((import.meta as any)?.env?.DEV) {
+      if (import.meta.env.DEV) {
         throw new Error("Dijkstra narration: resolve() called without a token.");
       }
       return "";
@@ -203,7 +203,7 @@ export const DIJKSTRA_NARRATION: NarrationBundle = {
       }
 
       default: {
-        if ((import.meta as any)?.env?.DEV) {
+        if (import.meta.env.DEV) {
           throw new Error(`Missing dijkstra narration for token: ${token}`);
         }
         return token;

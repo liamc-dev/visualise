@@ -7,15 +7,22 @@ function isNum(v: unknown): v is number {
   return typeof v === "number" && Number.isFinite(v);
 }
 
+function asRecord(v: unknown): Record<string, unknown> | null {
+  return typeof v === "object" && v !== null && !Array.isArray(v)
+    ? (v as Record<string, unknown>)
+    : null;
+}
+
 function normalizePoints(v: unknown): Array<{ x: number; y: number }> {
   if (!v) return [];
   if (Array.isArray(v)) {
     return v
-      .filter((p) => p && isNum((p as any).x) && isNum((p as any).y))
-      .map((p) => ({ x: (p as any).x, y: (p as any).y }));
+      .filter((p) => { const r = asRecord(p); return r && isNum(r.x) && isNum(r.y); })
+      .map((p) => { const r = asRecord(p)!; return { x: r.x as number, y: r.y as number }; });
   }
-  if (isNum((v as any).x) && isNum((v as any).y)) {
-    return [{ x: (v as any).x, y: (v as any).y }];
+  const r = asRecord(v);
+  if (r && isNum(r.x) && isNum(r.y)) {
+    return [{ x: r.x as number, y: r.y as number }];
   }
   return [];
 }
@@ -31,8 +38,9 @@ function gridToPx(
   };
 }
 
-function isPoint(p: any): p is { x: number; y: number } {
-  return p && isNum(p.x) && isNum(p.y);
+function isPoint(p: unknown): p is { x: number; y: number } {
+  const r = asRecord(p);
+  return r !== null && isNum(r.x) && isNum(r.y);
 }
 
 export function useTraceEdges(args: {
@@ -42,14 +50,14 @@ export function useTraceEdges(args: {
   focusEdges: Set<string>;
   colOffset: number;
 }) {
-  const { scene, cellSize, focusNodes, focusEdges, colOffset } = args;
+  const { scene, cellSize, focusEdges, colOffset } = args;
 
   return useMemo(() => {
     const edges = scene.edges ?? [];
 
     return edges
       .map((e) => {
-        const meta = (e.meta as any) ?? {};
+        const meta = (e.meta ?? {}) as Record<string, unknown>;
 
         
         const fromPtGrid = meta.fromPt;
@@ -93,5 +101,5 @@ export function useTraceEdges(args: {
         return out;
       })
       .filter(Boolean) as TreeEdge[];
-  }, [scene, cellSize, colOffset, focusEdges, focusNodes]);
+  }, [scene, cellSize, colOffset, focusEdges]);
 }

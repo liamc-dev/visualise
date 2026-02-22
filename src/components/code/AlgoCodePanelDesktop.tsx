@@ -18,8 +18,6 @@ import {
   Plus,
 } from "lucide-react";
 import { useSettingsStore } from "../../stores/useSettingsStore";
-import { AsciiText } from "../ui/AsciiText";
-import { ASCII_CODE } from "../../ascii-art";
 
 export type ViewMode = "reference" | "recall" | "compare";
 
@@ -60,16 +58,9 @@ export default function AlgoCodePanelDesktop({
     <Panel tone="glass" className="min-w-0 w-full h-full min-h-0 flex flex-col">
       <div className="flex items-center justify-between mb-1 pt-2 px-2 shrink-0">
         <div className="flex items-center gap-1.5">
-          <AsciiText
-            ascii={ASCII_CODE}
-            cssClass="tn-ascii-label"
-            ariaLabel={headerLabel}
-            fallback={
-              <span className="text-label tracking-[0.18em] uppercase text-tn-subtle/70 pl-1">
-                {headerLabel}
-              </span>
-            }
-          />
+          <span className="text-label tracking-[0.18em] uppercase text-tn-subtle/70 pl-1">
+            {headerLabel}
+          </span>
 
           <button
             type="button"

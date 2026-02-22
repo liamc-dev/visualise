@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { ReactNode } from "react";
 import { useGridSweepPhase } from "../../hooks/use-grid-sweep-phase";
 import { lerpColor } from "../../utils/styleUtil";
@@ -10,7 +11,7 @@ type TokyoNightGridProps = {
   sweepSpeed: number;
 };
 
-export default function TokyoNightGrid({
+export default memo(function TokyoNightGrid({
   height,
   width,
   cellSize,
@@ -80,4 +81,4 @@ export default function TokyoNightGrid({
       {cells}
     </div>
   );
-}
+});

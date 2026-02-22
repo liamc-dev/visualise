@@ -50,7 +50,7 @@ type PushArgs = {
   focusEdges?: FileUploadCdnEdgeKey[];
   pointers?: (TracePointer | null)[];
   caption: string;
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
 };
 
 export function fileUploadCdnTrace(args?: FileUploadCdnTraceArgs): TraceFrame[] {
@@ -122,7 +122,7 @@ export function fileUploadCdnTrace(args?: FileUploadCdnTraceArgs): TraceFrame[] 
   const buildScene = (caption: string): TraceScene => {
     const nodes: TraceScene["nodes"] = [];
 
-    const addCard = (k: FileUploadCdnNodeKey, meta: Record<string, any> = {}) => {
+    const addCard = (k: FileUploadCdnNodeKey, meta: Record<string, unknown> = {}) => {
       const p = layout.pos[k];
 
       nodes.push({

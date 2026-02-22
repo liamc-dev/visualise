@@ -31,7 +31,7 @@ export const BFS_NARRATION: NarrationBundle = {
 
   resolve(token, mode, ctx) {
     if (!token) {
-      if ((import.meta as any)?.env?.DEV) {
+      if (import.meta.env.DEV) {
         throw new Error("BFS narration: resolve() called without a token.");
       }
       return "";
@@ -201,7 +201,7 @@ export const BFS_NARRATION: NarrationBundle = {
         });
 
       default: {
-        if ((import.meta as any)?.env?.DEV) {
+        if (import.meta.env.DEV) {
           throw new Error(`Missing BFS narration for token: ${token}`);
         }
         return token;
