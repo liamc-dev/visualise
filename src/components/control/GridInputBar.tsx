@@ -46,7 +46,7 @@ export default function GridInputBar() {
   const densityPct = Math.round(wallDensity * 100);
 
   return (
-    <div className="flex items-center gap-1.5 px-1">
+    <div className="flex items-center gap-1.5 px-1 overflow-x-auto min-w-0">
       {/* Grid size selects */}
       <span className="text-xs text-tn-muted whitespace-nowrap">Rows</span>
       <PortalSelect
@@ -87,7 +87,7 @@ export default function GridInputBar() {
         max={40}
         value={densityPct}
         onChange={(e) => setWallDensity(Number(e.target.value) / 100)}
-        className="tn-range-modern w-20 cursor-pointer"
+        className="tn-range-modern min-w-16 w-20 shrink cursor-pointer"
         style={{ ["--p" as string]: `${(densityPct / 40) * 100}%` }}
         title={`Wall density: ${densityPct}%`}
       />

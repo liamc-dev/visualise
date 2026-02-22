@@ -34,7 +34,7 @@ export default function DijkstraInputBar() {
   const toggleDijkstraInput = useLayoutStore((s) => s.toggleDijkstraInput);
 
   return (
-    <div className="flex items-center gap-1.5 px-1">
+    <div className="flex items-center gap-1.5 px-1 overflow-x-auto min-w-0">
       {/* Mode toggle */}
       <div className="flex gap-0.5">
         <Btn
@@ -232,7 +232,7 @@ function GridControls() {
         max={40}
         value={densityPct}
         onChange={(e) => setWallDensity(Number(e.target.value) / 100)}
-        className="tn-range-modern w-20 cursor-pointer"
+        className="tn-range-modern min-w-16 w-20 shrink cursor-pointer"
         style={{ ["--p" as string]: `${(densityPct / 40) * 100}%` }}
         title={`Wall density: ${densityPct}%`}
       />

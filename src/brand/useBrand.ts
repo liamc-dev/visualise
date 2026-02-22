@@ -13,8 +13,7 @@ export function useBrand() {
 
   const appLogoSrc = resolveThemedAsset(BRAND_ASSETS.appLogo, theme);
 
-  const appLogoAlt =
-    theme === "tokyo-night" ? "Visualiser" : "";
+  const appLogoAlt = "Visualiser";
 
   const getAlgoLogoSrc = useCallback(
     (algorithmKey: AlgorithmId) =>

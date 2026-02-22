@@ -9,6 +9,8 @@ import { emailValidator, passwordValidator, usernameOptionalValidator } from "..
 import { Eye, EyeOff } from "lucide-react";
 import { Panel } from "../../components/ui/Panel";
 import { Btn } from "../../components/ui/Btn";
+import { AsciiText } from "../../components/ui/AsciiText";
+import { ASCII_CREATE_ACCOUNT } from "../../ascii-art";
 
 function getErrorMessage(err: unknown) {
   if (err instanceof Error) return err.message;
@@ -68,7 +70,14 @@ export default function SignupPage() {
           <div className="text-label tracking-[0.22em] uppercase text-tn-subtle/70">
             Account
           </div>
-          <h1 className="mt-2 text-2xl font-[var(--st-fw-semibold)] tracking-tight">Create account</h1>
+          <AsciiText
+            ascii={ASCII_CREATE_ACCOUNT}
+            cssClass="tn-ascii-heading"
+            ariaLabel="Create account"
+            fallback={
+              <h1 className="mt-2 text-2xl font-[var(--st-fw-semibold)] tracking-tight">Create account</h1>
+            }
+          />
           <p className="mt-1 text-sm text-tn-muted">Create your account to start using the app.</p>
         </div>
 

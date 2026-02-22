@@ -109,6 +109,14 @@ export function defineLightTn(monaco, name = "tn-light") {
             "editorBracketMatch.background": withAlpha(accent, 0.10),
             "editorBracketMatch.border": withAlpha(accent, 0.25),
 
+            // Bracket pair colorization
+            "editorBracketHighlight.foreground1": warning,
+            "editorBracketHighlight.foreground2": accent,
+            "editorBracketHighlight.foreground3": muted,
+            "editorBracketHighlight.foreground4": warning,
+            "editorBracketHighlight.foreground5": accent,
+            "editorBracketHighlight.foreground6": muted,
+
             // Indent guides
             "editorIndentGuide.background1": withAlpha(border, 0.6),
             "editorIndentGuide.activeBackground1": withAlpha(border, 0.9),
@@ -220,6 +228,14 @@ export function defineDarkTn(monaco, name = "tn-dark") {
 
             "editorBracketMatch.background": withAlpha(accent, 0.10),
             "editorBracketMatch.border": withAlpha(accent, 0.25),
+
+            // Bracket pair colorization
+            "editorBracketHighlight.foreground1": warning,
+            "editorBracketHighlight.foreground2": accent,
+            "editorBracketHighlight.foreground3": muted,
+            "editorBracketHighlight.foreground4": warning,
+            "editorBracketHighlight.foreground5": accent,
+            "editorBracketHighlight.foreground6": muted,
 
             "editorIndentGuide.background1": withAlpha(border, 0.6),
             "editorIndentGuide.activeBackground1": withAlpha(border, 0.9),

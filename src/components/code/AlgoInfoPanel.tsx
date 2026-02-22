@@ -1,6 +1,8 @@
 // src/components/AlgoInfoPanel.tsx
 import type { ReactNode } from "react";
 import { Panel } from "../ui/Panel";
+import { AsciiText } from "../ui/AsciiText";
+import { ASCII_ALGO_NAMES } from "../../ascii-art";
 
 type AlgoInfoPanelProps = {
   logoSrc: string;
@@ -38,9 +40,18 @@ const AlgoInfoPanel = ({
         )}
 
         {/* Title */}
-        <h3 className="text-label font-[var(--st-fw-semibold)] tracking-[0.22em] uppercase text-tn-subtle text-center">
-          {title}
-        </h3>
+        <div className="text-center">
+          <AsciiText
+            ascii={ASCII_ALGO_NAMES[title]}
+            cssClass="tn-ascii-algo"
+            ariaLabel={title}
+            fallback={
+              <h3 className="text-label font-[var(--st-fw-semibold)] tracking-[0.22em] uppercase text-tn-subtle">
+                {title}
+              </h3>
+            }
+          />
+        </div>
 
         {/* Description */}
         <div className="text-sm text-tn-muted leading-relaxed">

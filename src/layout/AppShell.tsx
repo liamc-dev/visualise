@@ -8,6 +8,7 @@ import UserMenu from "../components/top-bar-menu/UserMenu";
 import { IconBtn } from "../components/ui/IconBtn";
 import { useSettingsStore } from "../stores/useSettingsStore";
 import { useBrand } from "../brand/useBrand";
+import { useStyleStore } from "../stores/useStyleStore";
 
 const TOP_H = 52;
 const RAIL_W = 72;
@@ -56,6 +57,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const effectsEnabled = useSettingsStore((s) => s.effectsEnabled);
   const toggleEffects = useSettingsStore((s) => s.toggleEffects);
   const { appLogoSrc, appLogoAlt } = useBrand();
+  const style = useStyleStore((s) => s.style);
   const desktopSidebarW = isSidebarOpen ? OPEN_W : RAIL_W;
 
   return (
@@ -85,8 +87,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 alt={appLogoAlt ?? "App logo"}
                 className="h-7 w-auto select-none pointer-events-none opacity-95"
               />
+            ) : style === "terminal" ? (
+              <pre className="tn-brand-ascii text-tn-text select-none leading-none" aria-label="Visualiser">{
+` __   _____ ___ _   _  _   _    ___ ___ ___ ___
+ \\ \\ / /_ _/ __| | | |/_\\ | |  |_ _/ __| __| _ \\
+  \\ V / | |\\__ \\ |_| / _ \\| |__ | |\\__ \\ _||   /
+   \\_/ |___|___/\\___/_/ \\_\\____|___|___/___|_|_\\`
+              }</pre>
             ) : (
-              <span className="text-ui font-[var(--st-fw-semibold)] tracking-wide text-tn-text">
+              <span className="tn-brand-text text-ui text-tn-text">
                 {appLogoAlt ?? "App"}
               </span>
             )}

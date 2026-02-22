@@ -9,6 +9,8 @@ import { ApiError } from "../../api/api-error";
 import { Eye, EyeOff } from "lucide-react";
 import { Panel } from "../../components/ui/Panel";
 import { Btn } from "../../components/ui/Btn";
+import { AsciiText } from "../../components/ui/AsciiText";
+import { ASCII_LOG_IN } from "../../ascii-art";
 
 type LocationState = {
   from?: { pathname?: string };
@@ -74,7 +76,14 @@ export default function LoginPage() {
           <div className="text-label tracking-[0.22em] uppercase text-tn-subtle/70">
             Account
           </div>
-          <h1 className="mt-2 text-2xl font-[var(--st-fw-semibold)] tracking-tight">Log in</h1>
+          <AsciiText
+            ascii={ASCII_LOG_IN}
+            cssClass="tn-ascii-heading"
+            ariaLabel="Log in"
+            fallback={
+              <h1 className="mt-2 text-2xl font-[var(--st-fw-semibold)] tracking-tight">Log in</h1>
+            }
+          />
           <p className="mt-1 text-sm text-tn-muted">
             Welcome back. Enter your details to continue.
           </p>

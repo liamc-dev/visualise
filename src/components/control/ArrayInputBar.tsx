@@ -44,7 +44,7 @@ export default function ArrayInputBar() {
   const toggleArrayInput = useLayoutStore((s) => s.toggleArrayInput);
 
   return (
-    <div className="flex items-center gap-1.5 px-1">
+    <div className="flex items-center gap-1.5 px-1 overflow-x-auto min-w-0">
       {/* Text input */}
       <textarea
         id="array-input"
@@ -90,7 +90,7 @@ export default function ArrayInputBar() {
         max={24}
         value={size}
         onChange={(e) => generateRandom(Number(e.target.value))}
-        className="tn-range-modern w-16 cursor-pointer"
+        className="tn-range-modern min-w-14 w-16 shrink cursor-pointer"
         style={{ ["--p" as string]: `${((size - 3) / 21) * 100}%` }}
       />
       <span className="text-xs font-mono text-tn-muted w-5 text-right">{size}</span>

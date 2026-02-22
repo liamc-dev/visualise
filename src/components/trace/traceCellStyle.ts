@@ -4,14 +4,10 @@ import type { TraceNode } from "../../types/trace-types";
 import { opacity, scale, backgroundColor, boxShadow } from "../../utils/styleUtil";
 
 const BASE =
-  "absolute rounded-[var(--cellRadius)] flex items-center justify-center font-semibold text-tn-text leading-none border";
+  "absolute rounded-st-sm flex items-center justify-center font-semibold text-tn-text leading-none border";
 
-const CELL_BASE = `${BASE} bg-tn-surface border-solid`;
+const CELL_BASE = `${BASE} bg-tn-surface`;
 const TEMP_BASE = `${BASE} border-dashed`;
-
-function radius(cellSize: number) {
-  return Math.max(10, cellSize * 0.22);
-}
 
 function fontSize(cellSize: number) {
   return cellSize <= 20
@@ -107,14 +103,13 @@ export function getTraceCellStyle(args: {
   const borderColor = toneBorder ?? baseBorder;
 
   const rawShadow = isTemp ? "none" : effects ? boxShadow(flags) : "none";
-  const insetShadow = "var(--tn-overlay-inset)";
+  const cellInset = "var(--st-cell-inset, 0 0 0 0 transparent)";
   const finalShadow =
-    rawShadow === "none" ? insetShadow : `${insetShadow}, ${rawShadow}`;
+    rawShadow === "none" ? cellInset : `${cellInset}, ${rawShadow}`;
 
-  // z-index / border width are now purely generic:
-  // highlight beats weight; then weight beats normal.
   const zIndex = isTemp ? 1 : highlight ? 6 : 2 + weight;
-  const borderWidth = isTemp ? 1 : highlight || weight >= 2 ? 3 : 1;
+  const borderWidth = isTemp ? 1 : highlight || weight >= 2
+    ? "var(--st-cell-border-heavy, 3px)" : "var(--st-border-w, 1px)";
 
   const isCard = node.kind === "card";
 
@@ -138,13 +133,13 @@ export function getTraceCellStyle(args: {
         : cellSize);
 
   const style: CSSProperties = {
-    ["--cellRadius" as any]: `${radius(cellSize)}px`,
     fontSize: `${fontSize(cellSize)}px`,
 
     width: `${widthPx}px`,
     height: `${heightPx}px`,
 
     zIndex,
+    borderStyle: "var(--st-cell-border-style, solid)" as any,
     borderColor,
     borderWidth,
     opacity: opacityVal,
@@ -152,11 +147,11 @@ export function getTraceCellStyle(args: {
 
     transform: `translate(${x}px, ${y}px) scale(${scaleVal})`,
     transition: `
-      transform 260ms cubic-bezier(0.25, 0.8, 0.25, 1),
-      opacity 220ms ease,
-      box-shadow 200ms ease,
-      border-color 180ms ease,
-      background-color 180ms ease
+      transform var(--st-dur-normal, 260ms) var(--st-ease, ease),
+      opacity var(--st-dur-normal, 220ms) var(--st-ease, ease),
+      box-shadow var(--st-dur-fast, 200ms) var(--st-ease, ease),
+      border-color var(--st-dur-fast, 180ms) var(--st-ease, ease),
+      background-color var(--st-dur-fast, 180ms) var(--st-ease, ease)
     `,
   };
 

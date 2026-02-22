@@ -201,6 +201,7 @@ export default function AlgoCodeMonacoHost({
 
     const baseOptions = {
         minimap: { enabled: false },
+        bracketPairColorization: { enabled: true, independentColorPoolPerBracketType: true },
         scrollBeyondLastLine: false,
         wordWrap: "off" as const,
         lineNumbers: "on" as const,

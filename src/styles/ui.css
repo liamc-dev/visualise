@@ -114,7 +114,7 @@
     }
 
     .tn-range-modern::-webkit-slider-runnable-track {
-        height: 6px;
+        height: 4px;
         border-radius: 9999px;
         background: linear-gradient(to right,
                 rgb(var(--tn-slider-accent)) 0%,
@@ -128,25 +128,25 @@
         -webkit-appearance: none;
         appearance: none;
         box-sizing: border-box;
-        margin-top: -6px;
-        width: 18px;
-        height: 18px;
+        margin-top: -5px;
+        width: 14px;
+        height: 14px;
         border-radius: 9999px;
-        background: rgb(var(--tn-surface));
+        background: rgb(var(--tn-slider-thumb));
         border: 2px solid rgb(var(--tn-slider-accent));
         box-shadow:
-            0 4px 12px rgba(0, 0, 0, 0.12),
-            0 0 0 4px rgba(var(--tn-slider-accent), 0.10);
+            0 2px 8px rgba(0, 0, 0, 0.10),
+            0 0 0 3px rgba(var(--tn-slider-accent), 0.10);
     }
 
     .tn-range-modern:focus-visible::-webkit-slider-thumb {
         box-shadow:
-            0 4px 12px rgba(0, 0, 0, 0.12),
-            0 0 0 6px rgba(var(--tn-slider-accent), 0.16);
+            0 2px 8px rgba(0, 0, 0, 0.10),
+            0 0 0 5px rgba(var(--tn-slider-accent), 0.16);
     }
 
     .tn-range-modern::-moz-range-track {
-        height: 6px;
+        height: 4px;
         border-radius: 9999px;
         background: linear-gradient(to right,
                 rgb(var(--tn-slider-accent)) 0%,
@@ -158,14 +158,126 @@
 
     .tn-range-modern::-moz-range-thumb {
         box-sizing: border-box;
-        width: 18px;
-        height: 18px;
+        width: 14px;
+        height: 14px;
         border-radius: 9999px;
-        background: rgb(var(--tn-surface));
+        background: rgb(var(--tn-slider-thumb));
         border: 2px solid rgb(var(--tn-slider-accent));
         box-shadow:
-            0 4px 12px rgba(0, 0, 0, 0.12),
-            0 0 0 4px rgba(var(--tn-slider-accent), 0.10);
+            0 2px 8px rgba(0, 0, 0, 0.10),
+            0 0 0 3px rgba(var(--tn-slider-accent), 0.10);
+    }
+
+    /* ---- TERMINAL slider ---- */
+    html[data-style="terminal"] .tn-range-modern::-webkit-slider-runnable-track {
+        height: 2px;
+        border-radius: 0;
+        background: transparent;
+        border-bottom: 1px var(--st-border-style) rgb(var(--tn-border));
+        box-shadow: none;
+    }
+
+    html[data-style="terminal"] .tn-range-modern::-webkit-slider-thumb {
+        margin-top: -6px;
+        width: 8px;
+        height: 12px;
+        border-radius: 1px;
+        border: 1px solid rgb(var(--tn-border));
+        background: rgb(var(--tn-slider-thumb));
+        box-shadow: none;
+    }
+
+    html[data-style="terminal"] .tn-range-modern:focus-visible::-webkit-slider-thumb {
+        box-shadow: none;
+        border-color: rgb(var(--tn-slider-accent));
+    }
+
+    html[data-style="terminal"] .tn-range-modern::-moz-range-track {
+        height: 2px;
+        border-radius: 0;
+        background: transparent;
+        border-bottom: 1px var(--st-border-style) rgb(var(--tn-border));
+        box-shadow: none;
+    }
+
+    html[data-style="terminal"] .tn-range-modern::-moz-range-thumb {
+        width: 8px;
+        height: 12px;
+        border-radius: 1px;
+        border: 1px solid rgb(var(--tn-border));
+        background: rgb(var(--tn-slider-thumb));
+        box-shadow: none;
+    }
+
+    /* ---- CLEAN slider ---- */
+    html[data-style="clean"] .tn-range-modern::-webkit-slider-runnable-track {
+        height: 3px;
+        border-radius: 2px;
+        box-shadow: none;
+    }
+
+    html[data-style="clean"] .tn-range-modern::-webkit-slider-thumb {
+        margin-top: -5px;
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+        border: 1px solid rgb(var(--tn-border));
+        box-shadow: none;
+    }
+
+    html[data-style="clean"] .tn-range-modern:focus-visible::-webkit-slider-thumb {
+        box-shadow: none;
+        border-color: rgb(var(--tn-slider-accent));
+    }
+
+    html[data-style="clean"] .tn-range-modern::-moz-range-track {
+        height: 3px;
+        border-radius: 2px;
+        box-shadow: none;
+    }
+
+    html[data-style="clean"] .tn-range-modern::-moz-range-thumb {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+        border: 1px solid rgb(var(--tn-border));
+        box-shadow: none;
+    }
+
+    /* ---- ORGANIC slider ---- */
+    html[data-style="organic"] .tn-range-modern::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 9999px;
+        box-shadow: none;
+    }
+
+    html[data-style="organic"] .tn-range-modern::-webkit-slider-thumb {
+        margin-top: -5px;
+        width: 16px;
+        height: 16px;
+        border-radius: 9999px;
+        border: none;
+        background: rgb(var(--tn-slider-accent));
+        box-shadow: none;
+    }
+
+    html[data-style="organic"] .tn-range-modern:focus-visible::-webkit-slider-thumb {
+        box-shadow: 0 0 0 4px rgba(var(--tn-slider-accent), 0.16);
+    }
+
+    html[data-style="organic"] .tn-range-modern::-moz-range-track {
+        height: 6px;
+        border-radius: 9999px;
+        box-shadow: none;
+    }
+
+    html[data-style="organic"] .tn-range-modern::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 9999px;
+        border: none;
+        background: rgb(var(--tn-slider-accent));
+        box-shadow: none;
     }
 
     .tn-active-band {
@@ -175,6 +287,56 @@
                 rgb(var(--tn-accent) / 0.10),
                 rgb(var(--tn-accent) / 0.02));
         border-left: 3px solid rgb(var(--tn-accent) / 0.65);
+    }
+
+    /* -----------------------------
+     Brand text (top bar)
+     ----------------------------- */
+
+    .tn-brand-text {
+        font-weight: var(--st-fw-semibold);
+        letter-spacing: 0.08em;
+    }
+
+    .tn-brand-ascii {
+        font-size: 6.5px;
+        line-height: 1.15;
+        opacity: 0.55;
+        margin: 0;
+    }
+
+    .tn-ascii-heading {
+        font-size: 6.5px;
+        line-height: 1.15;
+        opacity: 0.55;
+    }
+
+    .tn-ascii-label {
+        font-size: 3.5px;
+        line-height: 1.15;
+        opacity: 1;
+    }
+
+    .tn-ascii-algo {
+        font-size: 4px;
+        line-height: 1.15;
+        opacity: 1;
+        text-align: left;
+        margin: 0 auto;
+        display: inline-block;
+    }
+
+    html[data-style="clean"] .tn-brand-text {
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-weight: var(--st-fw-normal);
+        font-size: 0.8em;
+    }
+
+    html[data-style="organic"] .tn-brand-text {
+        text-transform: lowercase;
+        letter-spacing: 0.14em;
+        font-weight: var(--st-fw-medium);
     }
 
     /* -----------------------------

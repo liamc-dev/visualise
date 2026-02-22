@@ -27,7 +27,7 @@ export function SpeedSlider({
   const p = range <= 0 ? 0 : ((clamped - min) / range) * 100;
 
   return (
-    <div className="w-42 p-0.5">
+    <div className="w-full p-0.5">
       <div className="flex items-baseline justify-between">
         <span className="text-label font-[var(--st-fw-semibold)] tracking-wider text-tn-subtle">
           Speed

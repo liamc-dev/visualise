@@ -57,7 +57,7 @@ export default function ControlsOverlay({ visible }: Props) {
         </div>
 
         {/* Speed slider */}
-        <div className="w-full md:w-[180px] shrink-0">
+        <div className="w-full md:w-[180px] md:min-w-[60px] md:shrink">
           <div className="w-full">
             <div className="mb-1 flex items-center justify-between md:hidden">
               <span className="text-label tracking-[0.18em] uppercase text-tn-subtle/70">

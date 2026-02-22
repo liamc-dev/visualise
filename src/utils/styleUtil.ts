@@ -1,6 +1,5 @@
 // utils/styleUtil.ts
 
-const STALE = "var(--color-tn-surface)";       // older/completed nodes
 const NEUTRAL = "var(--color-tn-accentSoft)";  // neutral active node
 const MID = "var(--color-tn-cyan)";            // pivot/mid
 const ACTIVE = "var(--color-tn-accent)";       // active range
@@ -70,24 +69,29 @@ export function scale(v: VisualFlags): number {
   return v.latest ? 1.0 : 0.95;
 }
 
+function glow(blur: number | string, color: string): string {
+  const b = typeof blur === "number" ? `${blur}px` : blur;
+  return `0 0 calc(${b} * var(--st-cell-glow, 1)) ${color}`;
+}
+
 export function boxShadow(v: VisualFlags): string {
   const s = strength(v.depth);
 
   if (v.highlight) {
-    const glow = 10 + s * 16;
-    return `0 0 ${glow}px ${mix(HIGHLIGHT, Math.round(28 * s))}`;
+    const g = 10 + s * 16;
+    return glow(g, mix(HIGHLIGHT, Math.round(28 * s)));
   }
 
   if (v.trail) {
-    const glow = 8 + 8 * s;
-    return `0 0 ${glow}px ${mix(TRAIL, Math.round(20 * s))}`;
+    const g = 8 + 8 * s;
+    return glow(g, mix(TRAIL, Math.round(20 * s)));
   }
 
-  if (v.mid) return `0 0 14px ${mix(MID, 25)}`;
-  if (v.active) return `0 0 14px ${mix(ACTIVE, 26)}`;
-  if (v.write) return `0 0 16px ${mix(WRITEBACK, 25)}`;
+  if (v.mid) return glow(14, mix(MID, 25));
+  if (v.active) return glow(14, mix(ACTIVE, 26));
+  if (v.write) return glow(16, mix(WRITEBACK, 25));
 
-  return `0 0 10px ${mix(COMPLETED, 18)}`;
+  return glow(10, mix(COMPLETED, 18));
 }
 
 export function lerpColor(c1: string, c2: string, t: number) {
