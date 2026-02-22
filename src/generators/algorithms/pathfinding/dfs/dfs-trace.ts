@@ -8,6 +8,7 @@ import type {
   TraceOverlay,
   TracePointer,
 } from "../../../../types/trace-types";
+import { applyPointerMasking } from "../../../../lib/trace-utils";
 import {
   decodeGridInput,
   DEFAULT_BFS_GRID,
@@ -219,31 +220,7 @@ export function dfsTrace(input: number[]): TraceFrame[] {
   }) {
     const scene = buildScene();
 
-    // Hide values on cells physically behind pointer badges.
-    if (args.pointers?.length) {
-      const behindIds = new Set<string>();
-      for (const p of args.pointers) {
-        if (p.target.kind !== "node") continue;
-        const m = p.target.nodeId.match(/^dfs:(\d+):(\d+)$/);
-        if (!m) continue;
-        const tr = parseInt(m[1]);
-        const tc = parseInt(m[2]);
-        const lane = p.lane ?? "above";
-        if (lane === "above" && tr > 0)
-          behindIds.add(cellId(tr - 1, tc));
-        else if (lane === "below" && tr < rows - 1)
-          behindIds.add(cellId(tr + 1, tc));
-        else if (lane === "left" && tc > 0)
-          behindIds.add(cellId(tr, tc - 1));
-        else if (lane === "right" && tc < cols - 1)
-          behindIds.add(cellId(tr, tc + 1));
-      }
-      for (const node of scene.nodes) {
-        if (behindIds.has(node.id) && node.meta) {
-          node.meta = { ...node.meta, value: "" };
-        }
-      }
-    }
+    applyPointerMasking(scene.nodes, args.pointers);
 
     frames.push({
       id: `dfs.${args.kind}.${stepNo++}`,

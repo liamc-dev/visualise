@@ -6,6 +6,7 @@ import type {
   TracePointer,
   TraceTone,
 } from "../../../../types/trace-types";
+import { applyPointerMasking } from "../../../../lib/trace-utils";
 import {
   CS_INPUT_Y,
   CS_COUNT_Y,
@@ -180,30 +181,7 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
       touchedCounts: args.touchedCounts,
     });
 
-    // Hide values on cells physically behind pointer badges (DFS pattern).
-    if (args.pointers?.length) {
-      const posMap = new Map<string, TraceNode>();
-      for (const nd of nodes) {
-        posMap.set(`${nd.pos.x},${nd.pos.y}`, nd);
-      }
-      for (const p of args.pointers) {
-        if (p.target.kind !== "node") continue;
-        const target = nodes.find((nd) => nd.id === p.target.nodeId);
-        if (!target) continue;
-        const lane = p.lane ?? "above";
-        let maskedKey: string | undefined;
-        if (lane === "above") maskedKey = `${target.pos.x},${target.pos.y - 1}`;
-        else if (lane === "below") maskedKey = `${target.pos.x},${target.pos.y + 1}`;
-        else if (lane === "left") maskedKey = `${target.pos.x - 1},${target.pos.y}`;
-        else if (lane === "right") maskedKey = `${target.pos.x + 1},${target.pos.y}`;
-        if (maskedKey) {
-          const masked = posMap.get(maskedKey);
-          if (masked?.meta) {
-            masked.meta = { ...masked.meta, value: "" };
-          }
-        }
-      }
-    }
+    applyPointerMasking(nodes, args.pointers);
 
     frames.push({
       id: `cs.${args.kind}.${stepNo++}`,
@@ -222,13 +200,13 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
   // -----------------------------------------------------------------------
   // Pointer helpers
   // -----------------------------------------------------------------------
-  function iPointer(idx: number, color = "var(--color-tn-cyan)"): TracePointer {
+  function iPointer(idx: number): TracePointer {
     return {
       id: "i",
       label: "i",
       target: { kind: "node", nodeId: `cs:a:${idx}` },
       lane: "above",
-      color,
+      color: "var(--color-tn-cyan)",
     };
   }
 
@@ -287,7 +265,7 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
       showCount: true,
       showOutput: false,
       // cyan tone on the count cell we're about to read
-      countOverrides: { [val]: { tone: "cyan", weight: 0 } },
+      countOverrides: { [val]: { tone: "cyan", weight: 1 } },
       touchedCounts,
       focusNodes: [`cs:a:${i}`, `cs:c:${val}`],
       pointers: [iPointer(i)],

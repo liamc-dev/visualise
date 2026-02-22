@@ -1,4 +1,4 @@
-import type { TraceFrame, TraceNode, TracePointer, TraceScene } from "../../../../types/trace-types";
+import type { TraceFrame, TraceNode, TracePointer, TraceScene, TraceTone } from "../../../../types/trace-types";
 import { makeBubbleSortLayout } from "./bubble-sort-layout";
 
 function cellId(index: number) {
@@ -15,7 +15,7 @@ export function bubbleSortTrace(input: number[]): TraceFrame[] {
   // Track which indices are in their final sorted position
   const sorted = new Set<number>();
 
-  function buildScene(): TraceScene {
+  function buildScene(toneOverrides?: Record<number, TraceTone>): TraceScene {
     const nodes: TraceNode[] = arr.map((value, idx) => ({
       id: cellId(idx),
       kind: "cell",
@@ -25,6 +25,7 @@ export function bubbleSortTrace(input: number[]): TraceFrame[] {
         index: idx,
         emphasis: sorted.has(idx) ? "soft" as const : "active" as const,
         ...(sorted.has(idx) ? { tone: "muted" as const, opacityMul: 0.45 } : undefined),
+        ...(toneOverrides?.[idx] ? { tone: toneOverrides[idx] } : undefined),
       },
     }));
 
@@ -37,9 +38,10 @@ export function bubbleSortTrace(input: number[]): TraceFrame[] {
     narrationToken?: string;
     highlight?: number[];
     pointers?: TracePointer[];
+    toneOverrides?: Record<number, TraceTone>;
     meta?: Record<string, unknown>;
   }) {
-    const scene = buildScene();
+    const scene = buildScene(args.toneOverrides);
     const focusNodes: string[] = [];
 
     if (args.highlight?.length) {
@@ -131,6 +133,7 @@ export function bubbleSortTrace(input: number[]): TraceFrame[] {
         narrationToken: "bs.compare",
         highlight: [j, j + 1],
         pointers: [...jPointers(j), ...sortedPointer()],
+        toneOverrides: { [j]: "cyan", [j + 1]: "magenta" },
         meta: { j, valJ, valJ1, pass: i },
       });
 
@@ -145,6 +148,7 @@ export function bubbleSortTrace(input: number[]): TraceFrame[] {
           narrationToken: "bs.swap",
           highlight: [j, j + 1],
           pointers: [...jPointers(j), ...sortedPointer()],
+          toneOverrides: { [j]: "cyan", [j + 1]: "magenta" },
           meta: { j, valJ, valJ1, pass: i, swapped: true },
         });
       } else {
@@ -155,6 +159,7 @@ export function bubbleSortTrace(input: number[]): TraceFrame[] {
           narrationToken: "bs.no_swap",
           highlight: [j, j + 1],
           pointers: [...jPointers(j), ...sortedPointer()],
+          toneOverrides: { [j]: "cyan", [j + 1]: "magenta" },
           meta: { j, valJ, valJ1, pass: i, swapped: false },
         });
       }

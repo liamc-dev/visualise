@@ -3,6 +3,7 @@ import type {
   TraceNode,
   TracePointer,
   TraceScene,
+  TraceTone,
 } from "../../../../types/trace-types";
 import { makeInsertionSortLayout } from "./insertion-sort-layout";
 
@@ -24,7 +25,7 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
   // elements we haven't reached yet (i+1..n-1) instead.
   let currentI: number | undefined;
 
-  function buildScene(keyNode?: { value: number; x: number }): TraceScene {
+  function buildScene(keyNode?: { value: number; x: number }, toneOverrides?: Record<number, TraceTone>): TraceScene {
     const nodes: TraceNode[] = arr.map((value, idx) => {
       const isUnsorted = currentI !== undefined && idx > currentI;
       return {
@@ -38,6 +39,7 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
           ...(isUnsorted
             ? { tone: "muted" as const, opacityMul: 0.45 }
             : undefined),
+          ...(toneOverrides?.[idx] ? { tone: toneOverrides[idx] } : undefined),
         },
       };
     });
@@ -64,10 +66,11 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
     narrationToken?: string;
     highlight?: number[];
     pointers?: TracePointer[];
+    toneOverrides?: Record<number, TraceTone>;
     meta?: Record<string, unknown>;
     keyNode?: { value: number; x: number };
   }) {
-    const scene = buildScene(args.keyNode);
+    const scene = buildScene(args.keyNode, args.toneOverrides);
     const focusNodes: string[] = [];
 
     if (args.keyNode) {
@@ -164,6 +167,7 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
         narrationToken: "is.compare",
         highlight: [j],
         pointers: [iPointer(i), jPointer(j), keyPointer],
+        toneOverrides: { [j]: "magenta" },
         keyNode: { value: key, x: j },
         meta: { i, j, key, valJ },
       });
@@ -179,6 +183,7 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
         narrationToken: "is.shift",
         highlight: [j, j + 1],
         pointers: [iPointer(i), jPointer(j), keyPointer],
+        toneOverrides: { [j]: "magenta" },
         keyNode: { value: key, x: j },
         meta: { i, j, key, valJ },
       });

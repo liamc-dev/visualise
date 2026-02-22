@@ -1,5 +1,5 @@
 // src/algorithms/sorting/trace/quick/quick-sort-trace.ts
-import type { TraceFrame, TracePointer, TraceScene } from "../../../../types/trace-types";
+import type { TraceFrame, TracePointer, TraceScene, TraceTone } from "../../../../types/trace-types";
 import { makeQuickSortLayout } from "./quick-sort-layout";
 
 type QuickSortStackNode = {
@@ -107,12 +107,23 @@ function buildScene(args: {
   const active = stack[stack.length - 1];
   const activeDepth = active?.depth ?? 0;
 
+  // Derive cell tones from active node's pointer roles
+  const activeTones: Record<number, TraceTone> = {};
+  if (active) {
+    if (typeof active.scanIndex === "number") activeTones[active.scanIndex] = "magenta";
+    if (typeof active.boundaryIndex === "number") activeTones[active.boundaryIndex] = "cyan";
+  }
+
   for (const node of vis) {
     const y = layout.rowY(node.depth);
     const emphasis = node.depth === activeDepth ? "active" : "soft";
+    const isActive = node === active;
 
     for (let g = node.lo; g <= node.hi; g++) {
       const isPivot = typeof node.pivotIndex === "number" && g === node.pivotIndex;
+      const cellTone: TraceTone | undefined = isPivot
+        ? "warning"
+        : isActive ? activeTones[g] : undefined;
 
       nodes.push({
         id: cellId(node.id, g),
@@ -129,13 +140,14 @@ function buildScene(args: {
 
           // style hooks (GENERIC)
           emphasis, // stack fading
-          // pivot = generic "warning tone" (renderer must stay agnostic)
           ...(isPivot
             ? {
-                tone: "warning",
+                tone: "warning" as const,
                 weight: 2, // strong but below highlight
               }
-            : undefined),
+            : cellTone
+              ? { tone: cellTone }
+              : undefined),
         },
       });
     }

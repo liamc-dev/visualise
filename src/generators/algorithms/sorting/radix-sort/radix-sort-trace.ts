@@ -6,6 +6,7 @@ import type {
   TracePointer,
   TraceTone,
 } from "../../../../types/trace-types";
+import { applyPointerMasking } from "../../../../lib/trace-utils";
 import { RX_INPUT_Y, RX_COUNT_Y, RX_OUTPUT_Y } from "./radix-sort-layout";
 
 export function radixSortTrace(input: number[]): TraceFrame[] {
@@ -157,30 +158,7 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
       touchedCounts: args.touchedCounts,
     });
 
-    // Hide values on cells physically behind pointer badges.
-    if (args.pointers?.length) {
-      const posMap = new Map<string, TraceNode>();
-      for (const nd of nodes) {
-        posMap.set(`${nd.pos.x},${nd.pos.y}`, nd);
-      }
-      for (const p of args.pointers) {
-        if (p.target.kind !== "node") continue;
-        const target = nodes.find((nd) => nd.id === p.target.nodeId);
-        if (!target) continue;
-        const lane = p.lane ?? "above";
-        let maskedKey: string | undefined;
-        if (lane === "above") maskedKey = `${target.pos.x},${target.pos.y - 1}`;
-        else if (lane === "below") maskedKey = `${target.pos.x},${target.pos.y + 1}`;
-        else if (lane === "left") maskedKey = `${target.pos.x - 1},${target.pos.y}`;
-        else if (lane === "right") maskedKey = `${target.pos.x + 1},${target.pos.y}`;
-        if (maskedKey) {
-          const masked = posMap.get(maskedKey);
-          if (masked?.meta) {
-            masked.meta = { ...masked.meta, value: "" };
-          }
-        }
-      }
-    }
+    applyPointerMasking(nodes, args.pointers);
 
     frames.push({
       id: `rx.${args.kind}.${stepNo++}`,
@@ -258,7 +236,7 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
         outputUsed,
         showCount: true,
         showOutput: false,
-        countOverrides: { [digit]: { tone: "cyan", weight: 0 } },
+        countOverrides: { [digit]: { tone: "cyan", weight: 1 } },
         touchedCounts,
         focusNodes: [`rx:a:${i}`, `rx:c:${digit}`],
         pointers: [
