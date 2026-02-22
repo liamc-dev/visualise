@@ -1,16 +1,67 @@
-# React + Vite
+```
+        _                  _ _
+ __   _(_)___ _   _  __ _ | (_)___  ___
+ \ \ / / / __| | | |/ _` || | / __|/ _ \
+  \ V /| \__ \ |_| | (_| || | \__ \  __/
+   \_/ |_|___/\__,_|\__,_||_|_|___/\___|
+```
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Step through algorithms, frame by frame.** A visual debugger for sorting and pathfinding algorithms with synchronized code highlighting, narration, and playback controls.
 
-Currently, two official plugins are available:
+[**Live Demo**](https://liamc.github.io/visualise/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<!-- screenshot -->
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frame-by-frame playback** — step forward, back, or autoplay with speed control
+- **Synchronized code highlighting** — see exactly which line executes on each step
+- **Narration** — plain-English explanations of what's happening and why
+- **Predict mode** — guess the next state before revealing it
+- **4 themes** — light, dark, tokyo night, ember
+- **Editable inputs** — tweak arrays, grids, and graph weights on the fly
 
-## Expanding the ESLint configuration
+## Algorithms
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Sorting | Pathfinding |
+|---------|-------------|
+| Bubble Sort | BFS (grid) |
+| Insertion Sort | Dijkstra (graph + grid) |
+| Merge Sort | |
+| Quick Sort | |
+| Heap Sort | |
+| Radix Sort | |
+
+## Themes
+
+- **Light** — clean and minimal
+- **Dark** — plum-tinted panels, easy on the eyes
+- **Tokyo Night** — moody blues and purples, neon accents
+- **Ember** — warm, cozy tones
+
+## Getting Started
+
+```bash
+pnpm install
+pnpm dev          # dev server on localhost:5173
+pnpm build        # production build
+pnpm lint         # eslint (zero warnings policy)
+pnpm run deploy   # build + deploy to GitHub Pages
+```
+
+Requires **pnpm** and **Node 18+**.
+
+## Tech Stack
+
+- **React 19** + **TypeScript**
+- **Vite 7** — dev server + bundler
+- **Tailwind CSS 4** — utility-first styling
+- **Zustand** — state management
+- **Monaco Editor** — code panel with syntax highlighting
+- **Framer Motion** — animations
+- **React Router** — hash-based routing
+- **React Query** — server state
+
+## License
+
+MIT
