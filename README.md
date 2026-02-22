@@ -26,11 +26,13 @@
 | Sorting | Pathfinding |
 |---------|-------------|
 | Bubble Sort | BFS (grid) |
-| Insertion Sort | Dijkstra (graph + grid) |
+| Insertion Sort | DFS (grid) |
+| Selection Sort | Dijkstra (graph + grid) |
 | Merge Sort | |
 | Quick Sort | |
 | Heap Sort | |
 | Radix Sort | |
+| Counting Sort | |
 
 ## Themes
 

@@ -61,9 +61,12 @@ const AboutPage = () => {
           <ul className="space-y-0.5">
             <li>Bubble Sort</li>
             <li>Insertion Sort</li>
+            <li>Selection Sort</li>
             <li>Merge Sort</li>
             <li>Quick Sort</li>
             <li>Heap Sort</li>
+            <li>Radix Sort</li>
+            <li>Counting Sort</li>
           </ul>
         </div>
 

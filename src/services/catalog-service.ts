@@ -131,5 +131,29 @@ const mockData = [
                 "name": "Sorting"
             }
         ]
+    },
+    {
+        "id": "e5f6a7b8-c9d0-1234-ef01-56789abcdef0",
+        "key": "counting-sort",
+        "name": "Counting Sort",
+        "categories": [
+            {
+                "id": "4472b151-6b88-4508-b2e4-b6cb8ecdb7ea",
+                "key": "sorting",
+                "name": "Sorting"
+            }
+        ]
+    },
+    {
+        "id": "d4e5f6a7-b8c9-0123-def0-456789abcdef",
+        "key": "selection-sort",
+        "name": "Selection Sort",
+        "categories": [
+            {
+                "id": "4472b151-6b88-4508-b2e4-b6cb8ecdb7ea",
+                "key": "sorting",
+                "name": "Sorting"
+            }
+        ]
     }
 ]

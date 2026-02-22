@@ -297,7 +297,7 @@ html[data-style="terminal"] {
   --st-cell-inset: 0 0 0 0 transparent;
   --st-cell-glow: 0;
   --st-cell-border-style: solid;
-  --st-cell-border-heavy: 1px;
+  --st-cell-border-heavy: 2px;
 
   --font-scale: 0.95;
   font-family: var(--st-font-ui);
