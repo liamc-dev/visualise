@@ -35,8 +35,38 @@ function toneBorderColor(tone: unknown) {
   if (tone === "danger") return "rgb(var(--tn-danger) / 0.55)";
   if (tone === "info") return "rgb(var(--tn-cyan) / 0.55)";
   if (tone === "accent") return "rgb(var(--tn-accent) / 0.55)";
+  if (tone === "cyan") return "rgb(var(--tn-cyan) / 0.55)";
+  if (tone === "magenta") return "rgb(var(--tn-magenta) / 0.55)";
   if (tone === "muted") return "rgb(var(--tn-subtle) / 0.28)";
   return null; // neutral: fall back to styleUtil
+}
+
+/** Map active tones to their CSS color variable (rgb triplet form). */
+function toneColorVar(tone: unknown): string | null {
+  if (tone === "warning") return "var(--tn-warning)";
+  if (tone === "accent") return "var(--tn-accent)";
+  if (tone === "cyan") return "var(--tn-cyan)";
+  if (tone === "magenta") return "var(--tn-magenta)";
+  if (tone === "danger") return "var(--tn-danger)";
+  if (tone === "info") return "var(--tn-cyan)";
+  return null;
+}
+
+/** Subtle tone-tinted background. Only accent/danger get a tint. */
+function toneBackgroundColor(tone: unknown, weight: number): string | null {
+  if (tone !== "accent" && tone !== "danger") return null;
+  const colorVar = toneColorVar(tone);
+  if (!colorVar) return null;
+  const pct = 10 + (weight >= 1 ? 5 : 0);
+  return `color-mix(in srgb, rgb(${colorVar}) ${pct}%, rgb(var(--tn-surface)))`;
+}
+
+/** Tone-colored glow for active signals with weight>=1. */
+function toneGlow(tone: unknown, weight: number): string | null {
+  if (weight < 1) return null;
+  const colorVar = toneColorVar(tone);
+  if (!colorVar) return null;
+  return `0 0 calc(14px * var(--st-cell-glow, 1)) color-mix(in srgb, rgb(${colorVar}) 26%, transparent)`;
 }
 
 export function getTraceCellStyle(args: {
@@ -102,7 +132,12 @@ export function getTraceCellStyle(args: {
   const toneBorder = isTemp ? null : toneBorderColor(tone);
   const borderColor = toneBorder ?? baseBorder;
 
-  const rawShadow = isTemp ? "none" : effects ? boxShadow(flags) : "none";
+  const toneGlowVal = isTemp ? null : toneGlow(tone, weight);
+  const rawShadow = isTemp
+    ? "none"
+    : effects
+      ? (toneGlowVal ?? boxShadow(flags))
+      : "none";
   const cellInset = "var(--st-cell-inset, 0 0 0 0 transparent)";
   const finalShadow =
     rawShadow === "none" ? cellInset : `${cellInset}, ${rawShadow}`;
@@ -162,6 +197,9 @@ export function getTraceCellStyle(args: {
 
   if (isTemp) {
     style.backgroundColor = "rgb(var(--tn-bg) / 0.15)";
+  } else {
+    const toneBg = toneBackgroundColor(tone, weight);
+    if (toneBg) style.backgroundColor = toneBg;
   }
 
   return {

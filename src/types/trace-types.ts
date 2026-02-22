@@ -19,7 +19,7 @@ export type TraceScene = {
   bounds?: { minX: number; minY: number; maxX: number; maxY: number };
 };
 
-export type TraceTone = "neutral" | "accent" | "info" | "warning" | "danger" | "muted";
+export type TraceTone = "neutral" | "accent" | "info" | "warning" | "danger" | "muted" | "cyan" | "magenta";
 
 export type TraceNode = {
   id: string;

@@ -47,11 +47,13 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
     showOutput: boolean;
     countOverrides?: Record<number, CellOverride>;
     outputOverrides?: Record<number, CellOverride>;
+    touchedCounts?: ReadonlySet<number>;
   }): { nodes: TraceNode[]; overlays: TraceOverlay[] } {
     const {
       arr: a, count, output, outputUsed,
       showCount, showOutput,
       countOverrides, outputOverrides,
+      touchedCounts,
     } = args;
     const nodes: TraceNode[] = [];
     const overlays: TraceOverlay[] = [];
@@ -99,14 +101,16 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
         const row = Math.floor(v / chunkW);
         const col = v % chunkW;
         const ov = countOverrides?.[v];
+        const dimmed = !ov && touchedCounts && !touchedCounts.has(v);
         nodes.push({
           id: `cs:c:${v}`,
           kind: "cell",
           pos: { x: col, y: CS_COUNT_Y + row },
           meta: {
             value: count[v],
-            tone: ov?.tone ?? ("info" as const),
+            tone: ov?.tone ?? ("neutral" as const),
             weight: ov?.weight ?? (0 as const),
+            ...(dimmed ? { emphasis: "faint" as const } : undefined),
             layer: "count",
             index: v,
           },
@@ -159,6 +163,7 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
     showOutput: boolean;
     countOverrides?: Record<number, CellOverride>;
     outputOverrides?: Record<number, CellOverride>;
+    touchedCounts?: ReadonlySet<number>;
     focusNodes?: string[];
     pointers?: TracePointer[];
     meta?: Record<string, unknown>;
@@ -172,6 +177,7 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
       showOutput: args.showOutput,
       countOverrides: args.countOverrides,
       outputOverrides: args.outputOverrides,
+      touchedCounts: args.touchedCounts,
     });
 
     // Hide values on cells physically behind pointer badges (DFS pattern).
@@ -216,13 +222,13 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
   // -----------------------------------------------------------------------
   // Pointer helpers
   // -----------------------------------------------------------------------
-  function iPointer(idx: number): TracePointer {
+  function iPointer(idx: number, color = "var(--color-tn-cyan)"): TracePointer {
     return {
       id: "i",
       label: "i",
       target: { kind: "node", nodeId: `cs:a:${idx}` },
       lane: "above",
-      color: "var(--color-tn-cyan)",
+      color,
     };
   }
 
@@ -232,6 +238,7 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
   const count = new Array(k).fill(0);
   const output = new Array(n).fill(0);
   const outputUsed = new Array(n).fill(false);
+  const touchedCounts = new Set<number>();
 
   // Init frame
   push({
@@ -261,6 +268,7 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
     outputUsed,
     showCount: true,
     showOutput: false,
+    touchedCounts,
     meta: { k },
   });
 
@@ -278,8 +286,9 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
       outputUsed,
       showCount: true,
       showOutput: false,
-      // warning tone on the count cell we're about to touch
-      countOverrides: { [val]: { tone: "warning", weight: 0 } },
+      // cyan tone on the count cell we're about to read
+      countOverrides: { [val]: { tone: "cyan", weight: 0 } },
+      touchedCounts,
       focusNodes: [`cs:a:${i}`, `cs:c:${val}`],
       pointers: [iPointer(i)],
       meta: { i, value: val },
@@ -287,8 +296,9 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
 
     // Mutate
     count[val]++;
+    touchedCounts.add(val);
 
-    // Frame 2: count — count cell lights up with accent after increment
+    // Frame 2: count — count cell lights up with magenta after increment
     push({
       kind: "count",
       codeToken: "cs.count",
@@ -299,7 +309,8 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
       outputUsed,
       showCount: true,
       showOutput: false,
-      countOverrides: { [val]: { tone: "accent", weight: 1 } },
+      countOverrides: { [val]: { tone: "magenta", weight: 1 } },
+      touchedCounts,
       focusNodes: [`cs:a:${i}`, `cs:c:${val}`],
       pointers: [iPointer(i)],
       meta: { i, value: val, countVal: count[val] },
@@ -333,8 +344,9 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
       showCount: true,
       showOutput: false,
       countOverrides: {
-        [i - 1]: { tone: "warning", weight: 1 },
+        [i - 1]: { tone: "cyan", weight: 1 },
       },
+      touchedCounts,
       focusNodes: [`cs:c:${i - 1}`, `cs:c:${i}`],
       pointers: [prefixPtr],
       meta: { prefixIdx: i, prevVal, curVal },
@@ -342,8 +354,9 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
 
     // Mutate
     count[i] += count[i - 1];
+    touchedCounts.add(i);
 
-    // Frame 2: prefix — result cell lights up with accent
+    // Frame 2: prefix — result cell lights up with magenta
     push({
       kind: "prefix",
       codeToken: "cs.prefix",
@@ -355,9 +368,10 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
       showCount: true,
       showOutput: false,
       countOverrides: {
-        [i - 1]: { tone: "warning", weight: 0 },
-        [i]: { tone: "accent", weight: 1 },
+        [i - 1]: { tone: "cyan", weight: 0 },
+        [i]: { tone: "magenta", weight: 1 },
       },
+      touchedCounts,
       focusNodes: [`cs:c:${i - 1}`, `cs:c:${i}`],
       pointers: [prefixPtr],
       meta: { prefixIdx: i, countVal: count[i] },
@@ -382,7 +396,7 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
       outputUsed,
       showCount: true,
       showOutput: true,
-      countOverrides: { [val]: { tone: "warning", weight: 1 } },
+      countOverrides: { [val]: { tone: "cyan", weight: 1 } },
       focusNodes: [`cs:a:${i}`, `cs:c:${val}`],
       pointers: [iPointer(i)],
       meta: { i, value: val, pos, countVal: count[val] },
@@ -393,7 +407,7 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
     outputUsed[pos] = true;
     count[val]--;
 
-    // Frame 2: place — output cell pops with accent, count decremented
+    // Frame 2: place — output cell pops with magenta, count decremented
     push({
       kind: "place",
       codeToken: "cs.place",
@@ -404,7 +418,7 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
       outputUsed,
       showCount: true,
       showOutput: true,
-      outputOverrides: { [pos]: { tone: "accent", weight: 1 } },
+      outputOverrides: { [pos]: { tone: "magenta", weight: 1 } },
       focusNodes: [`cs:a:${i}`, `cs:o:${pos}`],
       pointers: [
         iPointer(i),
@@ -413,7 +427,7 @@ export function countingSortTrace(input: number[]): TraceFrame[] {
           label: `${pos}`,
           target: { kind: "node", nodeId: `cs:o:${pos}` },
           lane: "below",
-          color: "var(--color-tn-accent)",
+          color: "var(--color-tn-magenta)",
         },
       ],
       meta: { i, value: val, pos, countVal: count[val] },

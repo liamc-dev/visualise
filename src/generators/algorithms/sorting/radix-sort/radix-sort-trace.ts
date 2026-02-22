@@ -4,6 +4,7 @@ import type {
   TraceNode,
   TraceOverlay,
   TracePointer,
+  TraceTone,
 } from "../../../../types/trace-types";
 import { RX_INPUT_Y, RX_COUNT_Y, RX_OUTPUT_Y } from "./radix-sort-layout";
 
@@ -18,6 +19,11 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
   const maxVal = Math.max(...arr);
 
   // -----------------------------------------------------------------------
+  // Per-cell tone/weight overrides applied during buildScene
+  // -----------------------------------------------------------------------
+  type CellOverride = { tone: TraceTone; weight: 0 | 1 | 2 };
+
+  // -----------------------------------------------------------------------
   // Scene builder
   // -----------------------------------------------------------------------
   function buildScene(args: {
@@ -27,8 +33,16 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
     outputUsed: boolean[];
     showCount: boolean;
     showOutput: boolean;
+    countOverrides?: Record<number, CellOverride>;
+    outputOverrides?: Record<number, CellOverride>;
+    touchedCounts?: ReadonlySet<number>;
   }): { nodes: TraceNode[]; overlays: TraceOverlay[] } {
-    const { arr: a, count, output, outputUsed, showCount, showOutput } = args;
+    const {
+      arr: a, count, output, outputUsed,
+      showCount, showOutput,
+      countOverrides, outputOverrides,
+      touchedCounts,
+    } = args;
     const nodes: TraceNode[] = [];
     const overlays: TraceOverlay[] = [];
 
@@ -63,13 +77,17 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
         emphasis: "faint",
       });
       for (let d = 0; d < 10; d++) {
+        const ov = countOverrides?.[d];
+        const dimmed = !ov && touchedCounts && !touchedCounts.has(d);
         nodes.push({
           id: `rx:c:${d}`,
           kind: "cell",
           pos: { x: d, y: RX_COUNT_Y },
           meta: {
             value: count[d],
-            tone: "info" as const,
+            tone: ov?.tone ?? ("neutral" as const),
+            weight: ov?.weight ?? (0 as const),
+            ...(dimmed ? { emphasis: "faint" as const } : undefined),
             layer: "count",
             index: d,
           },
@@ -88,6 +106,7 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
         emphasis: "faint",
       });
       for (let i = 0; i < a.length; i++) {
+        const ov = outputOverrides?.[i];
         nodes.push({
           id: `rx:o:${i}`,
           kind: outputUsed[i] ? "cell" : "temp",
@@ -96,7 +115,8 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
             value: outputUsed[i] ? output[i] : "",
             layer: "output",
             index: i,
-            tone: "neutral" as const,
+            tone: ov?.tone ?? ("neutral" as const),
+            weight: ov?.weight ?? (0 as const),
           },
         });
       }
@@ -118,6 +138,9 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
     outputUsed: boolean[];
     showCount: boolean;
     showOutput: boolean;
+    countOverrides?: Record<number, CellOverride>;
+    outputOverrides?: Record<number, CellOverride>;
+    touchedCounts?: ReadonlySet<number>;
     focusNodes?: string[];
     pointers?: TracePointer[];
     meta?: Record<string, unknown>;
@@ -129,7 +152,35 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
       outputUsed: args.outputUsed,
       showCount: args.showCount,
       showOutput: args.showOutput,
+      countOverrides: args.countOverrides,
+      outputOverrides: args.outputOverrides,
+      touchedCounts: args.touchedCounts,
     });
+
+    // Hide values on cells physically behind pointer badges.
+    if (args.pointers?.length) {
+      const posMap = new Map<string, TraceNode>();
+      for (const nd of nodes) {
+        posMap.set(`${nd.pos.x},${nd.pos.y}`, nd);
+      }
+      for (const p of args.pointers) {
+        if (p.target.kind !== "node") continue;
+        const target = nodes.find((nd) => nd.id === p.target.nodeId);
+        if (!target) continue;
+        const lane = p.lane ?? "above";
+        let maskedKey: string | undefined;
+        if (lane === "above") maskedKey = `${target.pos.x},${target.pos.y - 1}`;
+        else if (lane === "below") maskedKey = `${target.pos.x},${target.pos.y + 1}`;
+        else if (lane === "left") maskedKey = `${target.pos.x - 1},${target.pos.y}`;
+        else if (lane === "right") maskedKey = `${target.pos.x + 1},${target.pos.y}`;
+        if (maskedKey) {
+          const masked = posMap.get(maskedKey);
+          if (masked?.meta) {
+            masked.meta = { ...masked.meta, value: "" };
+          }
+        }
+      }
+    }
 
     frames.push({
       id: `rx.${args.kind}.${stepNo++}`,
@@ -151,6 +202,7 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
   let count = new Array(10).fill(0);
   let output = new Array(n).fill(0);
   let outputUsed = new Array(n).fill(false);
+  let touchedCounts = new Set<number>();
 
   // Init frame
   push({
@@ -174,6 +226,7 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
     count = new Array(10).fill(0);
     output = new Array(n).fill(0);
     outputUsed = new Array(n).fill(false);
+    touchedCounts = new Set<number>();
 
     // Digit start
     push({
@@ -186,6 +239,7 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
       outputUsed,
       showCount: true,
       showOutput: false,
+      touchedCounts,
       meta: { exp },
     });
 
@@ -193,7 +247,7 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
     for (let i = 0; i < n; i++) {
       const digit = Math.floor(arr[i] / exp) % 10;
 
-      // Extract
+      // Beat 1: extract — read input, highlight target count cell (cyan)
       push({
         kind: "extract",
         codeToken: "rx.extract",
@@ -204,7 +258,9 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
         outputUsed,
         showCount: true,
         showOutput: false,
-        focusNodes: [`rx:a:${i}`],
+        countOverrides: { [digit]: { tone: "cyan", weight: 0 } },
+        touchedCounts,
+        focusNodes: [`rx:a:${i}`, `rx:c:${digit}`],
         pointers: [
           {
             id: "i",
@@ -218,8 +274,9 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
       });
 
       count[digit]++;
+      touchedCounts.add(digit);
 
-      // Count
+      // Beat 2: count — count cell lights up magenta after increment
       push({
         kind: "count",
         codeToken: "rx.count",
@@ -230,6 +287,8 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
         outputUsed,
         showCount: true,
         showOutput: false,
+        countOverrides: { [digit]: { tone: "magenta", weight: 1 } },
+        touchedCounts,
         focusNodes: [`rx:a:${i}`, `rx:c:${digit}`],
         pointers: [
           {
@@ -246,8 +305,9 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
 
     // Prefix sum phase
     for (let i = 1; i < 10; i++) {
-      count[i] += count[i - 1];
+      const prevVal = count[i - 1];
 
+      // Beat 1: read source cell (cyan)
       push({
         kind: "prefix",
         codeToken: "rx.prefix",
@@ -258,7 +318,32 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
         outputUsed,
         showCount: true,
         showOutput: false,
-        focusNodes: [`rx:c:${i}`],
+        countOverrides: { [i - 1]: { tone: "cyan", weight: 1 } },
+        touchedCounts,
+        focusNodes: [`rx:c:${i - 1}`, `rx:c:${i}`],
+        meta: { exp, prefixIdx: i, prevVal, countVal: count[i] },
+      });
+
+      count[i] += count[i - 1];
+      touchedCounts.add(i);
+
+      // Beat 2: result cell lights up magenta
+      push({
+        kind: "prefix",
+        codeToken: "rx.prefix",
+        narrationToken: "rx.prefix",
+        arr,
+        count,
+        output,
+        outputUsed,
+        showCount: true,
+        showOutput: false,
+        countOverrides: {
+          [i - 1]: { tone: "cyan", weight: 0 },
+          [i]: { tone: "magenta", weight: 1 },
+        },
+        touchedCounts,
+        focusNodes: [`rx:c:${i - 1}`, `rx:c:${i}`],
         meta: { exp, prefixIdx: i, countVal: count[i] },
       });
     }
@@ -267,10 +352,8 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
     for (let i = n - 1; i >= 0; i--) {
       const digit = Math.floor(arr[i] / exp) % 10;
       const pos = count[digit] - 1;
-      output[pos] = arr[i];
-      outputUsed[pos] = true;
-      count[digit]--;
 
+      // Beat 1: read — look up position from count cell (cyan)
       push({
         kind: "place",
         codeToken: "rx.place",
@@ -281,6 +364,38 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
         outputUsed,
         showCount: true,
         showOutput: true,
+        countOverrides: { [digit]: { tone: "cyan", weight: 1 } },
+        touchedCounts,
+        focusNodes: [`rx:a:${i}`, `rx:c:${digit}`],
+        pointers: [
+          {
+            id: "i",
+            label: "i",
+            target: { kind: "node", nodeId: `rx:a:${i}` },
+            lane: "above",
+            color: "var(--color-tn-cyan)",
+          },
+        ],
+        meta: { exp, i, value: arr[i], digit, pos, countVal: count[digit] },
+      });
+
+      output[pos] = arr[i];
+      outputUsed[pos] = true;
+      count[digit]--;
+
+      // Beat 2: place — output cell lights up magenta
+      push({
+        kind: "place",
+        codeToken: "rx.place",
+        narrationToken: "rx.place",
+        arr,
+        count,
+        output,
+        outputUsed,
+        showCount: true,
+        showOutput: true,
+        outputOverrides: { [pos]: { tone: "magenta", weight: 1 } },
+        touchedCounts,
         focusNodes: [`rx:a:${i}`, `rx:o:${pos}`],
         pointers: [
           {
@@ -289,6 +404,13 @@ export function radixSortTrace(input: number[]): TraceFrame[] {
             target: { kind: "node", nodeId: `rx:a:${i}` },
             lane: "above",
             color: "var(--color-tn-cyan)",
+          },
+          {
+            id: "pos",
+            label: `${pos}`,
+            target: { kind: "node", nodeId: `rx:o:${pos}` },
+            lane: "below",
+            color: "var(--color-tn-magenta)",
           },
         ],
         meta: { exp, i, value: arr[i], digit, pos, countVal: count[digit] },

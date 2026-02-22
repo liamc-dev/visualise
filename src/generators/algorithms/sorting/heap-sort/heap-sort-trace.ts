@@ -1,5 +1,5 @@
 // src/generators/algorithms/sorting/heap-sort/heap-sort-trace.ts
-import type { TraceFrame, TraceScene, TracePointer } from "../../../../types/trace-types";
+import type { TraceFrame, TraceScene, TracePointer, TraceTone } from "../../../../types/trace-types";
 import { makeHeapLayout } from "./heap-layout";
 
 export function heapSortTrace(input: number[]): TraceFrame[] {
@@ -56,10 +56,19 @@ export function heapSortTrace(input: number[]): TraceFrame[] {
     ptrs?: { root?: number; child?: number; swapIdx?: number; end?: number };
     meta?: Record<string, unknown>;
   }) => {
+    // Derive cell tones from pointer roles
+    const toneOverrides: Record<number, TraceTone> = {};
+    if (args.ptrs) {
+      if (typeof args.ptrs.root === "number") toneOverrides[args.ptrs.root] = "warning";
+      if (typeof args.ptrs.child === "number") toneOverrides[args.ptrs.child] = "cyan";
+      if (typeof args.ptrs.swapIdx === "number") toneOverrides[args.ptrs.swapIdx] = "magenta";
+    }
+
     const scene = buildHeapScene({
       arr,
       heapSize: args.heapSize,
       layout,
+      toneOverrides,
     });
 
     const focusNodes = (args.highlight ?? []).flatMap((i) => [`a:${i}`, `h:${i}`]);
@@ -135,14 +144,16 @@ function buildHeapScene(args: {
   arr: number[];
   heapSize: number;
   layout: ReturnType<typeof makeHeapLayout>;
+  toneOverrides?: Record<number, TraceTone>;
 }): TraceScene {
-  const { arr, heapSize, layout } = args;
+  const { arr, heapSize, layout, toneOverrides } = args;
 
   const nodes: TraceScene["nodes"] = [];
 
   // Array row
   for (let i = 0; i < arr.length; i++) {
     const inHeap = i < heapSize;
+    const tone = toneOverrides?.[i] ?? (inHeap ? "neutral" : "muted");
 
     nodes.push({
       id: `a:${i}`,
@@ -150,7 +161,7 @@ function buildHeapScene(args: {
       pos: { x: i, y: layout.arrayY, depth: 0 },
       meta: {
         value: arr[i],
-        tone: inHeap ? "neutral" : "muted",
+        tone: tone as TraceTone,
         opacityMul: inHeap ? 1 : 0.22,
         layer: "array",
         index: i,
@@ -161,6 +172,7 @@ function buildHeapScene(args: {
   // Heap tree nodes
   for (let i = 0; i < arr.length; i++) {
     const inHeap = i < heapSize;
+    const tone = toneOverrides?.[i] ?? (inHeap ? "neutral" : "muted");
     const p = layout.heapPos[i];
 
     nodes.push({
@@ -169,7 +181,7 @@ function buildHeapScene(args: {
       pos: { x: p.x, y: p.y, depth: p.depth },
       meta: {
         value: arr[i],
-        tone: inHeap ? "neutral" : "muted",
+        tone: tone as TraceTone,
         opacityMul: inHeap ? 1 : 0.22,
         layer: "heap",
         index: i,
