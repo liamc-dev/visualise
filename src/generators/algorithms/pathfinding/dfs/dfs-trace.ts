@@ -440,7 +440,7 @@ export function dfsTrace(input: number[]): TraceFrame[] {
   showResult = true;
   const doneScene = buildScene();
   // Add summary caption above the grid
-  doneScene.overlays.push({
+  doneScene.overlays!.push({
     kind: "caption" as const,
     id: "dfs:result-label",
     x: GRID_X0 + cols / 2 - 0.5,

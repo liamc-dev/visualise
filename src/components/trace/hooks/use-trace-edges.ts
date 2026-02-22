@@ -91,11 +91,11 @@ export function useTraceEdges(args: {
           active,
           opacity,
           dashed,
-          arrow: meta.arrow ?? true,
+          arrow: (meta.arrow as boolean | undefined) ?? true,
           // If curved, ignore polyline routing
           via: curveVia ? undefined : via,
           curveVia,
-          color: meta.color,
+          color: meta.color as string | undefined,
         };
 
         return out;

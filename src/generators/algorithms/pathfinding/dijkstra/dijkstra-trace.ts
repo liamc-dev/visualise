@@ -6,7 +6,10 @@ import type {
   TraceEdge,
   TraceOverlay,
   TracePointer,
+  TraceTone,
+  TraceEmphasis,
 } from "../../../../types/trace-types";
+import { applyPointerMasking } from "../../../../lib/trace-utils";
 import {
   buildAdj,
   buildGraphFromInput,
@@ -81,12 +84,6 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
   const frames: TraceFrame[] = [];
   let stepNo = 0;
 
-  // Build a lookup of node positions by id for pointer masking
-  const nodePosById = new Map<string, { x: number; y: number }>();
-  for (const gn of graph.nodes) {
-    nodePosById.set(nodeId(gn.label), { x: gn.x, y: gn.y });
-  }
-
   /* ---- scene builder ---- */
 
   function buildScene(): TraceScene {
@@ -95,8 +92,8 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
       const isVisited = visited.has(gn.label);
       const isSource = gn.label === graph.source;
 
-      let tone: TraceNode["meta"] extends { tone?: infer T } ? T : never;
-      let emphasis: TraceNode["meta"] extends { emphasis?: infer E } ? E : never;
+      let tone: TraceTone;
+      let emphasis: TraceEmphasis | undefined;
 
       if (isVisited) {
         tone = "neutral";
@@ -203,8 +200,8 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
       const isVisited = visited.has(l);
       const isReachable = d < Infinity;
 
-      let tone: TraceNode["meta"] extends { tone?: infer T } ? T : never;
-      let emphasis: TraceNode["meta"] extends { emphasis?: infer E } ? E : never;
+      let tone: TraceTone;
+      let emphasis: TraceEmphasis | undefined;
 
       if (isVisited) {
         tone = "neutral";
@@ -238,7 +235,7 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
     };
   }
 
-  /* ---- frame pusher (with pointer masking) ---- */
+  /* ---- frame pusher ---- */
 
   function push(args: {
     kind: string;
@@ -251,42 +248,7 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
   }) {
     const scene = buildScene();
 
-    // Pointer masking: hide values on nodes physically behind pointer badges.
-    // A pointer badge at lane "above" extends ~1 unit upward from the target.
-    if (args.pointers?.length) {
-      const MASK_THRESHOLD = 1.1;
-      const behindIds = new Set<string>();
-
-      for (const p of args.pointers) {
-        if (p.target.kind !== "node") continue;
-        const targetPos = nodePosById.get(p.target.nodeId);
-        if (!targetPos) continue;
-
-        const lane = p.lane ?? "above";
-        let badgeX = targetPos.x;
-        let badgeY = targetPos.y;
-        if (lane === "above") badgeY -= 1;
-        else if (lane === "below") badgeY += 1;
-        else if (lane === "left") badgeX -= 1;
-        else if (lane === "right") badgeX += 1;
-
-        // Check all scene nodes (graph + dist table) for overlap
-        for (const node of scene.nodes) {
-          if (node.id === p.target.nodeId) continue;
-          const dx = Math.abs(node.pos.x - badgeX);
-          const dy = Math.abs(node.pos.y - badgeY);
-          if (dx < MASK_THRESHOLD && dy < MASK_THRESHOLD) {
-            behindIds.add(node.id);
-          }
-        }
-      }
-
-      for (const node of scene.nodes) {
-        if (behindIds.has(node.id) && node.meta) {
-          node.meta = { ...node.meta, value: "" };
-        }
-      }
-    }
+    applyPointerMasking(scene.nodes, args.pointers);
 
     frames.push({
       id: `dj.${args.kind}.${stepNo++}`,
