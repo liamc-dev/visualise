@@ -119,7 +119,7 @@ export function selectionSortTrace(input: number[]): TraceFrame[] {
       narrationToken: "ss.search_start",
       highlight: [i],
       pointers: [iPointer(i), minPointer(min)],
-      toneOverrides: { [min]: "magenta" },
+      toneOverrides: { [i]: "warning", [min]: "magenta" },
       meta: { i, minVal: arr[min], n },
     });
 
@@ -134,7 +134,7 @@ export function selectionSortTrace(input: number[]): TraceFrame[] {
         narrationToken: "ss.compare",
         highlight: [j, min],
         pointers: [iPointer(i), jPointer(j), minPointer(min)],
-        toneOverrides: { [min]: "magenta" },
+        toneOverrides: { [i]: "warning", [j]: "cyan", [min]: "magenta" },
         meta: { i, j, min, valJ, valMin },
       });
 
@@ -148,7 +148,7 @@ export function selectionSortTrace(input: number[]): TraceFrame[] {
           narrationToken: "ss.new_min",
           highlight: [min],
           pointers: [iPointer(i), jPointer(j), minPointer(min)],
-          toneOverrides: { [min]: "magenta" },
+          toneOverrides: { [i]: "warning", [j]: "cyan", [min]: "magenta" },
           meta: { i, j, min, valJ, valMin },
         });
       }
@@ -168,7 +168,7 @@ export function selectionSortTrace(input: number[]): TraceFrame[] {
         narrationToken: "ss.swap",
         highlight: [i, min],
         pointers: [iPointer(i), minPointer(min)],
-        toneOverrides: { [min]: "magenta" },
+        toneOverrides: { [i]: "warning", [min]: "magenta" },
         meta: { i, min, valI, valMin },
       });
     }

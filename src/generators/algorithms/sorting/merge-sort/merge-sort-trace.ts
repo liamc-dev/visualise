@@ -1,5 +1,5 @@
 // src/algorithms/sorting/trace/merge/merge-sort-trace.ts
-import type { TraceFrame, TraceScene, TracePointer } from "../../../../types/trace-types";
+import type { TraceFrame, TraceScene, TracePointer, TraceTone } from "../../../../types/trace-types";
 import { makeMergeLayout } from "./merge-layout";
 
 type StackNode = {
@@ -122,6 +122,10 @@ function buildScene(args: {
   const active = stack[stack.length - 1];
   const activeDepth = active?.depth ?? 0;
 
+  // Derive k tone for root-level cells during merge/write
+  const merging = active && (active.phase === "merge" || active.phase === "write");
+  const kIndex = merging && typeof active.k === "number" ? active.k : undefined;
+
   // Stack rows
   for (const node of vis) {
     const y = layout.rowY(node.depth);
@@ -131,6 +135,12 @@ function buildScene(args: {
 
     for (let g = node.lo; g <= node.hi; g++) {
       const x = layout.shiftX(g, node, unified);
+
+      // k pointer targets root cell — apply warning tone
+      const cellTone: TraceTone | undefined =
+        node.depth === 0 && kIndex !== undefined && g === kIndex
+          ? "warning"
+          : undefined;
 
       nodes.push({
         id: cellId(node.id, g),
@@ -150,6 +160,7 @@ function buildScene(args: {
           // isMid removed to avoid renderer coupling
 
           emphasis,
+          ...(cellTone ? { tone: cellTone } : undefined),
         },
       });
     }
@@ -158,10 +169,18 @@ function buildScene(args: {
   // Temp buffer row for ACTIVE node only (top of stack)
   if (active?.temp && (active.phase === "merge" || active.phase === "write")) {
     const yTemp = layout.rowY(active.depth) + 1;
+    const iIdx = typeof active.i === "number" ? active.i : -1;
+    const jIdx = typeof active.j === "number" ? active.j : -1;
 
     for (let t = 0; t < active.temp.length; t++) {
       const globalIndex = active.lo + t;
       const x = layout.shiftX(globalIndex, active, unified);
+
+      // i/j pointers target temp cells — apply matching tones
+      const tempTone: TraceTone =
+        t === iIdx ? "cyan" :
+        t === jIdx ? "magenta" :
+        "muted";
 
       nodes.push({
         id: tempId(active.id, t),
@@ -174,11 +193,10 @@ function buildScene(args: {
           globalIndex,
           depth: active.depth,
 
-          // temp should read as “aux buffer”
+          // temp should read as "aux buffer"
           emphasis: "soft",
 
-          // optional: make temp feel slightly "aux"
-          tone: "muted",
+          tone: tempTone,
           opacityMul: 0.85,
         },
       });
