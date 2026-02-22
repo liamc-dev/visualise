@@ -45,6 +45,7 @@ const AlgoInfoPanel = ({
             ascii={ASCII_ALGO_NAMES[title]}
             cssClass="tn-ascii-algo"
             ariaLabel={title}
+            onlyTheme="tokyo-night"
             fallback={
               <h3 className="text-label font-[var(--st-fw-semibold)] tracking-[0.22em] uppercase text-tn-subtle">
                 {title}

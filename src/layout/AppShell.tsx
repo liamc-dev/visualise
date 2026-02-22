@@ -9,6 +9,7 @@ import { IconBtn } from "../components/ui/IconBtn";
 import { useSettingsStore } from "../stores/useSettingsStore";
 import { useBrand } from "../brand/useBrand";
 import { useStyleStore } from "../stores/useStyleStore";
+import { useThemeStore } from "../stores/useThemeStore";
 
 const TOP_H = 52;
 const RAIL_W = 72;
@@ -59,6 +60,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const toggleEffects = useSettingsStore((s) => s.toggleEffects);
   const { appLogoSrc, appLogoAlt } = useBrand();
   const style = useStyleStore((s) => s.style);
+  const themeKey = useThemeStore((s) => s.theme);
   const desktopSidebarW = isSidebarOpen ? OPEN_W : RAIL_W;
 
   return (
@@ -88,12 +90,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 alt={appLogoAlt ?? "App logo"}
                 className="h-7 w-auto select-none pointer-events-none opacity-95"
               />
-            ) : style === "terminal" ? (
+            ) : style === "terminal" && themeKey === "tokyo-night" ? (
               <pre className="tn-brand-ascii text-tn-text select-none leading-none" aria-label="Visualiser">{
-` __   _____ ___ _   _  _   _    ___ ___ ___ ___
- \\ \\ / /_ _/ __| | | |/_\\ | |  |_ _/ __| __| _ \\
-  \\ V / | |\\__ \\ |_| / _ \\| |__ | |\\__ \\ _||   /
-   \\_/ |___|___/\\___/_/ \\_\\____|___|___/___|_|_\\`
+`  _   ___               ___
+ | | / (_)__ __ _____ _/ (_)__ ___ ____
+ | |/ / (_-</ // / _ \`/ / (_-</ -_) __/
+ |___/_/___/\\_,_/\\_,_/_/_/___/\\__/_/`
               }</pre>
             ) : (
               <span className="tn-brand-text text-ui text-tn-text">

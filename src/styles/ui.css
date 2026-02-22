@@ -299,14 +299,14 @@
     }
 
     .tn-brand-ascii {
-        font-size: 5.2px;
+        font-size: 5.5px;
         line-height: 1.15;
-        opacity: 1.05;
+        opacity: 1;
         margin: 0;
     }
 
     .tn-ascii-heading {
-        font-size: 5px;
+        font-size: 5.5px;
         line-height: 1.15;
         opacity: 0.55;
     }
@@ -318,7 +318,7 @@
     }
 
     .tn-ascii-algo {
-        font-size: 4px;
+        font-size: 5px;
         line-height: 1.15;
         opacity: 1;
         text-align: left;

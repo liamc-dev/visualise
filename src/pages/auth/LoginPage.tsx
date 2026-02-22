@@ -80,6 +80,7 @@ export default function LoginPage() {
             ascii={ASCII_LOG_IN}
             cssClass="tn-ascii-heading"
             ariaLabel="Log in"
+            onlyTheme="tokyo-night"
             fallback={
               <h1 className="mt-2 text-2xl font-[var(--st-fw-semibold)] tracking-tight">Log in</h1>
             }

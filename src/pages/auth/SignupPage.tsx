@@ -74,6 +74,7 @@ export default function SignupPage() {
             ascii={ASCII_CREATE_ACCOUNT}
             cssClass="tn-ascii-heading"
             ariaLabel="Create account"
+            onlyTheme="tokyo-night"
             fallback={
               <h1 className="mt-2 text-2xl font-[var(--st-fw-semibold)] tracking-tight">Create account</h1>
             }

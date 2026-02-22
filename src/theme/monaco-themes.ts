@@ -1,19 +1,23 @@
-// src/utils/monaco-themes.js
+// src/theme/monaco-themes.ts
 
-function clamp255(n) {
+import type monaco_editor from "monaco-editor";
+
+type Monaco = typeof monaco_editor;
+
+function clamp255(n: number): number {
     n = Number(n);
     if (Number.isNaN(n)) return 0;
     return Math.max(0, Math.min(255, Math.round(n)));
 }
 
-function rgbToHex(r, g, b) {
+function rgbToHex(r: number, g: number, b: number): string {
     const rr = clamp255(r).toString(16).padStart(2, "0");
     const gg = clamp255(g).toString(16).padStart(2, "0");
     const bb = clamp255(b).toString(16).padStart(2, "0");
     return `#${rr}${gg}${bb}`;
 }
 
-function hex6(hex) {
+function hex6(hex: string): string {
     // "#RRGGBB" -> "#RRGGBB", "#RRGGBBAA" -> "#RRGGBB"
     return typeof hex === "string" && hex.length === 9 ? hex.slice(0, 7) : hex;
 }
@@ -22,7 +26,7 @@ function hex6(hex) {
  * Reads CSS var like "--tn-text" which is stored as "15 23 42"
  * Returns hex like "#0f172a"
  */
-function cssRgbVarToHex(varName, fallback = "#000000") {
+function cssRgbVarToHex(varName: string, fallback = "#000000"): string {
     const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
     if (!v) return fallback;
 
@@ -32,7 +36,7 @@ function cssRgbVarToHex(varName, fallback = "#000000") {
     return rgbToHex(parts[0], parts[1], parts[2]);
 }
 
-function withAlpha(hex, alpha01) {
+function withAlpha(hex: string, alpha01: number): string {
     // Monaco supports 8-digit hex: #RRGGBBAA
     const a = Math.max(0, Math.min(1, alpha01));
     const aa = Math.round(a * 255).toString(16).padStart(2, "0");
@@ -42,7 +46,7 @@ function withAlpha(hex, alpha01) {
 /**
  *
  */
-export function defineLightTn(monaco, name = "tn-light") {
+export function defineLightTn(monaco: Monaco, name = "tn-light"): void {
     const _bg = cssRgbVarToHex("--tn-bg", "#ffffff");
     const surface = cssRgbVarToHex("--tn-surface", "#ffffff");
     const surfaceSoft = cssRgbVarToHex("--tn-surfaceSoft", "#f6f8fa");
@@ -176,7 +180,7 @@ export function defineLightTn(monaco, name = "tn-light") {
     monaco.editor.setTheme(name);
 }
 
-export function defineDarkTn(monaco, name = "tn-dark") {
+export function defineDarkTn(monaco: Monaco, name = "tn-dark"): void {
     const surface = cssRgbVarToHex("--tn-surface", "#1e1b24");
     const text = cssRgbVarToHex("--tn-text", "#e4e0ea");
     const muted = cssRgbVarToHex("--tn-muted", "#b2acbc");
@@ -279,5 +283,3 @@ export function defineDarkTn(monaco, name = "tn-dark") {
         },
     });
 }
-
-

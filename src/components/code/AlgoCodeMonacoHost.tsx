@@ -5,7 +5,7 @@ import type { editor } from "monaco-editor";
 import type { CodeBundle, CodeRef } from "../../types/algo-types";
 import { useCodeLangStore } from "../../stores/useCodeLangStore";
 import { useThemeStore } from "../../stores/useThemeStore";
-import { defineLightTn, defineDarkTn } from "../../theme/monaco-themes";
+import { defineLightTn, defineDarkTn } from "../../theme/monaco-themes.ts";
 import { EDITOR_LANG_MAP } from "../../types/algo-types";
 import { useCodeDraftStore } from "../../stores/useCodeDraftStore";
 import { useSettingsStore } from "../../stores/useSettingsStore";
