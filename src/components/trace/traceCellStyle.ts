@@ -146,12 +146,17 @@ export function getTraceCellStyle(args: {
     boxShadow: isTemp ? "none" : finalShadow,
 
     transform: `translate(${x}px, ${y}px) scale(${scaleVal})`,
-    transition: `
+    transition: effects
+      ? `
       transform var(--st-dur-normal, 260ms) var(--st-ease, ease),
       opacity var(--st-dur-normal, 220ms) var(--st-ease, ease),
       box-shadow var(--st-dur-fast, 200ms) var(--st-ease, ease),
       border-color var(--st-dur-fast, 180ms) var(--st-ease, ease),
       background-color var(--st-dur-fast, 180ms) var(--st-ease, ease)
+    `
+      : `
+      transform var(--st-dur-normal, 260ms) var(--st-ease, ease),
+      opacity var(--st-dur-normal, 220ms) var(--st-ease, ease)
     `,
   };
 

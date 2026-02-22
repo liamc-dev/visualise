@@ -2,10 +2,12 @@
 import Transport from "./Transport";
 import { SpeedSlider } from "./SpeedSlider";
 import { usePlayerStore } from "../../stores/usePlayerStore";
+import { useSettingsStore } from "../../stores/useSettingsStore";
 
 type Props = { visible: boolean };
 
 export default function ControlsOverlay({ visible }: Props) {
+  const effectsEnabled = useSettingsStore((s) => s.effectsEnabled);
   const currentStep = usePlayerStore((s) => s.currentStep);
   const stepsLength = usePlayerStore((s) => s.stepsLength);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
@@ -33,7 +35,7 @@ export default function ControlsOverlay({ visible }: Props) {
         // Desktop: absolute overlay at bottom of section
         "md:absolute md:bottom-0 md:left-0 md:right-0 md:z-10",
         "md:rounded-b-st-xl",
-        "md:bg-tn-surface/80 md:backdrop-blur-md",
+        effectsEnabled ? "md:bg-tn-surface/80 md:backdrop-blur-md" : "md:bg-tn-surface/90",
         "md:border-t md:border-tn-border/30",
         "md:px-4 md:py-2",
         // Fade transition (desktop only)

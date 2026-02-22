@@ -8,6 +8,9 @@ import { useControlsVisibility } from "../../hooks/use-controls-visibility";
 import { useMeasure } from "../../hooks/use-measure";
 import { useGridLayout } from "../../hooks/use-grid-layout";
 import { useSettingsStore } from "../../stores/useSettingsStore";
+import { useThemeStore } from "../../stores/useThemeStore";
+import { IconBtn } from "../ui/IconBtn";
+import { Waves } from "lucide-react";
 import TraceRenderer from "../trace/TraceRenderer";
 import type { TraceScene, TraceFocus } from "../../types/trace-types";
 
@@ -57,6 +60,9 @@ export default function Visualizer({
   contentHeightRows,
 }: VisualizerProps) {
   const effectsEnabled = useSettingsStore((s) => s.effectsEnabled);
+  const sweepEnabled = useSettingsStore((s) => s.sweepEnabled);
+  const toggleSweep = useSettingsStore((s) => s.toggleSweep);
+  const theme = useThemeStore((s) => s.theme);
   const { ref, size } = useMeasure<HTMLDivElement>(8);
   const measured = size.width > 0;
   const { visible, containerHandlers } = useControlsVisibility();
@@ -117,11 +123,12 @@ export default function Visualizer({
     <div ref={ref} className="block min-w-0 w-full">
       <div className="w-full max-w-full" style={{ opacity: measured ? 1 : 0 }}>
         <section
-          className="
+          className={`
             relative block w-full max-w-full rounded-st-xl
-            border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-tn-border bg-tn-grid backdrop-blur-[var(--st-blur-sm)]
+            border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-tn-border bg-tn-grid
             shadow-st-card
-          "
+            ${effectsEnabled ? "backdrop-blur-[var(--st-blur-sm)]" : ""}
+          `}
           onMouseEnter={containerHandlers.onMouseEnter}
           onMouseMove={containerHandlers.onMouseMove}
           onMouseLeave={containerHandlers.onMouseLeave}
@@ -152,6 +159,19 @@ export default function Visualizer({
               </div>
             </div>
           </div>
+
+          {theme === "tokyo-night" && (
+            <IconBtn
+              onClick={toggleSweep}
+              className="!absolute top-2 right-2 z-10 !w-7 !h-7 bg-tn-grid/70 backdrop-blur-sm"
+              title={sweepEnabled ? "Disable sweep effect" : "Enable sweep effect"}
+            >
+              <Waves
+                size={14}
+                className={sweepEnabled ? "text-tn-accent" : "text-tn-muted"}
+              />
+            </IconBtn>
+          )}
 
           <ControlsOverlay visible={visible} />
         </section>

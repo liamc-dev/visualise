@@ -48,12 +48,14 @@ export function getPointerStyle(
 export function getPointerArrowStyle(
   color: string,
   dir: "down" | "up" | "left" | "right" = "down",
-  cellSize: number
+  cellSize: number,
+  effectsEnabled = true,
 ) {
   const halfBase = cellSize * 0.22;
   const height = cellSize * 0.32;
   const offset = cellSize * 0.12;
 
+  const shadow = effectsEnabled ? "drop-shadow(var(--tn-overlay-inset))" : undefined;
   const isHorizontal = dir === "left" || dir === "right";
 
   if (isHorizontal) {
@@ -62,7 +64,7 @@ export function getPointerArrowStyle(
       height: 0,
       borderTop: `${halfBase}px solid transparent`,
       borderBottom: `${halfBase}px solid transparent`,
-      filter: "drop-shadow(var(--tn-overlay-inset))",
+      filter: shadow,
       transform: `translateX(${dir === "left" ? -offset : offset}px)`,
     };
 
@@ -78,7 +80,7 @@ export function getPointerArrowStyle(
     height: 0,
     borderLeft: `${halfBase}px solid transparent`,
     borderRight: `${halfBase}px solid transparent`,
-    filter: "drop-shadow(var(--tn-overlay-inset))",
+    filter: shadow,
     transform: `translateY(${dir === "up" ? -offset : offset}px)`,
   };
 

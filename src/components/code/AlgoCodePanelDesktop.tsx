@@ -8,6 +8,7 @@ import { Panel } from "../ui/Panel";
 import {
   Focus,
   Scan,
+  Highlighter,
   RotateCcw,
   Eye,
   PenLine,
@@ -53,6 +54,8 @@ export default function AlgoCodePanelDesktop({
   const [focusMode, setFocusMode] = useState(false);
   const editorFontSize = useSettingsStore((s) => s.editorFontSize);
   const setEditorFontSize = useSettingsStore((s) => s.setEditorFontSize);
+  const codeHighlightEnabled = useSettingsStore((s) => s.codeHighlightEnabled);
+  const toggleCodeHighlight = useSettingsStore((s) => s.toggleCodeHighlight);
 
   return (
     <Panel tone="glass" className="min-w-0 w-full h-full min-h-0 flex flex-col">
@@ -180,6 +183,21 @@ export default function AlgoCodePanelDesktop({
             <Btn onClick={() => setView("recall")} title="Back to recall">
               <ArrowLeft size={16} strokeWidth={1.5} />
               Back to recall
+            </Btn>
+          )}
+
+          {/* Highlight toggle */}
+          {isReference && (
+            <Btn
+              size="icon"
+              variant="ghost"
+              pressed={codeHighlightEnabled}
+              onClick={toggleCodeHighlight}
+              title={codeHighlightEnabled ? "Disable code highlighting" : "Enable code highlighting"}
+              aria-pressed={codeHighlightEnabled}
+              aria-label="Toggle code highlighting"
+            >
+              <Highlighter size={16} strokeWidth={1.5} />
             </Btn>
           )}
 

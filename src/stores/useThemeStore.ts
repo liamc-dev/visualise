@@ -12,10 +12,17 @@ type ThemeState = {
   cycleTheme: () => void;
 };
 
+function getSystemDefault(): Theme {
+  if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    return "dark";
+  }
+  return "light";
+}
+
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      theme: "tokyo-night",
+      theme: getSystemDefault(),
       setTheme: (theme) => set({ theme }),
       cycleTheme: () => {
         const idx = THEMES.indexOf(get().theme);

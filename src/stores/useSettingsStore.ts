@@ -5,6 +5,10 @@ type SettingsState = {
   effectsEnabled: boolean;
   toggleEffects: () => void;
   setEffectsEnabled: (value: boolean) => void;
+  sweepEnabled: boolean;
+  toggleSweep: () => void;
+  codeHighlightEnabled: boolean;
+  toggleCodeHighlight: () => void;
   editorFontSize: number;
   setEditorFontSize: (size: number) => void;
 };
@@ -12,13 +16,23 @@ type SettingsState = {
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
-      effectsEnabled: true,
+      effectsEnabled: false,
 
       toggleEffects: () =>
         set((state) => ({ effectsEnabled: !state.effectsEnabled })),
 
       setEffectsEnabled: (value: boolean) =>
         set({ effectsEnabled: value }),
+
+      sweepEnabled: false,
+
+      toggleSweep: () =>
+        set((state) => ({ sweepEnabled: !state.sweepEnabled })),
+
+      codeHighlightEnabled: true,
+
+      toggleCodeHighlight: () =>
+        set((state) => ({ codeHighlightEnabled: !state.codeHighlightEnabled })),
 
       editorFontSize: 14,
 

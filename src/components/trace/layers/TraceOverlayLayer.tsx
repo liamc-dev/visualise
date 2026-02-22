@@ -1,6 +1,7 @@
 // src/components/trace/layers/TraceOverlayLayer.tsx
 import React from "react";
 import type { TraceOverlay } from "../../../types/trace-types";
+import { useSettingsStore } from "../../../stores/useSettingsStore";
 
 export function TraceOverlayLayer({
   overlays,
@@ -13,6 +14,8 @@ export function TraceOverlayLayer({
   colOffset: number;
   zIndex?: number;
 }) {
+  const fx = useSettingsStore((s) => s.effectsEnabled);
+
   if (!overlays?.length) return null;
 
   return (
@@ -41,7 +44,7 @@ export function TraceOverlayLayer({
                   : "rgb(var(--tn-border) / 0.8)",
                 opacity: active ? 0.9 : 0.55,
                 borderRadius: `${Math.max(1, Math.round(strokeW / 2))}px`,
-                filter: active ? "drop-shadow(0 0 6px rgba(0,0,0,0.35))" : undefined,
+                filter: active && fx ? "drop-shadow(0 0 6px rgba(0,0,0,0.35))" : undefined,
               }}
             />
           );

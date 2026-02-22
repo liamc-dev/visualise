@@ -34,6 +34,7 @@ export default function AlgoCodeMonacoHost({
     const lang = useCodeLangStore((s) => s.lang);
     const themeKey = useThemeStore((s) => s.theme);
     const editorFontSize = useSettingsStore((s) => s.editorFontSize);
+    const codeHighlightEnabled = useSettingsStore((s) => s.codeHighlightEnabled);
     const isLightTheme = themeKey === "light" || themeKey === "ember";
     const themeName = `tn-${themeKey}`;
 
@@ -82,6 +83,12 @@ export default function AlgoCodeMonacoHost({
 
         const model = editor.getModel();
         if (!model) return;
+
+        if (!codeHighlightEnabled) {
+            decorationIdsRef.current = editor.deltaDecorations(decorationIdsRef.current, []);
+            lastRevealRef.current = null;
+            return;
+        }
 
         const [start, end] = codeRef?.lines ?? [0, 0];
         const spans = codeRef?.spans ?? [];
@@ -140,7 +147,7 @@ export default function AlgoCodeMonacoHost({
             editor.revealLineInCenterIfOutsideViewport(start, monaco.editor.ScrollType.Smooth);
             lastRevealRef.current = start;
         }
-    }, [monaco, codeRef, focusMode, canonicalContent]);
+    }, [monaco, codeRef, focusMode, codeHighlightEnabled, canonicalContent]);
 
 
     useEffect(() => {

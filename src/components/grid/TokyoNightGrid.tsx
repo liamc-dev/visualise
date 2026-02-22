@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useGridSweepPhase } from "../../hooks/use-grid-sweep-phase";
 import { lerpColor } from "../../utils/styleUtil";
 import { useSettingsStore } from "../../stores/useSettingsStore";
+import { usePlayerStore } from "../../stores/usePlayerStore";
 
 type TokyoNightGridProps = {
   height: number;
@@ -17,8 +18,10 @@ export default memo(function TokyoNightGrid({
   cellSize,
   sweepSpeed = 18000,
 }: TokyoNightGridProps) {
-  const effectsEnabled = useSettingsStore((s) => s.effectsEnabled);
-  const sweepPhase = useGridSweepPhase(sweepSpeed, 100, 1000, effectsEnabled);
+  const sweepEnabled = useSettingsStore((s) => s.sweepEnabled);
+  const isPlaying = usePlayerStore((s) => s.isPlaying);
+  const sweepActive = isPlaying && sweepEnabled;
+  const sweepPhase = useGridSweepPhase(sweepSpeed, 100, 1000, sweepActive);
 
   const BASE = "#1f2335";
   const BRIGHT = "#8f962fff";
@@ -32,7 +35,7 @@ export default memo(function TokyoNightGrid({
 
   const bandCenter = 1 - sweepPhase;
   const bandWidth = 0.22;
-  const bandBoost = effectsEnabled ? 0.475 : 0;
+  const bandBoost = sweepActive ? 0.475 : 0;
 
   const cells: ReactNode[] = [];
 
@@ -55,7 +58,7 @@ export default memo(function TokyoNightGrid({
       const borderColor = lerpColor(BASE, BRIGHT, t);
 
       const boxShadow =
-        effectsEnabled && sweepEnergy > 0.01
+        sweepActive && sweepEnergy > 0.01
           ? `0 0 ${4 + sweepEnergy * 8}px rgba(122,162,247,${0.08 + sweepEnergy * 0.3})`
           : "none";
 
