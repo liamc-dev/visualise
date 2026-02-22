@@ -49,6 +49,18 @@ const mockData = [
         ]
     },
     {
+        "id": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+        "key": "dfs",
+        "name": "Depth-First Search",
+        "categories": [
+            {
+                "id": "7219c7b4-c6aa-4495-9689-fde0a5066921",
+                "key": "graph",
+                "name": "Graph"
+            }
+        ]
+    },
+    {
         "id": "3ef746b0-730a-472b-905e-359a0355d79c",
         "key": "dijkstra",
         "name": "Dijkstra's Shortest Path",

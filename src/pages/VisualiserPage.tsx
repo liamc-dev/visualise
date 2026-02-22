@@ -43,9 +43,9 @@ export default function VisualiserPage() {
   const logoSrc = getAlgoLogoSrc(algoKey);
 
   const isSorting = def.category === "Sorting";
-  const isBfsGrid = algoKey === "bfs";
+  const isGridPathfinding = algoKey === "bfs" || algoKey === "dfs";
   const isDijkstra = algoKey === "dijkstra";
-  const isOtherGraphPathfinding = def.category === "Pathfinding" && !isBfsGrid && !isDijkstra;
+  const isOtherGraphPathfinding = def.category === "Pathfinding" && !isGridPathfinding && !isDijkstra;
 
   const dijkstraMode = useLayoutStore((s) => s.dijkstraMode);
 
@@ -53,7 +53,7 @@ export default function VisualiserPage() {
   const graphInput = useGraphInputStore((s) => s.array);
   const gridInput = useGridInputStore((s) => s.array);
   const dijkstraGridInput = useDijkstraGridStore((s) => s.array);
-  const inputArray = isBfsGrid
+  const inputArray = isGridPathfinding
     ? gridInput
     : isDijkstra
       ? (dijkstraMode === "graph" ? graphInput : dijkstraGridInput)
@@ -147,7 +147,7 @@ export default function VisualiserPage() {
         )
       )}
 
-      {isBfsGrid && (
+      {isGridPathfinding && (
         gridInputCollapsed ? (
           <div className="flex justify-end px-1">
             <IconBtn
