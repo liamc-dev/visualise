@@ -1,7 +1,7 @@
 // src/components/trace/traceCellStyle.ts
 import type { CSSProperties } from "react";
 import type { TraceNode } from "../../types/trace-types";
-import { opacity, scale, backgroundColor, boxShadow } from "../../utils/styleUtil";
+import { opacity, scale, backgroundColor, boxShadow } from "../../lib/style-utils";
 
 const BASE =
   "absolute rounded-st-sm flex items-center justify-center font-semibold text-tn-text leading-none border";

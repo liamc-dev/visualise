@@ -1,6 +1,6 @@
 // src/components/trace/layers/TracePointerLayer.tsx
 import React from "react";
-import { Pointer } from "../../visualizers/shared/Pointer";
+import { Pointer } from "../shared/Pointer";
 import type { TracePointer } from "../../../types/trace-types";
 import { resolveTargetPx } from "../utils/resolve-target-px";
 

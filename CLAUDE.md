@@ -30,7 +30,7 @@ The entire visualization pipeline flows through **trace frames** (`src/types/tra
 
 ### Algorithm Registry (auto-discovery)
 
-Algorithms are auto-registered via `import.meta.glob("./**/*.def.{ts,tsx}")` in `src/generators/algorithms/registry.tsx`. To add a new algorithm, create a directory under `src/generators/algorithms/<category>/<algo-name>/` with:
+Algorithms are auto-registered via `import.meta.glob("./**/*.def.{ts,tsx}")` in `src/generators/algorithms/registry.ts`. To add a new algorithm, create a directory under `src/generators/algorithms/<category>/<algo-name>/` with:
 
 - `<algo-name>.def.tsx` — default-exports an `AlgorithmDef` (label, category, trace fn, description, bullets, codeBundle, narrationBundle)
 - `<algo-name>-trace.ts` — trace generator: `(input: number[]) => TraceFrame[]`
@@ -68,7 +68,7 @@ Reusable themed primitives — always use these instead of raw HTML elements:
 
 ### Code Highlighting with Marker Spans
 
-Code sources use `[[token.name]]...[[/token.name]]` markers inline. `parseMarkerSpans()` in `src/generators/algorithms/sorting/markerSpans.ts` strips markers and produces `spansByToken` maps. When a trace frame's `codeToken` matches a token name, the corresponding code spans get highlighted in the Monaco editor. Each token should highlight at most 3 lines (prefer 1–2). Helper functions defined in code bundles are not wrapped in markers — only the call site is marked.
+Code sources use `[[token.name]]...[[/token.name]]` markers inline. `parseMarkerSpans()` in `src/generators/algorithms/markerSpans.ts` strips markers and produces `spansByToken` maps. When a trace frame's `codeToken` matches a token name, the corresponding code spans get highlighted in the Monaco editor. Each token should highlight at most 3 lines (prefer 1–2). Helper functions defined in code bundles are not wrapped in markers — only the call site is marked.
 
 ### State Management
 

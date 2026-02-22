@@ -1,4 +1,4 @@
-// src/generators/algorithms/code/markerSpans.ts
+// src/generators/algorithms/markerSpans.ts
 import { MarkerParseResult, CodeSpan } from "../../../types/algo-types";
 
 /**

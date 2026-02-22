@@ -1,6 +1,6 @@
 // src/generators/algorithms/sorting/heap-sort/code/heap-sort.bundle.ts
 import type { CodeBundle, CodeLang } from "../../../../../types/algo-types";
-import { parseMarkerSpans } from "../../markerSpans";
+import { parseMarkerSpans } from "../../../markerSpans";
 
 import {
   HEAP_SORT_PSEUDO,

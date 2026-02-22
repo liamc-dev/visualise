@@ -1,7 +1,7 @@
 // src/components/trace/hooks/use-trace-edges.ts
 import { useMemo } from "react";
 import type { TraceScene } from "../../../types/trace-types";
-import type { TreeEdge, TreePoint } from "../../visualizers/shared/TreeOverlay";
+import type { TreeEdge, TreePoint } from "../shared/TreeOverlay";
 
 function isNum(v: unknown): v is number {
   return typeof v === "number" && Number.isFinite(v);

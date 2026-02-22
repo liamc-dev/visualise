@@ -1,5 +1,5 @@
 import type { CodeBundle, CodeLang } from "../../../../../types/algo-types";
-import { parseMarkerSpans } from "../../markerSpans";
+import { parseMarkerSpans } from "../../../markerSpans";
 
 import {
   BUBBLE_SORT_PSEUDO,

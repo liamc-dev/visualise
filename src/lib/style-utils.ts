@@ -1,4 +1,4 @@
-// utils/styleUtil.ts
+// src/lib/style-utils.ts
 
 const NEUTRAL = "var(--color-tn-accentSoft)";  // neutral active node
 const MID = "var(--color-tn-cyan)";            // pivot/mid

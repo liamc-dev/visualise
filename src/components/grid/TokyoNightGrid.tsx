@@ -1,7 +1,7 @@
 import { memo } from "react";
 import type { ReactNode } from "react";
 import { useGridSweepPhase } from "../../hooks/use-grid-sweep-phase";
-import { lerpColor } from "../../utils/styleUtil";
+import { lerpColor } from "../../lib/style-utils";
 import { useSettingsStore } from "../../stores/useSettingsStore";
 import { usePlayerStore } from "../../stores/usePlayerStore";
 
