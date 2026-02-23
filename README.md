@@ -8,7 +8,7 @@
 
 **Step through algorithms, frame by frame.** A visual debugger for sorting and pathfinding algorithms with synchronized code highlighting, narration, and playback controls.
 
-[**Live Demo**](https://liamc.github.io/visualise/)
+[**Live Demo**](https://liamc-dev.github.io/visualise/)
 
 <!-- screenshot -->
 
