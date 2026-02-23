@@ -28,7 +28,7 @@
 | Bubble Sort | BFS (grid) |
 | Insertion Sort | DFS (grid) |
 | Selection Sort | Dijkstra (graph + grid) |
-| Merge Sort | |
+| Merge Sort | A* Search (grid) |
 | Quick Sort | |
 | Heap Sort | |
 | Radix Sort | |

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Algorithm visualization web app built with React 19, Vite 7, TypeScript, and Tailwind CSS 4. It renders step-by-step animated traces of algorithms (sorting: bubble sort, insertion sort, selection sort, merge sort, quick sort, heap sort, radix sort, counting sort; pathfinding: Dijkstra's algorithm with graph/grid modes, BFS with grid mode, DFS with grid mode) with synchronized code highlighting, narration, and playback controls. Deployed to GitHub Pages at `/visualise/`.
+Algorithm visualization web app built with React 19, Vite 7, TypeScript, and Tailwind CSS 4. It renders step-by-step animated traces of algorithms (sorting: bubble sort, insertion sort, selection sort, merge sort, quick sort, heap sort, radix sort, counting sort; pathfinding: Dijkstra's algorithm with graph/grid modes, BFS with grid mode, DFS with grid mode, A* Search with grid mode) with synchronized code highlighting, narration, and playback controls. Deployed to GitHub Pages at `/visualise/`.
 
 ## Commands
 

@@ -9,6 +9,7 @@ type LayoutState = {
   gridInputCollapsed: boolean;
   dijkstraMode: "graph" | "grid";
   dijkstraInputCollapsed: boolean;
+  astarInputCollapsed: boolean;
 
   setSplitRatio: (ratio: number) => void;
   resetSplitRatio: () => void;
@@ -17,6 +18,7 @@ type LayoutState = {
   toggleGridInput: () => void;
   setDijkstraMode: (mode: "graph" | "grid") => void;
   toggleDijkstraInput: () => void;
+  toggleAstarInput: () => void;
   hasHydrated: boolean;
   setHasHydrated: (v: boolean) => void;
 };
@@ -36,6 +38,7 @@ export const useLayoutStore = create<LayoutState>()(
       gridInputCollapsed: false,
       dijkstraMode: "graph",
       dijkstraInputCollapsed: false,
+      astarInputCollapsed: false,
 
       setSplitRatio: (ratio) =>
         set(() => ({
@@ -57,6 +60,9 @@ export const useLayoutStore = create<LayoutState>()(
 
       toggleDijkstraInput: () =>
         set((s) => ({ dijkstraInputCollapsed: !s.dijkstraInputCollapsed })),
+
+      toggleAstarInput: () =>
+        set((s) => ({ astarInputCollapsed: !s.astarInputCollapsed })),
 
       hasHydrated: false,
       setHasHydrated: (v) => set({ hasHydrated: v }),

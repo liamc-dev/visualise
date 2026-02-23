@@ -73,6 +73,18 @@ const mockData = [
         ]
     },
     {
+        "id": "f7a8b9c0-d1e2-3456-f789-0abcdef12345",
+        "key": "a-star",
+        "name": "A* Search",
+        "categories": [
+            {
+                "id": "7219c7b4-c6aa-4495-9689-fde0a5066921",
+                "key": "graph",
+                "name": "Graph"
+            }
+        ]
+    },
+    {
         "id": "0a9b547b-af0d-42cf-b960-ac3f2b2566ab",
         "key": "heap-sort",
         "name": "Heap Sort",

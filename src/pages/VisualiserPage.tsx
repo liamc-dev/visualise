@@ -17,11 +17,13 @@ import { useArrayInputStore } from "../stores/useArrayInputStore";
 import { useGraphInputStore } from "../stores/useGraphInputStore";
 import { useGridInputStore } from "../stores/useGridInputStore";
 import { useDijkstraGridStore } from "../stores/useDijkstraGridStore";
+import { useAstarGridStore } from "../stores/useAstarGridStore";
 import { useLayoutStore } from "../stores/useLayoutStore";
 import ArrayInputBar from "../components/control/ArrayInputBar";
 import GraphInputBar from "../components/control/GraphInputBar";
 import GridInputBar from "../components/control/GridInputBar";
 import DijkstraInputBar from "../components/control/DijkstraInputBar";
+import AstarInputBar from "../components/control/AstarInputBar";
 import { Panel } from "../components/ui/Panel";
 import { IconBtn } from "../components/ui/IconBtn";
 import { SlidersHorizontal } from "lucide-react";
@@ -45,7 +47,8 @@ export default function VisualiserPage() {
   const isSorting = def.category === "Sorting";
   const isGridPathfinding = algoKey === "bfs" || algoKey === "dfs";
   const isDijkstra = algoKey === "dijkstra";
-  const isOtherGraphPathfinding = def.category === "Pathfinding" && !isGridPathfinding && !isDijkstra;
+  const isAstar = algoKey === "a-star";
+  const isOtherGraphPathfinding = def.category === "Pathfinding" && !isGridPathfinding && !isDijkstra && !isAstar;
 
   const dijkstraMode = useLayoutStore((s) => s.dijkstraMode);
 
@@ -53,13 +56,16 @@ export default function VisualiserPage() {
   const graphInput = useGraphInputStore((s) => s.array);
   const gridInput = useGridInputStore((s) => s.array);
   const dijkstraGridInput = useDijkstraGridStore((s) => s.array);
+  const astarGridInput = useAstarGridStore((s) => s.array);
   const inputArray = isGridPathfinding
     ? gridInput
     : isDijkstra
       ? (dijkstraMode === "graph" ? graphInput : dijkstraGridInput)
-      : isOtherGraphPathfinding
-        ? graphInput
-        : arrayInput;
+      : isAstar
+        ? astarGridInput
+        : isOtherGraphPathfinding
+          ? graphInput
+          : arrayInput;
 
   const trace = useVisualizerTrace(inputArray, algoKey);
 
@@ -71,6 +77,8 @@ export default function VisualiserPage() {
   const toggleGridInput = useLayoutStore((s) => s.toggleGridInput);
   const dijkstraInputCollapsed = useLayoutStore((s) => s.dijkstraInputCollapsed);
   const toggleDijkstraInput = useLayoutStore((s) => s.toggleDijkstraInput);
+  const astarInputCollapsed = useLayoutStore((s) => s.astarInputCollapsed);
+  const toggleAstarInput = useLayoutStore((s) => s.toggleAstarInput);
 
   if (!algorithm || !(algorithm in ALGORITHMS)) {
     return <Navigate to={`/visualiser/${getLastAlgorithm()}`} replace />;
@@ -128,6 +136,22 @@ export default function VisualiserPage() {
           </div>
         ) : (
           <DijkstraInputBar />
+        )
+      )}
+
+      {isAstar && (
+        astarInputCollapsed ? (
+          <div className="flex justify-end px-1">
+            <IconBtn
+              onClick={toggleAstarInput}
+              title="Show A* input"
+              className="w-7 h-7"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-tn-muted" />
+            </IconBtn>
+          </div>
+        ) : (
+          <AstarInputBar />
         )
       )}
 
