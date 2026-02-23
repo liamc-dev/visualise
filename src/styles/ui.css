@@ -2,6 +2,10 @@
    COMPONENTS + UTILITIES
    ============================================================================= */
 
+.tn-terminal-cursor {
+    margin-left: 2px;
+}
+
 @layer components {
 
     /* -----------------------------
@@ -299,7 +303,7 @@
     }
 
     .tn-brand-ascii {
-        font-size: 5.5px;
+        font-size: 6.5px;
         line-height: 1.15;
         opacity: 1;
         margin: 0;

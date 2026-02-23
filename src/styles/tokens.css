@@ -303,6 +303,11 @@ html[data-style="terminal"] {
   font-family: var(--st-font-ui);
 }
 
+/* Tokyo Night terminal: boost border so dashes are visible on dark surface */
+html[data-style="terminal"][data-theme="tokyo-night"] {
+  --st-border-color: rgb(var(--tn-subtle) / 0.55);
+}
+
 /* CLEAN — sharp, flat, editor-like */
 html[data-style="clean"] {
   --st-radius-sm: 0px;
