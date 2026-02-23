@@ -10,6 +10,8 @@ type LayoutState = {
   dijkstraMode: "graph" | "grid";
   dijkstraInputCollapsed: boolean;
   astarInputCollapsed: boolean;
+  binarySearchInputCollapsed: boolean;
+  linearSearchInputCollapsed: boolean;
 
   setSplitRatio: (ratio: number) => void;
   resetSplitRatio: () => void;
@@ -19,6 +21,8 @@ type LayoutState = {
   setDijkstraMode: (mode: "graph" | "grid") => void;
   toggleDijkstraInput: () => void;
   toggleAstarInput: () => void;
+  toggleBinarySearchInput: () => void;
+  toggleLinearSearchInput: () => void;
   hasHydrated: boolean;
   setHasHydrated: (v: boolean) => void;
 };
@@ -39,6 +43,8 @@ export const useLayoutStore = create<LayoutState>()(
       dijkstraMode: "graph",
       dijkstraInputCollapsed: false,
       astarInputCollapsed: false,
+      binarySearchInputCollapsed: false,
+      linearSearchInputCollapsed: false,
 
       setSplitRatio: (ratio) =>
         set(() => ({
@@ -63,6 +69,12 @@ export const useLayoutStore = create<LayoutState>()(
 
       toggleAstarInput: () =>
         set((s) => ({ astarInputCollapsed: !s.astarInputCollapsed })),
+
+      toggleBinarySearchInput: () =>
+        set((s) => ({ binarySearchInputCollapsed: !s.binarySearchInputCollapsed })),
+
+      toggleLinearSearchInput: () =>
+        set((s) => ({ linearSearchInputCollapsed: !s.linearSearchInputCollapsed })),
 
       hasHydrated: false,
       setHasHydrated: (v) => set({ hasHydrated: v }),

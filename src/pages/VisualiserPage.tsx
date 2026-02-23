@@ -1,5 +1,5 @@
 // src/pages/VisualiserPage.tsx
-import React, { Suspense } from "react";
+import React, { Suspense, useMemo } from "react";
 import { useParams, Navigate } from "react-router-dom";
 
 import VisualizerZ from "../components/visualizers/Visualizer";
@@ -18,12 +18,16 @@ import { useGraphInputStore } from "../stores/useGraphInputStore";
 import { useGridInputStore } from "../stores/useGridInputStore";
 import { useDijkstraGridStore } from "../stores/useDijkstraGridStore";
 import { useAstarGridStore } from "../stores/useAstarGridStore";
+import { useBinarySearchInputStore } from "../stores/useBinarySearchInputStore";
+import { useLinearSearchInputStore } from "../stores/useLinearSearchInputStore";
 import { useLayoutStore } from "../stores/useLayoutStore";
 import ArrayInputBar from "../components/control/ArrayInputBar";
 import GraphInputBar from "../components/control/GraphInputBar";
 import GridInputBar from "../components/control/GridInputBar";
 import DijkstraInputBar from "../components/control/DijkstraInputBar";
 import AstarInputBar from "../components/control/AstarInputBar";
+import BinarySearchInputBar from "../components/control/BinarySearchInputBar";
+import LinearSearchInputBar from "../components/control/LinearSearchInputBar";
 import { Panel } from "../components/ui/Panel";
 import { IconBtn } from "../components/ui/IconBtn";
 import { SlidersHorizontal } from "lucide-react";
@@ -45,6 +49,8 @@ export default function VisualiserPage() {
   const logoSrc = getAlgoLogoSrc(algoKey);
 
   const isSorting = def.category === "Sorting";
+  const isBinarySearch = algoKey === "binary-search";
+  const isLinearSearch = algoKey === "linear-search";
   const isGridPathfinding = algoKey === "bfs" || algoKey === "dfs";
   const isDijkstra = algoKey === "dijkstra";
   const isAstar = algoKey === "a-star";
@@ -57,15 +63,25 @@ export default function VisualiserPage() {
   const gridInput = useGridInputStore((s) => s.array);
   const dijkstraGridInput = useDijkstraGridStore((s) => s.array);
   const astarGridInput = useAstarGridStore((s) => s.array);
-  const inputArray = isGridPathfinding
-    ? gridInput
-    : isDijkstra
-      ? (dijkstraMode === "graph" ? graphInput : dijkstraGridInput)
-      : isAstar
-        ? astarGridInput
-        : isOtherGraphPathfinding
-          ? graphInput
-          : arrayInput;
+  const bsArray = useBinarySearchInputStore((s) => s.array);
+  const bsTarget = useBinarySearchInputStore((s) => s.target);
+  const binarySearchInput = useMemo(() => [bsTarget, ...bsArray], [bsTarget, bsArray]);
+  const lsArray = useLinearSearchInputStore((s) => s.array);
+  const lsTarget = useLinearSearchInputStore((s) => s.target);
+  const linearSearchInput = useMemo(() => [lsTarget, ...lsArray], [lsTarget, lsArray]);
+  const inputArray = isLinearSearch
+    ? linearSearchInput
+    : isBinarySearch
+    ? binarySearchInput
+    : isGridPathfinding
+      ? gridInput
+      : isDijkstra
+        ? (dijkstraMode === "graph" ? graphInput : dijkstraGridInput)
+        : isAstar
+          ? astarGridInput
+          : isOtherGraphPathfinding
+            ? graphInput
+            : arrayInput;
 
   const trace = useVisualizerTrace(inputArray, algoKey);
 
@@ -79,6 +95,10 @@ export default function VisualiserPage() {
   const toggleDijkstraInput = useLayoutStore((s) => s.toggleDijkstraInput);
   const astarInputCollapsed = useLayoutStore((s) => s.astarInputCollapsed);
   const toggleAstarInput = useLayoutStore((s) => s.toggleAstarInput);
+  const binarySearchInputCollapsed = useLayoutStore((s) => s.binarySearchInputCollapsed);
+  const toggleBinarySearchInput = useLayoutStore((s) => s.toggleBinarySearchInput);
+  const linearSearchInputCollapsed = useLayoutStore((s) => s.linearSearchInputCollapsed);
+  const toggleLinearSearchInput = useLayoutStore((s) => s.toggleLinearSearchInput);
 
   if (!algorithm || !(algorithm in ALGORITHMS)) {
     return <Navigate to={`/visualiser/${getLastAlgorithm()}`} replace />;
@@ -184,6 +204,38 @@ export default function VisualiserPage() {
           </div>
         ) : (
           <GridInputBar />
+        )
+      )}
+
+      {isBinarySearch && (
+        binarySearchInputCollapsed ? (
+          <div className="flex justify-end px-1">
+            <IconBtn
+              onClick={toggleBinarySearchInput}
+              title="Show binary search input"
+              className="w-7 h-7"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-tn-muted" />
+            </IconBtn>
+          </div>
+        ) : (
+          <BinarySearchInputBar />
+        )
+      )}
+
+      {isLinearSearch && (
+        linearSearchInputCollapsed ? (
+          <div className="flex justify-end px-1">
+            <IconBtn
+              onClick={toggleLinearSearchInput}
+              title="Show linear search input"
+              className="w-7 h-7"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-tn-muted" />
+            </IconBtn>
+          </div>
+        ) : (
+          <LinearSearchInputBar />
         )
       )}
 

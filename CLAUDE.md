@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Algorithm visualization web app built with React 19, Vite 7, TypeScript, and Tailwind CSS 4. It renders step-by-step animated traces of algorithms (sorting: bubble sort, insertion sort, selection sort, merge sort, quick sort, heap sort, radix sort, counting sort; pathfinding: Dijkstra's algorithm with graph/grid modes, BFS with grid mode, DFS with grid mode, A* Search with grid mode) with synchronized code highlighting, narration, and playback controls. Deployed to GitHub Pages at `/visualise/`.
+Algorithm visualization web app built with React 19, Vite 7, TypeScript, and Tailwind CSS 4. It renders step-by-step animated traces of algorithms (sorting: bubble sort, insertion sort, selection sort, merge sort, quick sort, heap sort, radix sort, counting sort; search: linear search, binary search; pathfinding: Dijkstra's algorithm with graph/grid modes, Bellman-Ford with graph mode, BFS with grid mode, DFS with grid mode, A* Search with grid mode) with synchronized code highlighting, narration, and playback controls. Deployed to GitHub Pages at `/visualise/`.
 
 ## Commands
 
@@ -45,6 +45,7 @@ The `.def.tsx` filename suffix is what triggers auto-registration — no manual 
 Algorithms support different input modes based on category:
 
 - **Sorting algorithms** use `ArrayInputBar` with a number array textarea
+- **Binary Search** uses `BinarySearchInputBar` with a sorted array textarea + target input (encoded as `[target, ...sortedArray]` for the trace function, via `useBinarySearchInputStore`)
 - **BFS** uses `GridInputBar` with an unweighted grid (cells are 0=wall or 1=open)
 - **Dijkstra** uses `DijkstraInputBar` with a Graph/Grid mode toggle:
   - **Graph mode**: 6-node weighted graph (input length 16, via `useGraphInputStore`)

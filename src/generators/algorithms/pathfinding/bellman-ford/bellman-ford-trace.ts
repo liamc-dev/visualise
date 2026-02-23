@@ -1,4 +1,4 @@
-// src/generators/algorithms/pathfinding/dijkstra/dijkstra-trace.ts
+// src/generators/algorithms/pathfinding/bellman-ford/bellman-ford-trace.ts
 import type {
   TraceFrame,
   TraceScene,
@@ -11,23 +11,23 @@ import type {
 } from "../../../../types/trace-types";
 import { applyPointerMasking } from "../../../../lib/trace-utils";
 import {
-  buildAdj,
   buildGraphFromInput,
   edgeId,
   nodeId,
   type Graph,
   type GraphNode,
-} from "./dijkstra-graph";
+} from "./bellman-ford-graph";
 import { decodeGraphInput, DEFAULT_DIJKSTRA_INPUT } from "../../../../lib/graph-utils";
-import { dijkstraGridTrace } from "./dijkstra-grid-trace";
 
-const BOUNDS = { minX: 0, minY: 0, maxX: 12, maxY: 14 };
+const BOUNDS = { minX: 0, minY: 0, maxX: 12, maxY: 16 };
 const NODE_RADIUS = 0.5;
 const EDGE_GAP = 0.1;
 
 /* Distance table layout constants */
 const DIST_Y = 12;
 const DIST_LABEL_Y = 11.65;
+const PREV_Y = 14;
+const PREV_LABEL_Y = 13.65;
 const DIST_X_POSITIONS = [1, 3, 5, 7, 9, 11];
 
 /* ------------------------------------------------------------------ */
@@ -91,23 +91,17 @@ function curveViaForEdge(
 /*  Trace generator                                                   */
 /* ------------------------------------------------------------------ */
 
-export function dijkstraTrace(input: number[]): TraceFrame[] {
-  // Grid mode: anything that isn't a 16-element graph encoding
-  if (input.length !== 16) {
-    return dijkstraGridTrace(input);
-  }
-
+export function bellmanFordTrace(input: number[]): TraceFrame[] {
   // Decode input or fall back to defaults
   const encoded = input.length === 16 ? input : DEFAULT_DIJKSTRA_INPUT;
   const decoded = decodeGraphInput(encoded);
   const graph = buildGraphFromInput(decoded.source, decoded.edges);
-  const adj = buildAdj(graph);
 
   const labels = graph.nodes.map((n) => n.label);
+  const V = labels.length;
 
   const dist: Record<string, number> = {};
   const prev: Record<string, string | null> = {};
-  const visited = new Set<string>();
 
   for (const l of labels) {
     dist[l] = Infinity;
@@ -118,6 +112,9 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
   // Track which edges are in the shortest-path tree
   const sptEdges = new Set<string>();
 
+  const frames: TraceFrame[] = [];
+  let stepNo = 0;
+
   // Precompute curve points for edges that pass through non-endpoint nodes
   const curveVias = new Map<string, { x: number; y: number }>();
   for (const ge of graph.edges) {
@@ -125,23 +122,32 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
     if (cv) curveVias.set(edgeId(ge.from, ge.to), cv);
   }
 
-  const frames: TraceFrame[] = [];
-  let stepNo = 0;
+  // Build directed edge list from undirected graph (both directions)
+  const directedEdges: { from: string; to: string; weight: number }[] = [];
+  for (const e of graph.edges) {
+    directedEdges.push({ from: e.from, to: e.to, weight: e.weight });
+    directedEdges.push({ from: e.to, to: e.from, weight: e.weight });
+  }
 
   /* ---- scene builder ---- */
 
-  function buildScene(): TraceScene {
+  function buildScene(opts?: {
+    highlightEdge?: string;
+    highlightEdgeColor?: string;
+    distToneOverrides?: Record<string, TraceTone>;
+    distWeightOverrides?: Record<string, 0 | 1 | 2 | 3>;
+    prevToneOverrides?: Record<string, TraceTone>;
+  }): TraceScene {
     const nodes: TraceNode[] = graph.nodes.map((gn) => {
       const d = dist[gn.label];
-      const isVisited = visited.has(gn.label);
       const isSource = gn.label === graph.source;
 
       let tone: TraceTone;
       let emphasis: TraceEmphasis | undefined;
 
-      if (isVisited) {
-        tone = "neutral";
-        emphasis = "soft";
+      if (isSource && d === 0) {
+        tone = "accent";
+        emphasis = undefined;
       } else if (d < Infinity) {
         tone = "info";
         emphasis = undefined;
@@ -159,7 +165,6 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
           tone,
           emphasis,
           ...(tone === "muted" ? { opacityMul: 0.5 } : undefined),
-          ...(isSource && !isVisited ? { tone: "accent" as const } : undefined),
           label: gn.label,
         },
       };
@@ -170,6 +175,7 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
       const toPos = posOf(graph, ge.to);
       const eid = edgeId(ge.from, ge.to);
       const inSpt = sptEdges.has(eid);
+      const isHighlight = opts?.highlightEdge === eid;
       const cv = curveVias.get(eid);
 
       return {
@@ -182,10 +188,12 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
           fromPt: edgeEndpoint(fromPos, toPos),
           toPt: edgeEndpoint(toPos, fromPos),
           ...(cv ? { curveVia: cv } : undefined),
-          color: inSpt
-            ? "rgb(var(--tn-accent) / 0.70)"
-            : "rgb(var(--tn-accent) / 0.35)",
-          opacity: inSpt ? 0.7 : 0.25,
+          color: isHighlight
+            ? (opts?.highlightEdgeColor ?? "rgb(var(--tn-warning) / 0.80)")
+            : inSpt
+              ? "rgb(var(--tn-accent) / 0.70)"
+              : "rgb(var(--tn-accent) / 0.35)",
+          opacity: isHighlight ? 0.8 : inSpt ? 0.7 : 0.25,
         },
       };
     });
@@ -193,7 +201,7 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
     // Node label captions (above each node)
     const labelOverlays: TraceOverlay[] = graph.nodes.map((gn) => ({
       kind: "caption" as const,
-      id: `dj:label:${gn.label}`,
+      id: `bf:label:${gn.label}`,
       x: gn.x,
       y: gn.y - 0.8,
       text: gn.label,
@@ -210,17 +218,15 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
       const mx = cv ? 0.25 * f.x + 0.5 * cv.x + 0.25 * t.x : (f.x + t.x) / 2;
       const my = cv ? 0.25 * f.y + 0.5 * cv.y + 0.25 * t.y : (f.y + t.y) / 2;
 
-      // Offset weight label slightly so it doesn't sit on the edge line
       const dx = t.x - f.x;
       const dy = t.y - f.y;
       const len = Math.hypot(dx, dy) || 1;
-      // Perpendicular offset (rotate 90 degrees left)
       const ox = (-dy / len) * 0.45;
       const oy = (dx / len) * 0.45;
 
       return {
         kind: "caption" as const,
-        id: `dj:w:${ge.from}-${ge.to}`,
+        id: `bf:w:${ge.from}-${ge.to}`,
         x: mx + ox,
         y: my + oy,
         text: String(ge.weight),
@@ -230,7 +236,7 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
     // --- Distance table visualization ---
     const distCaption: TraceOverlay = {
       kind: "caption" as const,
-      id: "dj:dist-label",
+      id: "bf:dist-label",
       x: -1,
       y: DIST_Y,
       text: "dist[]",
@@ -239,7 +245,7 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
 
     const distLabelOverlays: TraceOverlay[] = labels.map((l, i) => ({
       kind: "caption" as const,
-      id: `dj:dlbl:${l}`,
+      id: `bf:dlbl:${l}`,
       x: DIST_X_POSITIONS[i],
       y: DIST_LABEL_Y,
       text: l,
@@ -247,15 +253,16 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
 
     const distNodes: TraceNode[] = labels.map((l, i) => {
       const d = dist[l];
-      const isVisited = visited.has(l);
       const isReachable = d < Infinity;
+      const toneOverride = opts?.distToneOverrides?.[l];
+      const weightOverride = opts?.distWeightOverrides?.[l];
 
       let tone: TraceTone;
       let emphasis: TraceEmphasis | undefined;
 
-      if (isVisited) {
-        tone = "neutral";
-        emphasis = "soft";
+      if (toneOverride) {
+        tone = toneOverride;
+        emphasis = undefined;
       } else if (isReachable) {
         tone = "info";
         emphasis = undefined;
@@ -265,7 +272,7 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
       }
 
       return {
-        id: `dj:d:${l}`,
+        id: `bf:d:${l}`,
         kind: "cell",
         pos: { x: DIST_X_POSITIONS[i], y: DIST_Y },
         meta: {
@@ -273,14 +280,54 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
           tone,
           emphasis,
           ...(tone === "muted" ? { opacityMul: 0.5 } : undefined),
+          ...(weightOverride != null ? { weight: weightOverride } : undefined),
+        },
+      };
+    });
+
+    // --- Predecessor table visualization ---
+    const prevCaption: TraceOverlay = {
+      kind: "caption" as const,
+      id: "bf:prev-label",
+      x: -1,
+      y: PREV_Y,
+      text: "prev[]",
+      emphasis: "soft",
+    };
+
+    const prevLabelOverlays: TraceOverlay[] = labels.map((l, i) => ({
+      kind: "caption" as const,
+      id: `bf:plbl:${l}`,
+      x: DIST_X_POSITIONS[i],
+      y: PREV_LABEL_Y,
+      text: l,
+    }));
+
+    const prevNodes: TraceNode[] = labels.map((l, i) => {
+      const p = prev[l];
+      const hasPrev = p !== null;
+      const prevTone = opts?.prevToneOverrides?.[l];
+
+      return {
+        id: `bf:p:${l}`,
+        kind: "cell",
+        pos: { x: DIST_X_POSITIONS[i], y: PREV_Y },
+        meta: {
+          value: hasPrev ? p : "\u2013",
+          tone: prevTone ?? (hasPrev ? "info" : "muted") as TraceTone,
+          ...(hasPrev ? undefined : { opacityMul: 0.5 }),
         },
       };
     });
 
     return {
-      nodes: [...nodes, ...distNodes],
+      nodes: [...nodes, ...distNodes, ...prevNodes],
       edges,
-      overlays: [...labelOverlays, ...weightOverlays, distCaption, ...distLabelOverlays],
+      overlays: [
+        ...labelOverlays, ...weightOverlays,
+        distCaption, ...distLabelOverlays,
+        prevCaption, ...prevLabelOverlays,
+      ],
       bounds: BOUNDS,
     };
   }
@@ -295,13 +342,24 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
     focusEdges?: string[];
     pointers?: TracePointer[];
     meta?: Record<string, unknown>;
+    highlightEdge?: string;
+    highlightEdgeColor?: string;
+    distToneOverrides?: Record<string, TraceTone>;
+    distWeightOverrides?: Record<string, 0 | 1 | 2 | 3>;
+    prevToneOverrides?: Record<string, TraceTone>;
   }) {
-    const scene = buildScene();
+    const scene = buildScene({
+      highlightEdge: args.highlightEdge,
+      highlightEdgeColor: args.highlightEdgeColor,
+      distToneOverrides: args.distToneOverrides,
+      distWeightOverrides: args.distWeightOverrides,
+      prevToneOverrides: args.prevToneOverrides,
+    });
 
     applyPointerMasking(scene.nodes, args.pointers);
 
     frames.push({
-      id: `dj.${args.kind}.${stepNo++}`,
+      id: `bf.${args.kind}.${stepNo++}`,
       kind: args.kind,
       codeToken: args.codeToken,
       narrationToken: args.narrationToken,
@@ -341,113 +399,65 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
   /*  Algorithm                                                       */
   /* ================================================================ */
 
-  // --- Init phase (4 frames) ---
-
-  // dj.init.dist — Initialize distances to ∞
+  // --- bf.init --- Initialize distances
   push({
-    kind: "init.dist",
-    codeToken: "dj.init.dist",
-    narrationToken: "dj.init.dist",
-    focusNodes: labels.map((l) => `dj:d:${l}`),
+    kind: "init",
+    codeToken: "bf.init",
+    narrationToken: "bf.init",
+    focusNodes: labels.map((l) => `bf:d:${l}`),
+    meta: { source: graph.source, V },
+  });
+
+  // --- bf.source --- Set dist[source] = 0
+  push({
+    kind: "source",
+    codeToken: "bf.source",
+    narrationToken: "bf.source",
+    focusNodes: [nodeId(graph.source), `bf:d:${graph.source}`],
     meta: { source: graph.source },
   });
 
-  // dj.init.prev — Initialize prev to null
-  push({
-    kind: "init.prev",
-    codeToken: "dj.init.prev",
-    narrationToken: "dj.init.prev",
-  });
-
-  // dj.init.visited — Create empty visited set
-  push({
-    kind: "init.visited",
-    codeToken: "dj.init.visited",
-    narrationToken: "dj.init.visited",
-  });
-
-  // dj.init.setdist — Set dist[source] = 0
-  push({
-    kind: "init.setdist",
-    codeToken: "dj.init.setdist",
-    narrationToken: "dj.init.setdist",
-    focusNodes: [nodeId(graph.source), `dj:d:${graph.source}`],
-    meta: { source: graph.source },
-  });
-
-  // --- main loop ---
-  while (visited.size < labels.length) {
-    // Pick unvisited node with minimum distance
-    let u: string | null = null;
-    let minDist = Infinity;
-    for (const l of labels) {
-      if (!visited.has(l) && dist[l] < minDist) {
-        minDist = dist[l];
-        u = l;
-      }
-    }
-    if (u === null) break; // unreachable nodes
-
-    const unvisitedCount = labels.length - visited.size;
-
-    // --- dj.loop ---
+  // --- V-1 passes ---
+  for (let pass = 1; pass < V; pass++) {
+    // bf.pass — announce pass
     push({
-      kind: "loop",
-      codeToken: "dj.loop",
-      narrationToken: "dj.loop",
-      pointers: [uPointer(u)],
-      meta: { unvisitedCount },
+      kind: "pass",
+      codeToken: "bf.pass",
+      narrationToken: "bf.pass",
+      meta: { pass, total: V - 1 },
     });
 
-    // --- dj.pick ---
-    push({
-      kind: "pick",
-      codeToken: "dj.pick",
-      narrationToken: "dj.pick",
-      focusNodes: [nodeId(u), `dj:d:${u}`],
-      pointers: [uPointer(u)],
-      meta: { u, dist: dist[u] },
-    });
+    for (const edge of directedEdges) {
+      const { from: u, to: v, weight: w } = edge;
 
-    // Relax neighbors
-    const neighbors = adj.get(u)!;
-    for (const { to: v, weight: w } of neighbors) {
+      // Skip edges where dist[u] === Infinity (can't relax from unreachable)
+      if (dist[u] === Infinity) continue;
+
       const eid = edgeId(u, v);
 
-      // --- dj.neighbors --- Consider this neighbor
+      // bf.edge — pick next edge
       push({
-        kind: "neighbors",
-        codeToken: "dj.neighbors",
-        narrationToken: "dj.neighbors",
+        kind: "edge",
+        codeToken: "bf.edge",
+        narrationToken: "bf.edge",
         focusNodes: [nodeId(u), nodeId(v)],
         focusEdges: [eid],
         pointers: [uPointer(u), vPointer(v)],
+        highlightEdge: eid,
         meta: { u, v, w },
       });
 
-      // --- dj.check.visited --- Check if v already visited
-      const isVisited = visited.has(v);
-      push({
-        kind: "check.visited",
-        codeToken: "dj.check.visited",
-        narrationToken: "dj.check.visited",
-        focusNodes: [nodeId(u), nodeId(v), `dj:d:${v}`],
-        focusEdges: [eid],
-        pointers: [uPointer(u), vPointer(v)],
-        meta: { u, v, w, result: isVisited ? "fail" : "pass" },
-      });
-      if (isVisited) continue;
-
       const tentative = dist[u] + w;
 
-      // --- dj.relax --- Compute tentative and compare
+      // bf.relax — compute tentative and compare
       push({
         kind: "relax",
-        codeToken: "dj.relax",
-        narrationToken: "dj.relax",
-        focusNodes: [nodeId(u), nodeId(v), `dj:d:${v}`],
+        codeToken: "bf.relax",
+        narrationToken: "bf.relax",
+        focusNodes: [nodeId(u), nodeId(v), `bf:d:${u}`, `bf:d:${v}`],
         focusEdges: [eid],
         pointers: [uPointer(u), vPointer(v)],
+        highlightEdge: eid,
         meta: { u, v, w, uDist: dist[u], tentative, currentDist: dist[v] },
       });
 
@@ -464,14 +474,18 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
         }
         sptEdges.add(eid);
 
-        // --- dj.update ---
+        // bf.update — distance improved
         push({
           kind: "update",
-          codeToken: "dj.update",
-          narrationToken: "dj.update",
-          focusNodes: [nodeId(v), `dj:d:${v}`],
+          codeToken: "bf.update",
+          narrationToken: "bf.update",
+          focusNodes: [nodeId(v), `bf:d:${v}`, `bf:p:${v}`],
           focusEdges: [eid],
           pointers: [uPointer(u), vPointer(v)],
+          highlightEdge: eid,
+          distToneOverrides: { [v]: "accent" },
+          distWeightOverrides: { [v]: 1 },
+          prevToneOverrides: { [v]: "accent" },
           meta: {
             u,
             v,
@@ -481,41 +495,31 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
           },
         });
       } else {
-        // --- dj.skip ---
+        // bf.skip — no improvement
         push({
           kind: "skip",
-          codeToken: "dj.relax",
-          narrationToken: "dj.skip",
-          focusNodes: [nodeId(u), nodeId(v), `dj:d:${v}`],
+          codeToken: "bf.relax",
+          narrationToken: "bf.skip",
+          focusNodes: [nodeId(u), nodeId(v), `bf:d:${v}`],
           focusEdges: [eid],
           pointers: [uPointer(u), vPointer(v)],
+          highlightEdge: eid,
           meta: { u, v, currentDist: dist[v], tentative },
         });
       }
     }
-
-    // --- dj.visit ---
-    visited.add(u);
-    push({
-      kind: "visit",
-      codeToken: "dj.visit",
-      narrationToken: "dj.visit",
-      focusNodes: [nodeId(u), `dj:d:${u}`],
-      pointers: [uPointer(u)],
-      meta: { u, dist: dist[u] },
-    });
   }
 
-  // --- dj.done ---
-  // Highlight all nodes and SPT edges
-  const allDistIds = labels.map((l) => `dj:d:${l}`);
+  // --- bf.done --- Final result
+  const allDistIds = labels.map((l) => `bf:d:${l}`);
+  const allPrevIds = labels.map((l) => `bf:p:${l}`);
   push({
     kind: "done",
-    codeToken: "dj.done",
-    narrationToken: "dj.done",
-    focusNodes: [...labels.map(nodeId), ...allDistIds],
+    codeToken: "bf.done",
+    narrationToken: "bf.done",
+    focusNodes: [...labels.map(nodeId), ...allDistIds, ...allPrevIds],
     focusEdges: Array.from(sptEdges),
-    meta: { dist: { ...dist } },
+    meta: { dist: { ...dist }, prev: { ...prev } },
   });
 
   return frames;

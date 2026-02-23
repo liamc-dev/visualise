@@ -167,5 +167,41 @@ const mockData = [
                 "name": "Sorting"
             }
         ]
+    },
+    {
+        "id": "a1b2c3d4-e5f6-7890-abcd-binary000001",
+        "key": "binary-search",
+        "name": "Binary Search",
+        "categories": [
+            {
+                "id": "b1c2d3e4-f5a6-7890-abcd-search000001",
+                "key": "search",
+                "name": "Search"
+            }
+        ]
+    },
+    {
+        "id": "a1b2c3d4-e5f6-7890-abcd-linear000001",
+        "key": "linear-search",
+        "name": "Linear Search",
+        "categories": [
+            {
+                "id": "b1c2d3e4-f5a6-7890-abcd-search000001",
+                "key": "search",
+                "name": "Search"
+            }
+        ]
+    },
+    {
+        "id": "b2c3d4e5-f6a7-8901-bcde-bellman00001",
+        "key": "bellman-ford",
+        "name": "Bellman-Ford",
+        "categories": [
+            {
+                "id": "7219c7b4-c6aa-4495-9689-fde0a5066921",
+                "key": "graph",
+                "name": "Graph"
+            }
+        ]
     }
 ]
