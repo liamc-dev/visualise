@@ -181,17 +181,17 @@ export function defineLightTn(monaco: Monaco, name = "tn-light"): void {
 }
 
 export function defineDarkTn(monaco: Monaco, name = "tn-dark"): void {
-    const surface = cssRgbVarToHex("--tn-surface", "#1e1b24");
-    const text = cssRgbVarToHex("--tn-text", "#e4e0ea");
-    const muted = cssRgbVarToHex("--tn-muted", "#b2acbc");
-    const subtle = cssRgbVarToHex("--tn-subtle", "#807a8e");
-    const border = cssRgbVarToHex("--tn-border", "#3a3442");
-    const accent = cssRgbVarToHex("--tn-accent", "#917dd2");
-    const cyan = cssRgbVarToHex("--tn-cyan", "#6ed2c8");
-    const magenta = cssRgbVarToHex("--tn-magenta", "#d28cdc");
-    const success = cssRgbVarToHex("--tn-success", "#82be64");
-    const warning = cssRgbVarToHex("--tn-warning", "#e6c382");
-    const danger = cssRgbVarToHex("--tn-danger", "#fa7882");
+    const surface = cssRgbVarToHex("--tn-surface", "#121218");
+    const text = cssRgbVarToHex("--tn-text", "#f2f3fa");
+    const muted = cssRgbVarToHex("--tn-muted", "#9ea0b4");
+    const subtle = cssRgbVarToHex("--tn-subtle", "#606276");
+    const border = cssRgbVarToHex("--tn-border", "#323442");
+    const accent = cssRgbVarToHex("--tn-accent", "#8c78ee");
+    const cyan = cssRgbVarToHex("--tn-cyan", "#50e1d7");
+    const magenta = cssRgbVarToHex("--tn-magenta", "#e18cf8");
+    const success = cssRgbVarToHex("--tn-success", "#64d74b");
+    const warning = cssRgbVarToHex("--tn-warning", "#fac846");
+    const danger = cssRgbVarToHex("--tn-danger", "#ff5f69");
 
     monaco.editor.defineTheme(name, {
         base: "vs-dark",
@@ -202,7 +202,7 @@ export function defineDarkTn(monaco: Monaco, name = "tn-dark"): void {
             { token: "string", foreground: hex6(success).slice(1) },
             { token: "keyword", foreground: hex6(accent).slice(1) },
             { token: "number", foreground: hex6(warning).slice(1) },
-            { token: "delimiter", foreground: hex6(muted).slice(1) },
+            { token: "delimiter", foreground: hex6(text).slice(1) },
             { token: "type.identifier", foreground: hex6(magenta).slice(1) },
             { token: "identifier", foreground: hex6(text).slice(1) },
             { token: "annotation", foreground: hex6(cyan).slice(1) },
@@ -236,10 +236,10 @@ export function defineDarkTn(monaco: Monaco, name = "tn-dark"): void {
             // Bracket pair colorization
             "editorBracketHighlight.foreground1": warning,
             "editorBracketHighlight.foreground2": accent,
-            "editorBracketHighlight.foreground3": muted,
+            "editorBracketHighlight.foreground3": cyan,
             "editorBracketHighlight.foreground4": warning,
             "editorBracketHighlight.foreground5": accent,
-            "editorBracketHighlight.foreground6": muted,
+            "editorBracketHighlight.foreground6": cyan,
 
             "editorIndentGuide.background1": withAlpha(border, 0.6),
             "editorIndentGuide.activeBackground1": withAlpha(border, 0.9),

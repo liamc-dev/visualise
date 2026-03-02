@@ -15,7 +15,7 @@ type StyleState = {
 export const useStyleStore = create<StyleState>()(
   persist(
     (set, get) => ({
-      style: "terminal",
+      style: "default",
       setStyle: (style) => set({ style }),
       cycleStyle: () => {
         const idx = STYLES.indexOf(get().style);

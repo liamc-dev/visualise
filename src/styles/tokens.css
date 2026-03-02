@@ -71,7 +71,7 @@ html {
 
 /* Dark elevation */
 html[data-theme="dark"] {
-  --card-shadow: 0 6px 32px rgba(0, 0, 0, 0.30), 0 2px 8px rgba(0, 0, 0, 0.12);
+  --card-shadow: 0 6px 32px rgba(0, 0, 0, 0.50), 0 2px 8px rgba(0, 0, 0, 0.25);
   color-scheme: dark;
 }
 
@@ -130,52 +130,52 @@ html[data-theme="tokyo-night"] {
   --grid-bright: #8f962f;
 }
 
-/* (dark plum) */
+/* DARK */
 :root[data-theme="dark"] {
 
-  /* Base layers — subtle purple-tinted blacks */
-  --tn-bg: 22 19 27;          /* main canvas */
-  --tn-surface: 30 27 36;     /* panels */
-  --tn-card: 40 36 47;        /* raised elements */
-  --tn-surfaceSoft: 48 44 56; /* hover / active */
+  /* Base layers — neutral cool-black */
+  --tn-bg: 11 11 15;          /* main canvas */
+  --tn-surface: 18 18 24;     /* panels */
+  --tn-card: 26 27 35;        /* raised elements */
+  --tn-surfaceSoft: 35 36 46; /* hover / active */
 
   /* Borders */
-  --tn-border: 58 52 66;
+  --tn-border: 50 52 66;
 
-  /* Text — light lavender tint */
-  --tn-text: 228 224 234;
-  --tn-muted: 178 172 188;
-  --tn-subtle: 128 122 142;
+  /* Text — high contrast, neutral */
+  --tn-text: 242 243 250;
+  --tn-muted: 158 160 180;
+  --tn-subtle: 96 98 118;
 
-  /* Accent — softened purple (less saturated for UI elements) */
-  --tn-accent: 145 125 210;
-  --tn-accentSoft: 50 42 72;
+  /* Accent — electric violet */
+  --tn-accent: 140 120 238;
+  --tn-accentSoft: 34 30 60;
 
-  /* Supporting colors */
-  --tn-cyan: 110 210 200;
-  --tn-magenta: 210 140 220;
+  /* Supporting colors — vivid */
+  --tn-cyan: 80 225 215;
+  --tn-magenta: 225 140 248;
 
-  --tn-success: 130 190 100;
-  --tn-warning: 230 195 130;
-  --tn-danger: 250 120 130;
+  --tn-success: 100 215 75;
+  --tn-warning: 250 200 70;
+  --tn-danger: 255 95 105;
 
   /* Overlays */
-  --tn-overlay-inset: inset 0 0 8px rgba(0,0,0,0.55);
-  --tn-overlay-textshadow: 0 0 6px rgba(0,0,0,0.75);
+  --tn-overlay-inset: inset 0 0 8px rgba(0,0,0,0.70);
+  --tn-overlay-textshadow: 0 0 6px rgba(0,0,0,0.90);
 
   --font-scale: 1.02;
 
   --tn-slider-accent: var(--tn-accentSoft);
   --tn-slider-thumb: var(--tn-slider-accent);
 
-  --tn-link: 145 125 210;
+  --tn-link: 140 120 238;
   --tn-divider: 255 255 255;
 
-  /* Grid — visible but subtle */
+  /* Grid */
   --tn-grid-fill-alpha: 0.5;
-  --tn-grid-line-alpha: 0.02;
-  --tn-grid-rgb: 200 180 255;
-  --tn-grid-bg: 28 24 36;
+  --tn-grid-line-alpha: 0.03;
+  --tn-grid-rgb: 160 165 200;
+  --tn-grid-bg: 14 14 19;
 }
 
 
