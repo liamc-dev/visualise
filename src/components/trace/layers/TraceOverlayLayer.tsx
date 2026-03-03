@@ -64,7 +64,7 @@ export function TraceOverlayLayer({
                 position: "absolute",
                 left: x,
                 top: y,
-                transform: "translateY(-50%)",
+                transform: o.align === "center" ? "translate(-50%, -50%)" : "translateY(-50%)",
                 maxWidth: 720, // tune
               }}
               className={[

@@ -13,7 +13,7 @@ export type ThemedLogo = Partial<Record<Theme, string>>;
 
 export type AlgorithmDef = {
   label: string;
-  category: "Sorting" | "Pathfinding" | "Graphs" | "Search" | "Other";
+  category: "Sorting" | "Pathfinding" | "Graphs" | "Search" | "Machine Learning" | "Other";
   trace?: (input: number[]) => TraceFrame[];
   description?: ReactNode;
   bullets?: string[];

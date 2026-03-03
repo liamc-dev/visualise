@@ -23,17 +23,17 @@
 
 ## Algorithms
 
-| Sorting | Search | Pathfinding |
-|---------|--------|-------------|
-| Bubble Sort | Linear Search | BFS (grid) |
-| Insertion Sort | Binary Search | DFS (grid) |
-| Selection Sort | | Dijkstra (graph + grid) |
-| Merge Sort | | Bellman-Ford (graph) |
-| Quick Sort | | Prim's MST (graph) |
-| | | Kruskal's MST (graph) |
-| Heap Sort | | A* Search (grid) |
-| Radix Sort | | |
-| Counting Sort | | |
+| Sorting | Search | Pathfinding | Machine Learning |
+|---------|--------|-------------|-----------------|
+| Bubble Sort | Linear Search | BFS (grid) | Linear Regression |
+| Insertion Sort | Binary Search | DFS (grid) | |
+| Selection Sort | | Dijkstra (graph + grid) | |
+| Merge Sort | | Bellman-Ford (graph) | |
+| Quick Sort | | Prim's MST (graph) | |
+| | | Kruskal's MST (graph) | |
+| Heap Sort | | A* Search (grid) | |
+| Radix Sort | | | |
+| Counting Sort | | | |
 
 ## Themes
 

@@ -72,7 +72,8 @@ export function useTraceEdges(args: {
         // Style resolution (support either e.kind or meta.style or meta.dashed)
         const style = (e.kind ?? meta.style ?? "flow") as string;
         const dashed = meta.dashed === true || style === "dashed";
-        const opacity = active ? 0.6 : 0.28;
+        const metaOpacity = isNum(meta.opacity) ? meta.opacity : undefined;
+        const opacity = metaOpacity ?? (active ? 0.6 : 0.28);
 
         const from = gridToPx(fromPtGrid, colOffset, cellSize);
         const to = gridToPx(toPtGrid, colOffset, cellSize);

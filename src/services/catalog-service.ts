@@ -227,5 +227,17 @@ const mockData = [
                 "name": "Graph"
             }
         ]
+    },
+    {
+        "id": "e5f6a7b8-c9d0-1234-cdef-linreg000001",
+        "key": "linear-regression",
+        "name": "Linear Regression",
+        "categories": [
+            {
+                "id": "a1b2c3d4-e5f6-7890-abcd-ml0000000001",
+                "key": "machine-learning",
+                "name": "Machine Learning"
+            }
+        ]
     }
 ]

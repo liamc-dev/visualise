@@ -14,6 +14,7 @@ type LayoutState = {
   astarInputCollapsed: boolean;
   binarySearchInputCollapsed: boolean;
   linearSearchInputCollapsed: boolean;
+  scatterInputCollapsed: boolean;
 
   setSplitRatio: (ratio: number) => void;
   resetSplitRatio: () => void;
@@ -27,6 +28,7 @@ type LayoutState = {
   toggleAstarInput: () => void;
   toggleBinarySearchInput: () => void;
   toggleLinearSearchInput: () => void;
+  toggleScatterInput: () => void;
   hasHydrated: boolean;
   setHasHydrated: (v: boolean) => void;
 };
@@ -51,6 +53,7 @@ export const useLayoutStore = create<LayoutState>()(
       astarInputCollapsed: false,
       binarySearchInputCollapsed: false,
       linearSearchInputCollapsed: false,
+      scatterInputCollapsed: false,
 
       setSplitRatio: (ratio) =>
         set(() => ({
@@ -86,6 +89,9 @@ export const useLayoutStore = create<LayoutState>()(
 
       toggleLinearSearchInput: () =>
         set((s) => ({ linearSearchInputCollapsed: !s.linearSearchInputCollapsed })),
+
+      toggleScatterInput: () =>
+        set((s) => ({ scatterInputCollapsed: !s.scatterInputCollapsed })),
 
       hasHydrated: false,
       setHasHydrated: (v) => set({ hasHydrated: v }),
