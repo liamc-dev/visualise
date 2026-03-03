@@ -98,8 +98,9 @@ function Transport() {
   const btnBase = `
     flex-1 h-full aspect-square
     rounded-st-sm grid place-items-center
-    text-tn-text hover:bg-tn-surface
-    disabled:opacity-40 disabled:hover:bg-transparent
+    text-tn-text hover:bg-tn-accent/10
+    transition-colors duration-150
+    disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-tn-text
     focus:outline-none focus-visible:ring-2 focus-visible:ring-tn-accent/35
   `;
 
@@ -175,7 +176,7 @@ function Transport() {
           "border transition",
           predictEnabled
             ? "border-tn-accent/25 bg-tn-accent/10 text-tn-accent hover:bg-tn-accent/15"
-            : "border-transparent text-tn-muted hover:text-tn-text",
+            : "border-transparent text-tn-muted hover:text-tn-muted hover:bg-tn-surfaceSoft/50",
         ].join(" ")}
       >
         <Brain size={14} />

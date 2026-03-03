@@ -18,7 +18,7 @@ export default function PortalSelect<T extends string>(props: {
       buttonClassName={`
         inline-flex items-center justify-center gap-1
         rounded-st-sm px-2 py-1.5 text-xs
-        text-tn-text
+        text-tn-text hover:bg-tn-surfaceSoft
         focus-visible:outline-none
         focus-visible:ring-2 focus-visible:ring-tn-accent/30
         transition-colors

@@ -11,6 +11,8 @@
 
   /* Default: slider follows accent */
   --tn-slider-accent: var(--tn-accent);
+  --tn-slider-hover: var(--tn-accent);
+  --tn-slider-track: var(--tn-border);
   --tn-slider-thumb: var(--tn-surface);
 
   /* Typography */
@@ -94,7 +96,7 @@ html[data-theme="tokyo-night"] {
   --tn-surface: 22 22 30;
   --tn-card: 36 40 59;
   --tn-border: 31 35 53;
-  --tn-surfaceSoft: 21 23 40;
+  --tn-surfaceSoft: 38 41 62;
 
   --tn-text: 192 202 245;
   --tn-muted: 169 177 214;
@@ -114,7 +116,9 @@ html[data-theme="tokyo-night"] {
 
   --font-scale: 1.05;
 
-  --tn-slider-accent: var(--tn-accentSoft);
+  --tn-slider-accent: 66 74 110;
+  --tn-slider-hover: 90 115 175;
+  --tn-slider-track: 40 43 60;
   --tn-slider-thumb: var(--tn-slider-accent);
 
   --tn-link: 62 166 255;       /* #3EA6FF-ish */
@@ -137,7 +141,7 @@ html[data-theme="tokyo-night"] {
   --tn-bg: 11 11 15;          /* main canvas */
   --tn-surface: 18 18 24;     /* panels */
   --tn-card: 26 27 35;        /* raised elements */
-  --tn-surfaceSoft: 35 36 46; /* hover / active */
+  --tn-surfaceSoft: 44 44 58; /* hover / active */
 
   /* Borders */
   --tn-border: 50 52 66;
@@ -165,7 +169,9 @@ html[data-theme="tokyo-night"] {
 
   --font-scale: 1.02;
 
-  --tn-slider-accent: var(--tn-accentSoft);
+  --tn-slider-accent: 48 45 82;
+  --tn-slider-hover: 85 75 150;
+  --tn-slider-track: 36 36 50;
   --tn-slider-thumb: var(--tn-slider-accent);
 
   --tn-link: 140 120 238;
@@ -186,7 +192,7 @@ html[data-theme="tokyo-night"] {
   --tn-bg: 210 180 158;
   --tn-surface: 218 190 168;
   --tn-card: 198 166 142;
-  --tn-surfaceSoft: 188 155 130;
+  --tn-surfaceSoft: 182 150 124;
 
   /* Borders */
   --tn-border: 160 120 88;
@@ -206,7 +212,7 @@ html[data-theme="tokyo-night"] {
 
   --tn-success: 95 125 50;
   --tn-warning: 195 130 15;
-  --tn-danger: 195 50 40;
+  --tn-danger: 155 55 35;
 
   /* Overlays (light scheme — subtle) */
   --tn-overlay-inset: inset 0 0 4px rgba(80, 40, 10, 0.15);
@@ -214,7 +220,9 @@ html[data-theme="tokyo-night"] {
 
   --font-scale: 1.02;
 
-  --tn-slider-accent: 170 120 85;
+  --tn-slider-accent: 160 116 78;
+  --tn-slider-hover: 172 95 48;
+  --tn-slider-track: 188 158 134;
 
   --tn-link: 160 55 10;
   --tn-divider: 35 22 14;
@@ -232,7 +240,7 @@ html[data-theme="tokyo-night"] {
   --tn-surface: 255 255 255;
 
   --tn-card: 248 250 252;
-  --tn-surfaceSoft: 241 245 249;
+  --tn-surfaceSoft: 230 235 242;
 
   --tn-border: 226 232 240;
   --tn-borderSoft: 241 245 249;
@@ -251,7 +259,9 @@ html[data-theme="tokyo-night"] {
   --tn-warning: 234 179 8;
   --tn-danger: 239 68 68;
 
-  --tn-slider-accent: 130 160 195;
+  --tn-slider-accent: 120 150 190;
+  --tn-slider-hover: 85 140 220;
+  --tn-slider-track: 200 208 220;
   --font-scale: 1.02;
 
   --tn-link: 6 95 212;

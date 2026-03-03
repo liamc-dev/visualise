@@ -22,7 +22,7 @@ export default function IconSelect<T extends string>({
       menuWidth="content"
       offset={6}
       showChevron={false}
-      buttonClassName={`px-0 py-0 rounded-sm leading-none focus-visible:ring-0 ${className}`}
+      buttonClassName={`px-0 py-0 rounded-sm leading-none hover:bg-tn-surfaceSoft transition-colors focus-visible:ring-0 ${className}`}
       menuClassName="rounded-md"
       itemClassName="px-2 py-1 text-button"
       activeItemClassName="bg-tn-surfaceSoft"
