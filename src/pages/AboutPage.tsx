@@ -68,7 +68,7 @@ const AboutPage = () => {
             <li>Radix Sort</li>
             <li>Counting Sort</li>
             <li>Linear Search, Binary Search</li>
-            <li>BFS, DFS, Dijkstra, Bellman-Ford, A*</li>
+            <li>BFS, DFS, Dijkstra, Bellman-Ford, Prim&rsquo;s, Kruskal&rsquo;s, A*</li>
           </ul>
         </div>
 

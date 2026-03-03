@@ -1,17 +1,13 @@
 // src/pages/VisualiserPage.tsx
 import React, { Suspense, useMemo } from "react";
 import { useParams, Navigate } from "react-router-dom";
-
 import VisualizerZ from "../components/visualizers/Visualizer";
-
 import AlgoInfoPanel from "../components/code/AlgoInfoPanel";
 import AlgoCodePanel from "../components/code/AlgoCodePanel";
 import AlgoWorkspaceShell from "../components/layout/AlgoWorkSpaceShell";
-
 import { ALGORITHMS, type AlgorithmId, toAlgorithmId } from "../generators/algorithms/registry";
 import { useVisualizerTrace } from "../hooks/use-visualizer-trace";
 import { useLastAlgorithm, getLastAlgorithm } from "../hooks/use-last-algorithm";
-
 import { useBrand } from "../brand/useBrand";
 import { useArrayInputStore } from "../stores/useArrayInputStore";
 import { useGraphInputStore } from "../stores/useGraphInputStore";
@@ -25,6 +21,7 @@ import ArrayInputBar from "../components/control/ArrayInputBar";
 import GraphInputBar from "../components/control/GraphInputBar";
 import GridInputBar from "../components/control/GridInputBar";
 import DijkstraInputBar from "../components/control/DijkstraInputBar";
+import DfsInputBar from "../components/control/DfsInputBar";
 import AstarInputBar from "../components/control/AstarInputBar";
 import BinarySearchInputBar from "../components/control/BinarySearchInputBar";
 import LinearSearchInputBar from "../components/control/LinearSearchInputBar";
@@ -51,12 +48,14 @@ export default function VisualiserPage() {
   const isSorting = def.category === "Sorting";
   const isBinarySearch = algoKey === "binary-search";
   const isLinearSearch = algoKey === "linear-search";
-  const isGridPathfinding = algoKey === "bfs" || algoKey === "dfs";
+  const isGridPathfinding = algoKey === "bfs";
   const isDijkstra = algoKey === "dijkstra";
+  const isDfs = algoKey === "dfs";
   const isAstar = algoKey === "a-star";
-  const isOtherGraphPathfinding = def.category === "Pathfinding" && !isGridPathfinding && !isDijkstra && !isAstar;
+  const isOtherGraphPathfinding = def.category === "Pathfinding" && !isGridPathfinding && !isDijkstra && !isDfs && !isAstar;
 
   const dijkstraMode = useLayoutStore((s) => s.dijkstraMode);
+  const dfsMode = useLayoutStore((s) => s.dfsMode);
 
   const arrayInput = useArrayInputStore((s) => s.array);
   const graphInput = useGraphInputStore((s) => s.array);
@@ -77,11 +76,13 @@ export default function VisualiserPage() {
       ? gridInput
       : isDijkstra
         ? (dijkstraMode === "graph" ? graphInput : dijkstraGridInput)
-        : isAstar
-          ? astarGridInput
-          : isOtherGraphPathfinding
-            ? graphInput
-            : arrayInput;
+        : isDfs
+          ? (dfsMode === "graph" ? graphInput : gridInput)
+          : isAstar
+            ? astarGridInput
+            : isOtherGraphPathfinding
+              ? graphInput
+              : arrayInput;
 
   const trace = useVisualizerTrace(inputArray, algoKey);
 
@@ -93,6 +94,8 @@ export default function VisualiserPage() {
   const toggleGridInput = useLayoutStore((s) => s.toggleGridInput);
   const dijkstraInputCollapsed = useLayoutStore((s) => s.dijkstraInputCollapsed);
   const toggleDijkstraInput = useLayoutStore((s) => s.toggleDijkstraInput);
+  const dfsInputCollapsed = useLayoutStore((s) => s.dfsInputCollapsed);
+  const toggleDfsInput = useLayoutStore((s) => s.toggleDfsInput);
   const astarInputCollapsed = useLayoutStore((s) => s.astarInputCollapsed);
   const toggleAstarInput = useLayoutStore((s) => s.toggleAstarInput);
   const binarySearchInputCollapsed = useLayoutStore((s) => s.binarySearchInputCollapsed);
@@ -120,7 +123,6 @@ export default function VisualiserPage() {
         <span className="ml-1 font-[var(--st-fw-semibold)] text-tn-text">{def.label}</span>.
       </Panel>
     );
-
 
   const codeBundle = def.codeBundle;
   const codeRef = trace.codeRef;
@@ -156,6 +158,22 @@ export default function VisualiserPage() {
           </div>
         ) : (
           <DijkstraInputBar />
+        )
+      )}
+
+      {isDfs && (
+        dfsInputCollapsed ? (
+          <div className="flex justify-end px-1">
+            <IconBtn
+              onClick={toggleDfsInput}
+              title="Show DFS input"
+              className="w-7 h-7"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-tn-muted" />
+            </IconBtn>
+          </div>
+        ) : (
+          <DfsInputBar />
         )
       )}
 

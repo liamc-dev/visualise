@@ -9,6 +9,8 @@ type LayoutState = {
   gridInputCollapsed: boolean;
   dijkstraMode: "graph" | "grid";
   dijkstraInputCollapsed: boolean;
+  dfsMode: "graph" | "grid";
+  dfsInputCollapsed: boolean;
   astarInputCollapsed: boolean;
   binarySearchInputCollapsed: boolean;
   linearSearchInputCollapsed: boolean;
@@ -20,6 +22,8 @@ type LayoutState = {
   toggleGridInput: () => void;
   setDijkstraMode: (mode: "graph" | "grid") => void;
   toggleDijkstraInput: () => void;
+  setDfsMode: (mode: "graph" | "grid") => void;
+  toggleDfsInput: () => void;
   toggleAstarInput: () => void;
   toggleBinarySearchInput: () => void;
   toggleLinearSearchInput: () => void;
@@ -42,6 +46,8 @@ export const useLayoutStore = create<LayoutState>()(
       gridInputCollapsed: false,
       dijkstraMode: "graph",
       dijkstraInputCollapsed: false,
+      dfsMode: "grid",
+      dfsInputCollapsed: false,
       astarInputCollapsed: false,
       binarySearchInputCollapsed: false,
       linearSearchInputCollapsed: false,
@@ -66,6 +72,11 @@ export const useLayoutStore = create<LayoutState>()(
 
       toggleDijkstraInput: () =>
         set((s) => ({ dijkstraInputCollapsed: !s.dijkstraInputCollapsed })),
+
+      setDfsMode: (mode) => set({ dfsMode: mode }),
+
+      toggleDfsInput: () =>
+        set((s) => ({ dfsInputCollapsed: !s.dfsInputCollapsed })),
 
       toggleAstarInput: () =>
         set((s) => ({ astarInputCollapsed: !s.astarInputCollapsed })),

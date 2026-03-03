@@ -14,6 +14,7 @@ import {
   DEFAULT_BFS_GRID,
   DIRECTIONS,
 } from "../../../../lib/grid-utils";
+import { dfsGraphTrace } from "./dfs-graph-trace";
 
 /* Grid cell layout: x starts at GRID_X0, y starts at GRID_Y0 */
 const GRID_X0 = 2;
@@ -36,6 +37,11 @@ function stackNodeId(i: number): string { return `dfs:s:${i}`; }
 /* Trace generator */
 
 export function dfsTrace(input: number[]): TraceFrame[] {
+  // Graph mode: 16-element graph encoding
+  if (input.length === 16) {
+    return dfsGraphTrace(input);
+  }
+
   // Decode input or fall back to defaults
   const encoded = input.length >= 4 || input.length === 66 ? input : DEFAULT_BFS_GRID;
   const { rows, cols, startRow, startCol, walls } = decodeGridInput(encoded);

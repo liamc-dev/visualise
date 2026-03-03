@@ -203,5 +203,29 @@ const mockData = [
                 "name": "Graph"
             }
         ]
+    },
+    {
+        "id": "c3d4e5f6-a7b8-9012-cdef-prims0000001",
+        "key": "prims",
+        "name": "Prim's MST",
+        "categories": [
+            {
+                "id": "7219c7b4-c6aa-4495-9689-fde0a5066921",
+                "key": "graph",
+                "name": "Graph"
+            }
+        ]
+    },
+    {
+        "id": "d4e5f6a7-b8c9-0123-cdef-kruskal00001",
+        "key": "kruskals",
+        "name": "Kruskal's MST",
+        "categories": [
+            {
+                "id": "7219c7b4-c6aa-4495-9689-fde0a5066921",
+                "key": "graph",
+                "name": "Graph"
+            }
+        ]
     }
 ]

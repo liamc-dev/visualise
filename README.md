@@ -29,8 +29,9 @@
 | Insertion Sort | Binary Search | DFS (grid) |
 | Selection Sort | | Dijkstra (graph + grid) |
 | Merge Sort | | Bellman-Ford (graph) |
-| Quick Sort | | A* Search (grid) |
-| Heap Sort | | |
+| Quick Sort | | Prim's MST (graph) |
+| | | Kruskal's MST (graph) |
+| Heap Sort | | A* Search (grid) |
 | Radix Sort | | |
 | Counting Sort | | |
 

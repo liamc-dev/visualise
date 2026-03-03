@@ -26,6 +26,12 @@ function coord(meta: Meta, rKey: string, cKey: string): string {
   return "(?,?)";
 }
 
+/** Returns node label for graph mode, or grid coord for grid mode. */
+function target(meta: Meta, nodeKey: string, rKey: string, cKey: string): string {
+  const v = s(meta, nodeKey);
+  return v ?? coord(meta, rKey, cKey);
+}
+
 export const DFS_NARRATION: NarrationBundle = {
   defaultMode: "explain",
 
@@ -67,26 +73,32 @@ export const DFS_NARRATION: NarrationBundle = {
           minimal: "init order",
         });
 
-      case "dfs.init.mark":
+      case "dfs.init.mark": {
+        const src = target(meta, "source", "sr", "sc");
         return pickMode(mode, {
-          explain: `Mark ${coord(meta, "sr", "sc")} as visited.`,
-          code: `visited[${n(meta, "sr") ?? "sr"}][${n(meta, "sc") ?? "sc"}] = true`,
+          explain: `Mark ${src} as visited.`,
+          code: s(meta, "source") ? `visited.add(${src})` : `visited[${n(meta, "sr") ?? "sr"}][${n(meta, "sc") ?? "sc"}] = true`,
           minimal: "mark source",
         });
+      }
 
-      case "dfs.init.setorder":
+      case "dfs.init.setorder": {
+        const src = target(meta, "source", "sr", "sc");
         return pickMode(mode, {
-          explain: `Set discovery order of ${coord(meta, "sr", "sc")} to 1.`,
-          code: `order[${n(meta, "sr") ?? "sr"}][${n(meta, "sc") ?? "sc"}] = 1`,
+          explain: `Set discovery order of ${src} to 1.`,
+          code: s(meta, "source") ? `order[${src}] = 1` : `order[${n(meta, "sr") ?? "sr"}][${n(meta, "sc") ?? "sc"}] = 1`,
           minimal: "source order 1",
         });
+      }
 
-      case "dfs.init.push":
+      case "dfs.init.push": {
+        const src = target(meta, "source", "sr", "sc");
         return pickMode(mode, {
-          explain: `Push source cell ${coord(meta, "sr", "sc")} onto the stack.`,
-          code: `stack.push(${coord(meta, "sr", "sc")})`,
+          explain: `Push source ${s(meta, "source") ? "node" : "cell"} ${src} onto the stack.`,
+          code: `stack.push(${src})`,
           minimal: "push source",
         });
+      }
 
       case "dfs.loop":
         return pickMode(mode, {
@@ -98,15 +110,15 @@ export const DFS_NARRATION: NarrationBundle = {
           minimal: `stack: ${stackSize ?? "?"}`,
         });
 
-      case "dfs.pop":
+      case "dfs.pop": {
+        const u = s(meta, "u");
+        const label = u ?? coord(meta, "r", "c");
         return pickMode(mode, {
-          explain:
-            order !== undefined
-              ? `Pop ${coord(meta, "r", "c")} from top (order ${order}).`
-              : `Pop ${coord(meta, "r", "c")} from top.`,
-          code: `(r, c) = stack.pop()`,
-          minimal: `pop ${coord(meta, "r", "c")}`,
+          explain: order !== undefined ? `Pop ${label} from top (order ${order}).` : `Pop ${label} from top.`,
+          code: u ? `u = stack.pop() // ${u}` : `(r, c) = stack.pop()`,
+          minimal: `pop ${label}`,
         });
+      }
 
       case "dfs.check":
         return pickMode(mode, {
@@ -150,7 +162,35 @@ export const DFS_NARRATION: NarrationBundle = {
               minimal: "wall skip",
             });
 
-      case "dfs.visited":
+      case "dfs.neighbors": {
+        const u = s(meta, "u");
+        const v = s(meta, "v");
+        return pickMode(mode, {
+          explain:
+            u !== undefined && v !== undefined
+              ? `Examine neighbor ${v} of ${u}.`
+              : "Examine next neighbor.",
+          code: `for v in adj[${u ?? "?"}] // ${v ?? "?"}`,
+          minimal: `nb ${v ?? "?"}`,
+        });
+      }
+
+      case "dfs.visited": {
+        const u = s(meta, "u");
+        const v = s(meta, "v");
+        if (u !== undefined && v !== undefined) {
+          return pass
+            ? pickMode(mode, {
+                explain: `${v} not yet visited \u2014 discover it.`,
+                code: "not visited \u2192 proceed",
+                minimal: "unvisited",
+              })
+            : pickMode(mode, {
+                explain: `${v} already visited \u2014 skip.`,
+                code: "visited \u2192 continue",
+                minimal: "visited skip",
+              });
+        }
         return pass
           ? pickMode(mode, {
               explain: `${coord(meta, "nr", "nc")} not yet visited \u2014 discover it.`,
@@ -165,37 +205,41 @@ export const DFS_NARRATION: NarrationBundle = {
               code: "visited \u2192 continue",
               minimal: "visited skip",
             });
+      }
 
-      case "dfs.mark":
+      case "dfs.mark": {
+        const nb = target(meta, "v", "nr", "nc");
         return pickMode(mode, {
-          explain: `Mark ${coord(meta, "nr", "nc")} as visited.`,
-          code: `visited[${n(meta, "nr") ?? "nr"}][${n(meta, "nc") ?? "nc"}] = true`,
-          minimal: `mark ${coord(meta, "nr", "nc")}`,
+          explain: `Mark ${nb} as visited.`,
+          code: s(meta, "v") ? `visited.add(${nb})` : `visited[${n(meta, "nr") ?? "nr"}][${n(meta, "nc") ?? "nc"}] = true`,
+          minimal: `mark ${nb}`,
         });
+      }
 
-      case "dfs.setorder":
+      case "dfs.setorder": {
+        const nb = target(meta, "v", "nr", "nc");
         return pickMode(mode, {
-          explain:
-            order !== undefined
-              ? `Set discovery order of ${coord(meta, "nr", "nc")} to ${order}.`
-              : `Set discovery order of ${coord(meta, "nr", "nc")}.`,
-          code: `order[${n(meta, "nr") ?? "nr"}][${n(meta, "nc") ?? "nc"}] = ${order ?? "?"}`,
+          explain: order !== undefined ? `Set discovery order of ${nb} to ${order}.` : `Set discovery order of ${nb}.`,
+          code: s(meta, "v") ? `order[${nb}] = ${order ?? "?"}` : `order[${n(meta, "nr") ?? "nr"}][${n(meta, "nc") ?? "nc"}] = ${order ?? "?"}`,
           minimal: `order ${order ?? "?"}`,
         });
+      }
 
-      case "dfs.push":
+      case "dfs.push": {
+        const nb = target(meta, "v", "nr", "nc");
         return pickMode(mode, {
-          explain: `Push ${coord(meta, "nr", "nc")} onto the stack.`,
-          code: `stack.push(${coord(meta, "nr", "nc")})`,
-          minimal: `push ${coord(meta, "nr", "nc")}`,
+          explain: `Push ${nb} onto the stack.`,
+          code: `stack.push(${nb})`,
+          minimal: `push ${nb}`,
         });
+      }
 
       case "dfs.done":
         return pickMode(mode, {
           explain:
             totalVisited !== undefined
-              ? `DFS complete \u2014 ${totalVisited} cells reached. Each cell shows its discovery order.`
-              : "DFS complete. Each cell shows its discovery order.",
+              ? `DFS complete \u2014 ${totalVisited} node${totalVisited !== 1 ? "s" : ""} reached. Each shows its discovery order.`
+              : "DFS complete. Each node shows its discovery order.",
           code: "return order",
           minimal: `done \u2014 ${totalVisited ?? "?"} reached`,
         });
