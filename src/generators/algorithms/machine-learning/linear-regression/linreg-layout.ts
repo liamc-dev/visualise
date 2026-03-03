@@ -15,12 +15,15 @@ export const PARAM_X = [2, 5, 8, 11] as const;
 export const PARAM_LABELS = ["m", "b", "loss", "epoch"] as const;
 
 /** ŷ[] prediction row below params. */
-export const YHAT_LABEL_Y = 14.65;
-export const YHAT_Y = 15;
+export const YHAT_LABEL_Y = 14.9;
+export const YHAT_Y = 15.5;
 
-export const BOUNDS = { minX: -1, minY: -1, maxX: 13, maxY: 17 };
+/** Dimmed y[] comparison row below ŷ[]. */
+export const YACT_Y = 16.4;
 
-export type ScaledPoint = { x: number; y: number; ox: number; oy: number };
+export const BOUNDS = { minX: -1, minY: -1, maxX: 13, maxY: 18 };
+
+export type ScaledPoint = { x: number; y: number };
 
 /** Scale raw data points into grid coordinates. */
 export function scalePoints(
@@ -39,8 +42,6 @@ export function scalePoints(
     x: PLOT_X0 + ((p.x - xMin) / xRange) * (PLOT_X1 - PLOT_X0),
     // Flip y so low values are at bottom of grid
     y: PLOT_Y0 + (1 - (p.y - yMin) / yRange) * (PLOT_Y1 - PLOT_Y0),
-    ox: p.x,
-    oy: p.y,
   }));
 }
 
@@ -63,3 +64,4 @@ export function dataXToGrid(
   const xRange = xMax - xMin || 1;
   return PLOT_X0 + ((x - xMin) / xRange) * (PLOT_X1 - PLOT_X0);
 }
+

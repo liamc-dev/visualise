@@ -3,6 +3,7 @@
 import { useCallback, useRef, useLayoutEffect } from "react";
 import { Dices, RotateCcw, ChevronUp } from "lucide-react";
 import { IconBtn } from "../ui/IconBtn";
+import { TextArea } from "../ui/TextArea";
 import { useScatterInputStore } from "../../stores/useScatterInputStore";
 import { useLayoutStore } from "../../stores/useLayoutStore";
 
@@ -44,25 +45,18 @@ export default function ScatterInputBar() {
 
   return (
     <div className="flex items-center gap-1.5 px-1 overflow-x-auto min-w-0">
-      <textarea
+      <TextArea
         id="scatter-input"
         ref={textareaRef}
+        size="sm"
         rows={1}
         value={rawInput}
         onChange={(e) => { setRawInput(e.target.value); }}
         onBlur={commitInput}
         onKeyDown={handleKeyDown}
         spellCheck={false}
-        className={[
-          "flex-1 min-w-0 font-mono resize-none overflow-y-auto",
-          "min-h-7 px-2 py-1 rounded-st-sm text-xs leading-snug",
-          "border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] text-tn-text bg-tn-surfaceSoft/55",
-          "focus:outline-none focus:ring-2",
-          "placeholder:text-tn-muted/60 transition",
-          error
-            ? "border-tn-danger/70 focus:ring-tn-danger/30"
-            : "border-tn-border focus:ring-tn-accent/30",
-        ].join(" ")}
+        error={!!error}
+        className="flex-1 min-w-0 font-mono overflow-y-auto"
         placeholder="e.g. (1, 2.1) (2, 3.9) (3, 6.2)"
       />
 

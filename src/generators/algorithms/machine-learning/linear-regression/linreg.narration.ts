@@ -11,7 +11,7 @@ function pickMode(
 
 type Meta = Record<string, unknown>;
 
-function num(meta: Meta, key: string): number | undefined {
+function n(meta: Meta, key: string): number | undefined {
   const v = meta[key];
   return typeof v === "number" ? v : undefined;
 }
@@ -28,18 +28,18 @@ export const LINREG_NARRATION: NarrationBundle = {
     }
 
     const meta = (ctx.meta ?? {}) as Meta;
-    const epoch = num(meta, "epoch");
-    const m = num(meta, "m");
-    const b = num(meta, "b");
-    const loss = num(meta, "loss");
-    const dm = num(meta, "dm");
-    const db = num(meta, "db");
+    const epoch = n(meta, "epoch");
+    const m = n(meta, "m");
+    const b = n(meta, "b");
+    const loss = n(meta, "loss");
+    const dm = n(meta, "dm");
+    const db = n(meta, "db");
 
     switch (token) {
       case "reg.data":
         return pickMode(mode, {
-          explain: `Load ${num(meta, "n") ?? "?"} training data points (X, Y) and plot them.`,
-          code: `fit(X, Y, lr, epochs)  // n=${num(meta, "n") ?? "?"}`,
+          explain: `Load ${n(meta, "n") ?? "?"} training data points (X, Y) and plot them.`,
+          code: `fit(X, Y, lr, epochs)  // n=${n(meta, "n") ?? "?"}`,
           minimal: "load data",
         });
 
@@ -65,11 +65,11 @@ export const LINREG_NARRATION: NarrationBundle = {
         });
 
       case "reg.predict.step": {
-        const idx = num(meta, "pointIdx");
-        const px = num(meta, "pointX");
-        const py = num(meta, "pointY");
-        const yh = num(meta, "yHat");
-        const err = num(meta, "error");
+        const idx = n(meta, "pointIdx");
+        const px = n(meta, "pointX");
+        const py = n(meta, "pointY");
+        const yh = n(meta, "yHat");
+        const err = n(meta, "error");
         return pickMode(mode, {
           explain:
             `Point ${idx ?? "?"}: \u0177 = ${m ?? "??"}\u00b7${px ?? "?"} + ${b ?? "?"} = ${yh ?? "?"}. ` +
@@ -95,8 +95,8 @@ export const LINREG_NARRATION: NarrationBundle = {
         });
 
       case "reg.update": {
-        const oldM = num(meta, "oldM");
-        const oldB = num(meta, "oldB");
+        const oldM = n(meta, "oldM");
+        const oldB = n(meta, "oldB");
         const hasOld = oldM != null && oldB != null;
         return pickMode(mode, {
           explain: hasOld
@@ -108,10 +108,10 @@ export const LINREG_NARRATION: NarrationBundle = {
       }
 
       case "reg.loss.step": {
-        const idx = num(meta, "pointIdx");
-        const sq = num(meta, "sq");
-        const sum = num(meta, "sum");
-        const nVal = num(meta, "n");
+        const idx = n(meta, "pointIdx");
+        const sq = n(meta, "sq");
+        const sum = n(meta, "sum");
+        const nVal = n(meta, "n");
         if (idx != null) {
           return pickMode(mode, {
             explain: `Point ${idx}: squared error = ${sq ?? "?"}. Running sum = ${sum ?? "?"}.`,
@@ -127,7 +127,7 @@ export const LINREG_NARRATION: NarrationBundle = {
       }
 
       case "reg.loss.avg": {
-        const nVal = num(meta, "n");
+        const nVal = n(meta, "n");
         return pickMode(mode, {
           explain: `Divide by n = ${nVal ?? "?"} to get mean. MSE = ${loss ?? "?"} at epoch ${epoch ?? "?"}.`,
           code: `loss /= ${nVal ?? "n"}  // ${loss ?? "?"}`,

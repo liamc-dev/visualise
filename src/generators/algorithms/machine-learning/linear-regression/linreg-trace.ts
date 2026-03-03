@@ -9,17 +9,12 @@ import type {
   TraceTone,
 } from "../../../../types/trace-types";
 import {
-  BOUNDS,
-  PARAM_X,
-  PARAM_Y,
-  PARAM_Y_LABEL,
-  PARAM_LABELS,
-  YHAT_Y,
-  YHAT_LABEL_Y,
-  scalePoints,
-  dataYToGrid,
-  dataXToGrid,
+  PLOT_X0, PLOT_X1, PLOT_Y0, PLOT_Y1,
+  BOUNDS, PARAM_X, PARAM_Y, PARAM_Y_LABEL, PARAM_LABELS,
+  YHAT_Y, YHAT_LABEL_Y, YACT_Y,
+  scalePoints, dataYToGrid, dataXToGrid,
 } from "./linreg-layout";
+import { buildAxisOverlays } from "../../../../lib/axis-utils";
 
 const NUM_EPOCHS = 20;
 const LEARNING_RATE = 0.01;
@@ -67,6 +62,11 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
   const yMax = Math.max(...ys);
   const bounds = { ...BOUNDS, maxX: Math.max(BOUNDS.maxX, n + 2) };
 
+  const axis = buildAxisOverlays({
+    plotX0: PLOT_X0, plotX1: PLOT_X1, plotY0: PLOT_Y0, plotY1: PLOT_Y1,
+    xMin, xMax, yMin, yMax, prefix: "lr:ax",
+  });
+
   let m = 0;
   let b = 0;
   let prevLoss = 0;
@@ -92,32 +92,43 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
         y: PARAM_Y_LABEL, text: label, emphasis: "faint" as const }
     ));
 
-    // Scatter data points as value labels
+    // Axis tick labels
+    overlays.push(...axis.overlays);
+
+    // Scatter data points as index labels
     for (let i = 0; i < n; i++) {
       const hl = i === opts.highlightIdx;
       overlays.push({ kind: "caption" as const, id: ptId(i),
-        x: scaled[i].x, y: scaled[i].y, text: fmt(scaled[i].oy, 1),
+        x: scaled[i].x + 0.5, y: scaled[i].y + 0.5, text: String(i),
         emphasis: hl ? "active" as const : "soft" as const,
         align: "center" as const });
     }
 
-    // ŷ[] prediction row
+    // ŷ[] and y[] comparison rows (captions only, no cells)
     if (opts.yHat) {
       overlays.push({ kind: "caption" as const, id: "lr:yh-lbl",
         x: -0.5, y: YHAT_Y, text: "\u0177[]", emphasis: "soft" as const });
       for (let i = 0; i < n; i++) {
         const v = opts.yHat[i];
         const hl = i === opts.highlightIdx;
-        nodes.push({ id: `lr:yh:${i}`, kind: "cell", pos: { x: 1 + i, y: YHAT_Y },
-          meta: { value: v != null ? fmt(v, 2) : "\u2013",
-            tone: (hl ? "warning" : v != null ? "info" : "neutral") as TraceTone,
-            weight: (hl ? 1 : 0) as 0 | 1 } });
-        overlays.push({ kind: "caption" as const, id: `lr:yhlbl:${i}`,
-          x: 1 + i, y: YHAT_LABEL_Y, text: String(i), emphasis: "faint" as const });
+        overlays.push(
+          { kind: "caption" as const, id: `lr:yh:${i}`, x: 1 + i, y: YHAT_Y,
+            text: v != null ? fmt(v, 2) : "\u2013",
+            emphasis: hl ? "active" as const : "soft" as const },
+          { kind: "caption" as const, id: `lr:yhlbl:${i}`,
+            x: 1 + i, y: YHAT_LABEL_Y, text: String(i), emphasis: "faint" as const, opacity: 0.4 },
+        );
+      }
+      // Dimmed actual y[] below ŷ[] for comparison
+      overlays.push({ kind: "caption" as const, id: "lr:ya-lbl",
+        x: -0.5, y: YACT_Y, text: "y[]", emphasis: "faint" as const });
+      for (let i = 0; i < n; i++) {
+        overlays.push({ kind: "caption" as const, id: `lr:ya:${i}`,
+          x: 1 + i, y: YACT_Y, text: fmt(pairs[i].y, 1), emphasis: "faint" as const });
       }
     }
 
-    const edges: TraceEdge[] = [];
+    const edges: TraceEdge[] = [...axis.edges];
 
     // Regression line
     if (opts.showLine !== false) {
@@ -142,20 +153,10 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
     // Residual lines
     const resUp = opts.residualUpTo ?? -1;
     for (let i = 0; i <= resUp && i < n; i++) {
-      const gridPredY = dataYToGrid(opts.m * pairs[i].x + opts.b, yMin, yMax);
-      edges.push({
-        id: `lr:res:${i}`,
-        from: ptId(i),
-        to: ptId(i),
-        kind: "residual",
-        meta: {
-          fromPt: { x: scaled[i].x, y: scaled[i].y },
-          toPt: { x: scaled[i].x, y: gridPredY },
-          tone: "danger",
-          weight: 0,
-          dashed: true,
-        },
-      });
+      const gy = dataYToGrid(opts.m * pairs[i].x + opts.b, yMin, yMax);
+      edges.push({ id: `lr:res:${i}`, from: ptId(i), to: ptId(i), kind: "residual",
+        meta: { fromPt: { x: scaled[i].x, y: scaled[i].y },
+          toPt: { x: scaled[i].x, y: gy }, tone: "danger", weight: 0, dashed: true } });
     }
 
     return { nodes, edges, overlays, bounds };

@@ -64,8 +64,12 @@ export function TraceOverlayLayer({
                 position: "absolute",
                 left: x,
                 top: y,
-                transform: o.align === "center" ? "translate(-50%, -50%)" : "translateY(-50%)",
-                maxWidth: 720, // tune
+                transform: o.align === "center" ? "translate(-50%, -50%)"
+                  : o.align === "right" ? "translate(-100%, -50%)"
+                  : o.align === "below" ? "translateX(-50%)"
+                  : "translateY(-50%)",
+                maxWidth: 720,
+                opacity: o.opacity,
               }}
               className={[
                 "whitespace-nowrap",
