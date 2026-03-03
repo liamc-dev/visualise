@@ -7,9 +7,18 @@ import type { TraceFrame } from "../types/trace-types";
  */
 export function computeContentHeightRows(frames: TraceFrame[]): number {
   let maxY = 0;
+  let hasBounds = false;
 
   for (const f of frames) {
     const s = f.scene;
+
+    // Explicit bounds take priority over scanning content
+    if (s.bounds) {
+      const by = s.bounds.maxY;
+      if (typeof by === "number" && by > maxY) maxY = by;
+      hasBounds = true;
+      continue;
+    }
 
     for (const n of s.nodes) {
       const y = n.pos?.y;
@@ -29,6 +38,6 @@ export function computeContentHeightRows(frames: TraceFrame[]): number {
     }
   }
 
-  // +1 because coordinates are 0-indexed
-  return maxY + 1;
+  // When bounds are explicit the maxY already represents the row count
+  return hasBounds ? maxY : maxY + 1;
 }

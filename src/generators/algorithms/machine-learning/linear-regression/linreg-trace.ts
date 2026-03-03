@@ -141,11 +141,9 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
           color: "rgb(var(--tn-accent))", opacity: 0.8, arrow: false,
           tone: "accent", weight: 1 } });
 
-      // Line equation caption at midpoint
-      const midX = (gx0 + gx1) / 2;
-      const midY = (gy0 + gy1) / 2 - 0.45;
+      // Line equation caption above the calc overlay
       overlays.push({ kind: "caption" as const, id: "lr:eq",
-        x: midX, y: midY,
+        x: 6, y: 1,
         text: `\u0177 = ${fmt(opts.m, 3)}x + ${fmt(opts.b, 3)}`,
         emphasis: "soft" as const, align: "center" as const });
     }

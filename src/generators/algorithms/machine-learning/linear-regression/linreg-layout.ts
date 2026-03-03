@@ -21,7 +21,7 @@ export const YHAT_Y = 15.5;
 /** Dimmed y[] comparison row below ŷ[]. */
 export const YACT_Y = 16.4;
 
-export const BOUNDS = { minX: -1, minY: -1, maxX: 13, maxY: 18 };
+export const BOUNDS = { minX: -1, minY: 0, maxX: 13, maxY: 15 };
 
 export type ScaledPoint = { x: number; y: number };
 
