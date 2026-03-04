@@ -15,7 +15,7 @@ export default function TraceCardContent({ meta }: { meta: Record<string, unknow
   const title = meta?.title ?? "";
   const subtitle = meta?.subtitle;
   const lines: string[] = Array.isArray(meta?.lines) ? meta.lines : [];
-  const Icon = meta?.icon ? ICONS[meta.icon] : null;
+  const Icon = meta?.icon ? ICONS[meta.icon as string] : null;
 
   return (
     <div className="w-full">
@@ -29,10 +29,10 @@ export default function TraceCardContent({ meta }: { meta: Record<string, unknow
 
         <div className="min-w-0">
           <div className="text-ui font-semibold tracking-tight text-tn-text leading-tight truncate">
-            {title}
+            {title as React.ReactNode}
           </div>
           {subtitle ? (
-            <div className="text-label text-tn-muted leading-tight truncate">{subtitle}</div>
+            <div className="text-label text-tn-muted leading-tight truncate">{subtitle as React.ReactNode}</div>
           ) : null}
         </div>
       </div>

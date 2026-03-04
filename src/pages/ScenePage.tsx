@@ -29,7 +29,6 @@ export default function ScenePage() {
         <div className="min-w-0 flex flex-col gap-2">
             {trace.scene ? (
                 <Visualizer
-                    id={def.id}
                     scene={trace.scene}
                     focus={trace.focus}
                     description={trace.description}

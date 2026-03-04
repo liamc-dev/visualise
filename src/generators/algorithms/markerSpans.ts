@@ -1,5 +1,5 @@
 // src/generators/algorithms/markerSpans.ts
-import { MarkerParseResult, CodeSpan } from "../../../types/algo-types";
+import { MarkerParseResult, CodeSpan } from "../../types/algo-types";
 
 /**
  * Marker syntax:

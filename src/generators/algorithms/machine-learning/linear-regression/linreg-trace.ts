@@ -180,7 +180,7 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
   }
 
   function calc(scene: TraceScene, text: string): TraceScene {
-    return { ...scene, overlays: [...scene.overlays, { kind: "caption" as const, id: "lr:calc",
+    return { ...scene, overlays: [...(scene.overlays ?? []), { kind: "caption" as const, id: "lr:calc",
       x: 6, y: 0.5, text, emphasis: "active" as const, align: "center" as const }] };
   }
 

@@ -590,7 +590,7 @@ export function astarTrace(input: number[]): TraceFrame[] {
     let pc: number | null = goalCol;
     while (pr !== null && pc !== null) {
       pathCells.add(`${pr},${pc}`);
-      const p = prev[pr][pc];
+      const p: [number, number] | null = prev[pr][pc];
       if (p === null) {
         // Check if this is the start cell
         if (pr === startRow && pc === startCol) break;

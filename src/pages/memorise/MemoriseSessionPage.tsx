@@ -48,7 +48,6 @@ export default function MemoriseSessionPage() {
             <div className="relative">
                 {def.trace && trace.traceEnabled && trace.scene ? (
                     <Visualizer
-                        id={algoKey}
                         scene={trace.scene}
                         focus={trace.focus}
                         description={trace.description}

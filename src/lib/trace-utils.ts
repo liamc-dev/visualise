@@ -21,7 +21,7 @@ export function applyPointerMasking(
 
   for (const p of pointers) {
     if (p.target.kind !== "node") continue;
-    const target = nodes.find((nd) => nd.id === p.target.nodeId);
+    const target = nodes.find((nd) => nd.id === (p.target as { kind: "node"; nodeId: string }).nodeId);
     if (!target) continue;
 
     const lane = p.lane ?? "above";

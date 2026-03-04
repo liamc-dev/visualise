@@ -9,7 +9,7 @@ export function useControlsVisibility() {
   const isPlaying = usePlayerStore((s) => s.isPlaying);
   const paused = usePlayerStore((s) => s.paused);
   const [visible, setVisible] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const hoveringRef = useRef(false);
 
   const startHideTimer = useCallback(() => {

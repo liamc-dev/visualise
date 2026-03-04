@@ -65,7 +65,7 @@ export default function TraceNodeLayer({
               ].join(" ")}
               style={style}
             >
-              <TraceCardContent meta={n.meta} />
+              <TraceCardContent meta={n.meta ?? {}} />
             </div>
           );
         }
