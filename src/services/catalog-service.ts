@@ -239,5 +239,17 @@ const mockData = [
                 "name": "Machine Learning"
             }
         ]
+    },
+    {
+        "id": "f6a7b8c9-d0e1-2345-cdef-kmeans000001",
+        "key": "k-means",
+        "name": "K-Means Clustering",
+        "categories": [
+            {
+                "id": "a1b2c3d4-e5f6-7890-abcd-ml0000000001",
+                "key": "machine-learning",
+                "name": "Machine Learning"
+            }
+        ]
     }
 ]

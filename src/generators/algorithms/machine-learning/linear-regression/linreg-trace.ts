@@ -60,7 +60,16 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
   const xMax = Math.max(...xs);
   const yMin = Math.min(...ys);
   const yMax = Math.max(...ys);
-  const bounds = { ...BOUNDS, maxX: Math.max(BOUNDS.maxX, n + 2) };
+  // Array display: 1 unit per value, min width 8, expand bounds symmetrically
+  const arrWidth = Math.max((n - 1) * 1.2, 8);
+  const arrCenter = (BOUNDS.minX + BOUNDS.maxX) / 2;
+  const arrL = arrCenter - arrWidth / 2;
+  const arrR = arrCenter + arrWidth / 2;
+  const bounds = {
+    ...BOUNDS,
+    minX: Math.min(BOUNDS.minX, arrL - 1.5),
+    maxX: Math.max(BOUNDS.maxX, arrR + 1.5),
+  };
 
   const axis = buildAxisOverlays({
     plotX0: PLOT_X0, plotX1: PLOT_X1, plotY0: PLOT_Y0, plotY1: PLOT_Y1,
@@ -106,25 +115,30 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
 
     // ŷ[] and y[] comparison rows (captions only, no cells)
     if (opts.yHat) {
+      const step = n > 1 ? (arrR - arrL) / (n - 1) : 0;
+      const arrX = (i: number) => arrL + i * step;
       overlays.push({ kind: "caption" as const, id: "lr:yh-lbl",
-        x: -0.5, y: YHAT_Y, text: "\u0177[]", emphasis: "soft" as const });
+        x: arrL - 1.5, y: YHAT_Y, text: "\u0177[]", emphasis: "soft" as const });
       for (let i = 0; i < n; i++) {
         const v = opts.yHat[i];
         const hl = i === opts.highlightIdx;
         overlays.push(
-          { kind: "caption" as const, id: `lr:yh:${i}`, x: 1 + i, y: YHAT_Y,
+          { kind: "caption" as const, id: `lr:yh:${i}`, x: arrX(i), y: YHAT_Y,
             text: v != null ? fmt(v, 2) : "\u2013",
-            emphasis: hl ? "active" as const : "soft" as const },
+            emphasis: hl ? "active" as const : "soft" as const,
+            align: "center" as const },
           { kind: "caption" as const, id: `lr:yhlbl:${i}`,
-            x: 1 + i, y: YHAT_LABEL_Y, text: String(i), emphasis: "faint" as const, opacity: 0.4 },
+            x: arrX(i), y: YHAT_LABEL_Y, text: String(i), emphasis: "faint" as const,
+            opacity: 0.4, align: "center" as const },
         );
       }
       // Dimmed actual y[] below ŷ[] for comparison
       overlays.push({ kind: "caption" as const, id: "lr:ya-lbl",
-        x: -0.5, y: YACT_Y, text: "y[]", emphasis: "faint" as const });
+        x: arrL - 1.5, y: YACT_Y, text: "y[]", emphasis: "faint" as const });
       for (let i = 0; i < n; i++) {
         overlays.push({ kind: "caption" as const, id: `lr:ya:${i}`,
-          x: 1 + i, y: YACT_Y, text: fmt(pairs[i].y, 1), emphasis: "faint" as const });
+          x: arrX(i), y: YACT_Y, text: fmt(pairs[i].y, 1), emphasis: "faint" as const,
+          align: "center" as const });
       }
     }
 
