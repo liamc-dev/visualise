@@ -1,4 +1,5 @@
-import type { TraceFrame, TraceNode, TracePointer, TraceScene, TraceTone } from "../../../../types/trace-types";
+import type { TraceFrame, TraceNode, TraceOverlay, TracePointer, TraceScene, TraceTone } from "../../../../types/trace-types";
+import { createOpsChart, quadraticRef } from "../../../../lib/ops-chart";
 import { makeBubbleSortLayout } from "./bubble-sort-layout";
 
 function cellId(index: number) {
@@ -11,6 +12,7 @@ export function bubbleSortTrace(input: number[]): TraceFrame[] {
   const frames: TraceFrame[] = [];
   const layout = makeBubbleSortLayout();
   let stepNo = 0;
+  const opsChart = createOpsChart(quadraticRef(n));
 
   // Track which indices are in their final sorted position
   const sorted = new Set<number>();
@@ -29,7 +31,11 @@ export function bubbleSortTrace(input: number[]): TraceFrame[] {
       },
     }));
 
-    return { nodes };
+    const overlays: TraceOverlay[] = [];
+    const chart = opsChart.overlay();
+    if (chart) overlays.push(chart);
+
+    return { nodes, overlays: overlays.length ? overlays : undefined };
   }
 
   function push(args: {
@@ -127,6 +133,7 @@ export function bubbleSortTrace(input: number[]): TraceFrame[] {
       const valJ1 = arr[j + 1];
 
       // bs.compare
+      opsChart.record();
       push({
         kind: "compare",
         codeToken: "bs.compare",

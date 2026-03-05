@@ -1,4 +1,5 @@
-import type { TraceFrame, TraceNode, TracePointer, TraceScene, TraceTone } from "../../../../types/trace-types";
+import type { TraceFrame, TraceNode, TraceOverlay, TracePointer, TraceScene, TraceTone } from "../../../../types/trace-types";
+import { createOpsChart, quadraticRef } from "../../../../lib/ops-chart";
 import { makeSelectionSortLayout } from "./selection-sort-layout";
 
 function cellId(index: number) {
@@ -10,6 +11,7 @@ export function selectionSortTrace(input: number[]): TraceFrame[] {
   const n = arr.length;
   const frames: TraceFrame[] = [];
   const layout = makeSelectionSortLayout();
+  const opsChart = createOpsChart(quadraticRef(n));
   let stepNo = 0;
 
   // Track which indices are in their final sorted position
@@ -29,7 +31,11 @@ export function selectionSortTrace(input: number[]): TraceFrame[] {
       },
     }));
 
-    return { nodes };
+    const overlays: TraceOverlay[] = [];
+    const chart = opsChart.overlay();
+    if (chart) overlays.push(chart);
+
+    return { nodes, overlays: overlays.length ? overlays : undefined };
   }
 
   function push(args: {
@@ -128,6 +134,7 @@ export function selectionSortTrace(input: number[]): TraceFrame[] {
       const valMin = arr[min];
 
       // ss.compare
+      opsChart.record();
       push({
         kind: "compare",
         codeToken: "ss.compare",

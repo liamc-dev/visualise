@@ -1,8 +1,8 @@
-export const BS_TOP_PADDING_ROWS = 2;
+export const BS_ARRAY_Y = 5;
 
 export function makeBubbleSortLayout() {
   return {
-    arrayY: BS_TOP_PADDING_ROWS,
+    arrayY: BS_ARRAY_Y,
     colOffset: 0,
   };
 }

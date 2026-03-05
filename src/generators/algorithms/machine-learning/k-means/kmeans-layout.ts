@@ -29,7 +29,7 @@ export const CENTROID_ROW_Y = 16.5;
 export const DIST_ROW_LABEL_Y = 17.15;
 export const DIST_ROW_Y = 17.5;
 
-export const BOUNDS = { minX: -1, minY: 0, maxX: 13, maxY: 17 };
+export const BOUNDS = { minX: -1, minY: 0, maxX: 13, maxY: 18 };
 
 /** Algorithm constants. */
 export const MAX_ITERATIONS = 15;

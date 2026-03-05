@@ -1,5 +1,6 @@
 // src/generators/algorithms/sorting/heap-sort/heap-sort-trace.ts
 import type { TraceFrame, TraceScene, TracePointer, TraceTone } from "../../../../types/trace-types";
+import { createOpsChart, nLogNRef } from "../../../../lib/ops-chart";
 import { makeHeapLayout } from "./heap-layout";
 
 export function heapSortTrace(input: number[]): TraceFrame[] {
@@ -11,6 +12,7 @@ export function heapSortTrace(input: number[]): TraceFrame[] {
   const edgeIdByPair = new Map<string, string>();
   for (const e of layout.heapEdges) edgeIdByPair.set(`${e.parent}->${e.child}`, e.id);
 
+  const opsChart = createOpsChart(nLogNRef(arr.length));
   let stepNo = 0;
 
   // ---------------------------------------------------------------------------
@@ -69,6 +71,7 @@ export function heapSortTrace(input: number[]): TraceFrame[] {
       heapSize: args.heapSize,
       layout,
       toneOverrides,
+      opsChart,
     });
 
     const focusNodes = (args.highlight ?? []).flatMap((i) => [`a:${i}`, `h:${i}`]);
@@ -104,7 +107,7 @@ export function heapSortTrace(input: number[]): TraceFrame[] {
   };
 
   // Build max heap
-  buildMaxHeap(arr, push, edgeIdByPair);
+  buildMaxHeap(arr, push, edgeIdByPair, opsChart);
 
   // Extract max repeatedly
   for (let end = arr.length - 1; end > 0; end--) {
@@ -121,7 +124,7 @@ export function heapSortTrace(input: number[]): TraceFrame[] {
       meta: { maxVal, end },
     });
 
-    siftDown(arr, 0, end, push, end, edgeIdByPair);
+    siftDown(arr, 0, end, push, end, edgeIdByPair, opsChart);
   }
 
   // End state: highlight all
@@ -145,8 +148,9 @@ function buildHeapScene(args: {
   heapSize: number;
   layout: ReturnType<typeof makeHeapLayout>;
   toneOverrides?: Record<number, TraceTone>;
+  opsChart: ReturnType<typeof createOpsChart>;
 }): TraceScene {
-  const { arr, heapSize, layout, toneOverrides } = args;
+  const { arr, heapSize, layout, toneOverrides, opsChart } = args;
 
   const nodes: TraceScene["nodes"] = [];
 
@@ -212,7 +216,11 @@ function buildHeapScene(args: {
       };
     });
 
-  return { nodes, edges, overlays: [] };
+  const overlays: TraceScene["overlays"] = [];
+  const chart = opsChart.overlay();
+  if (chart) overlays.push(chart);
+
+  return { nodes, edges, overlays };
 }
 
 function buildPointers(args: {
@@ -287,7 +295,8 @@ function buildMaxHeap(
     ptrs?: { root?: number; child?: number; swapIdx?: number; end?: number };
     meta?: Record<string, unknown>;
   }) => void,
-  edgeIdByPair: Map<string, string>
+  edgeIdByPair: Map<string, string>,
+  opsChart: ReturnType<typeof createOpsChart>,
 ) {
   push({
     kind: "init",
@@ -310,7 +319,7 @@ function buildMaxHeap(
       meta: { root: i },
     });
 
-    siftDown(arr, i, arr.length, push, arr.length, edgeIdByPair);
+    siftDown(arr, i, arr.length, push, arr.length, edgeIdByPair, opsChart);
   }
 }
 
@@ -330,7 +339,8 @@ function siftDown(
     meta?: Record<string, unknown>;
   }) => void,
   endPtr: number,
-  edgeIdByPair: Map<string, string>
+  edgeIdByPair: Map<string, string>,
+  opsChart: ReturnType<typeof createOpsChart>,
 ) {
   let root = start;
 
@@ -366,6 +376,7 @@ function siftDown(
 
     let swapIdx = root;
 
+    opsChart.record();
     push({
       kind: "compare",
       codeToken: "hs.pick_left",
@@ -404,6 +415,7 @@ function siftDown(
     });
 
     if (hasRight) {
+      opsChart.record();
       push({
         kind: "compare",
         codeToken: "hs.pick_right",

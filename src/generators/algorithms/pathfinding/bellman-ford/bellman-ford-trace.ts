@@ -10,6 +10,7 @@ import type {
   TraceEmphasis,
 } from "../../../../types/trace-types";
 import { applyPointerMasking } from "../../../../lib/trace-utils";
+import { createOpsChart, veProductRef } from "../../../../lib/ops-chart";
 import {
   buildGraphFromInput,
   edgeId,
@@ -128,6 +129,8 @@ export function bellmanFordTrace(input: number[]): TraceFrame[] {
     directedEdges.push({ from: e.from, to: e.to, weight: e.weight });
     directedEdges.push({ from: e.to, to: e.from, weight: e.weight });
   }
+
+  const opsChart = createOpsChart(veProductRef(V, directedEdges.length));
 
   /* ---- scene builder ---- */
 
@@ -320,14 +323,18 @@ export function bellmanFordTrace(input: number[]): TraceFrame[] {
       };
     });
 
+    const overlays: TraceOverlay[] = [
+      ...labelOverlays, ...weightOverlays,
+      distCaption, ...distLabelOverlays,
+      prevCaption, ...prevLabelOverlays,
+    ];
+    const chart = opsChart.overlay();
+    if (chart) overlays.push(chart);
+
     return {
       nodes: [...nodes, ...distNodes, ...prevNodes],
       edges,
-      overlays: [
-        ...labelOverlays, ...weightOverlays,
-        distCaption, ...distLabelOverlays,
-        prevCaption, ...prevLabelOverlays,
-      ],
+      overlays,
       bounds: BOUNDS,
     };
   }
@@ -450,6 +457,7 @@ export function bellmanFordTrace(input: number[]): TraceFrame[] {
       const tentative = dist[u] + w;
 
       // bf.relax — compute tentative and compare
+      opsChart.record();
       push({
         kind: "relax",
         codeToken: "bf.relax",

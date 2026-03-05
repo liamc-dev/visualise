@@ -5,6 +5,7 @@ import { useSettingsStore } from "../../../stores/useSettingsStore";
 import { LineChartOverlay } from "./LineChartOverlay";
 import { ResidualChartOverlay } from "./ResidualChartOverlay";
 import { SigmoidChartOverlay } from "./SigmoidChartOverlay";
+import { VoronoiOverlay } from "./VoronoiOverlay";
 
 export function TraceOverlayLayer({
   overlays,
@@ -125,6 +126,9 @@ export function TraceOverlayLayer({
               height={o.height}
               points={o.points}
               yLabel={o.yLabel}
+              refPoints={o.refPoints}
+              refLabel={o.refLabel}
+              anchorRight={o.anchorRight}
               cellSize={cellSize}
               colOffset={colOffset}
             />
@@ -157,6 +161,21 @@ export function TraceOverlayLayer({
               height={o.height}
               dataPoints={o.dataPoints}
               highlightIdx={o.highlightIdx}
+              cellSize={cellSize}
+              colOffset={colOffset}
+            />
+          );
+        }
+
+        if (o.kind === "voronoi") {
+          return (
+            <VoronoiOverlay
+              key={o.id}
+              x={o.x}
+              y={o.y}
+              width={o.width}
+              height={o.height}
+              centroids={o.centroids}
               cellSize={cellSize}
               colOffset={colOffset}
             />

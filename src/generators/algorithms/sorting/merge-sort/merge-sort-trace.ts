@@ -1,5 +1,6 @@
 // src/algorithms/sorting/trace/merge/merge-sort-trace.ts
 import type { TraceFrame, TraceScene, TracePointer, TraceTone } from "../../../../types/trace-types";
+import { createOpsChart, nLogNRef } from "../../../../lib/ops-chart";
 import { makeMergeLayout } from "./merge-layout";
 
 type StackNode = {
@@ -33,6 +34,7 @@ export function mergeSortTrace(input: number[]): TraceFrame[] {
   const stack: StackNode[] = [];
 
   const layout = makeMergeLayout(arr.length);
+  const opsChart = createOpsChart(nLogNRef(arr.length));
 
   let stepNo = 0;
 
@@ -50,6 +52,7 @@ export function mergeSortTrace(input: number[]): TraceFrame[] {
       stack,
       layout,
       unified: !!args.unified,
+      opsChart,
     });
 
     const focusNodes = buildFocusNodes({
@@ -78,7 +81,7 @@ export function mergeSortTrace(input: number[]): TraceFrame[] {
     });
   };
 
-  mergeSort(arr, 0, arr.length - 1, 0, stack, push, layout, true);
+  mergeSort(arr, 0, arr.length - 1, 0, stack, push, layout, opsChart, true);
 
   return frames;
 }
@@ -113,8 +116,9 @@ function buildScene(args: {
   stack: StackNode[];
   layout: ReturnType<typeof makeMergeLayout>;
   unified: boolean;
+  opsChart: ReturnType<typeof createOpsChart>;
 }): TraceScene {
-  const { arr, stack, layout, unified } = args;
+  const { arr, stack, layout, unified, opsChart } = args;
 
   const nodes: TraceScene["nodes"] = [];
 
@@ -229,6 +233,9 @@ function buildScene(args: {
     });
   }
 
+  const chart = opsChart.overlay();
+  if (chart) overlays.push(chart);
+
   return {
     nodes,
     overlays,
@@ -337,6 +344,7 @@ function mergeSort(
     unified?: boolean;
   }) => void,
   layout: ReturnType<typeof makeMergeLayout>,
+  opsChart: ReturnType<typeof createOpsChart>,
   isRoot = false
 ) {
   const node: StackNode = {
@@ -402,7 +410,7 @@ function mergeSort(
     meta: { ...baseMeta(), side: "left" },
   });
 
-  mergeSort(arr, left, mid, depth + 1, stack, push, layout);
+  mergeSort(arr, left, mid, depth + 1, stack, push, layout, opsChart);
 
   node.phase = "split";
   push({
@@ -420,7 +428,7 @@ function mergeSort(
     meta: { ...baseMeta(), side: "right" },
   });
 
-  mergeSort(arr, mid + 1, right, depth + 1, stack, push, layout);
+  mergeSort(arr, mid + 1, right, depth + 1, stack, push, layout, opsChart);
 
   node.phase = "split";
   push({
@@ -431,7 +439,7 @@ function mergeSort(
   });
 
   node.phase = "merge";
-  merge(arr, left, mid, right, stack, push);
+  merge(arr, left, mid, right, stack, push, opsChart);
 
   node.temp = undefined;
   node.i = node.j = node.k = undefined;
@@ -476,7 +484,8 @@ function merge(
     pointers?: TracePointer[];
     meta?: Record<string, unknown>;
     unified?: boolean;
-  }) => void
+  }) => void,
+  opsChart: ReturnType<typeof createOpsChart>,
 ) {
   const node = stack[stack.length - 1];
   node.phase = "merge";
@@ -525,6 +534,7 @@ function merge(
   });
 
   while (i < leftSize && j < totalSize) {
+    opsChart.record();
     push({
       kind: "merge_compare",
       codeToken: "ms.merge_compare",

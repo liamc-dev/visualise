@@ -10,8 +10,8 @@ export type HeapLayout = {
 };
 
 export function makeHeapLayout(n: number): HeapLayout {
-  const arrayY = 1;
-  const heapY0 = 4;
+  const arrayY = 2;
+  const heapY0 = 5;
   const rowGap = 2;
   const slotWidth = 1.2;
 

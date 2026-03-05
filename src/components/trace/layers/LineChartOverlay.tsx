@@ -12,6 +12,9 @@ export function LineChartOverlay({
   height,
   points,
   yLabel,
+  refPoints,
+  refLabel,
+  anchorRight,
   cellSize,
   colOffset,
 }: {
@@ -21,27 +24,34 @@ export function LineChartOverlay({
   height: number;
   points: Point[];
   yLabel?: string;
+  refPoints?: Point[];
+  refLabel?: string;
+  anchorRight?: boolean;
   cellSize: number;
   colOffset: number;
 }) {
   if (points.length === 0) return null;
 
-  const left = (colOffset + x) * cellSize;
   const top = y * cellSize;
   const w = width * cellSize;
   const h = height * cellSize;
 
   // Padding inside the SVG for labels/ticks
-  const pad = { top: 16, right: 12, bottom: 20, left: 36 };
+  const pad = { top: 16, right: refLabel ? 56 : 12, bottom: 20, left: 36 };
   const plotW = w - pad.left - pad.right;
   const plotH = h - pad.top - pad.bottom;
 
+  // Combine points and refPoints for shared axis scaling
+  const allValues = points.map((p) => p.value);
+  if (refPoints?.length) {
+    for (const rp of refPoints) allValues.push(rp.value);
+  }
+
   const epochs = points.map((p) => p.epoch);
-  const values = points.map((p) => p.value);
   const xMin = Math.min(...epochs);
   const xMax = Math.max(...epochs);
-  const yMin = Math.min(...values);
-  const yMax = Math.max(...values);
+  const yMin = Math.min(...allValues);
+  const yMax = Math.max(...allValues);
   const xRange = xMax - xMin || 1;
   const yRange = yMax - yMin || 1;
 
@@ -61,12 +71,15 @@ export function LineChartOverlay({
   const mutedColor = "rgb(var(--tn-muted))";
   const gridColor = "rgb(var(--tn-border) / 0.3)";
 
+  const posStyle = anchorRight
+    ? { right: x * cellSize, top }
+    : { left: (colOffset + x) * cellSize, top };
+
   return (
     <div
       style={{
         position: "absolute",
-        left,
-        top,
+        ...posStyle,
         width: w,
         height: h,
         pointerEvents: "none",
@@ -143,6 +156,18 @@ export function LineChartOverlay({
           strokeLinecap="round"
         />
 
+        {/* Reference line (dashed, muted) */}
+        {refPoints && refPoints.length >= 2 && (
+          <polyline
+            points={refPoints.map((p) => `${toSx(p.epoch)},${toSy(p.value)}`).join(" ")}
+            fill="none"
+            stroke={mutedColor}
+            strokeWidth={1}
+            strokeDasharray="4 3"
+            strokeLinejoin="round"
+          />
+        )}
+
         {/* Current point dot */}
         <circle
           cx={toSx(last.epoch)}
@@ -150,6 +175,20 @@ export function LineChartOverlay({
           r={3}
           fill={lineColor}
         />
+
+        {/* Legend */}
+        {refLabel && (
+          <g transform={`translate(${w - pad.right + 6}, ${pad.top + 4})`}>
+            <line x1={0} y1={0} x2={12} y2={0} stroke={lineColor} strokeWidth={1.5} />
+            <text x={15} y={0} dominantBaseline="middle" fill={lineColor} fontSize={8} fontFamily="var(--font-mono)">
+              ops
+            </text>
+            <line x1={0} y1={14} x2={12} y2={14} stroke={mutedColor} strokeWidth={1} strokeDasharray="4 3" />
+            <text x={15} y={14} dominantBaseline="middle" fill={mutedColor} fontSize={8} fontFamily="var(--font-mono)">
+              {refLabel}
+            </text>
+          </g>
+        )}
       </svg>
     </div>
   );

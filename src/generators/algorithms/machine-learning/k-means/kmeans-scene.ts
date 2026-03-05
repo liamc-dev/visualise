@@ -14,6 +14,7 @@ import {
   DIST_ROW_LABEL_Y, DIST_ROW_Y,
   LOSS_CHART_X, LOSS_CHART_Y,
   LOSS_CHART_WIDTH, LOSS_CHART_HEIGHT,
+  PLOT_X0, PLOT_X1, PLOT_Y0, PLOT_Y1,
   clusterTone,
 } from "./kmeans-layout";
 
@@ -52,10 +53,10 @@ export type SceneOpts = {
   changesHistory?: { epoch: number; value: number }[];
 };
 
-/** Evenly spaced x positions for k items across the param row width. */
+/** Evenly spaced x positions for k items across the full layout width. */
 function clusterX(j: number, k: number): number {
-  const x0 = PARAM_X[0];
-  const x1 = PARAM_X[2];
+  const x0 = 0;
+  const x1 = 12;
   if (k <= 1) return (x0 + x1) / 2;
   return x0 + (j / (k - 1)) * (x1 - x0);
 }
@@ -91,10 +92,21 @@ export function buildScene(opts: SceneOpts): TraceScene {
     });
   }
 
-  // Data points as colored digit captions on scatter plot (no cell nodes)
+  // Voronoi region overlay (behind data points)
+  // +1 on width/height to cover the full cell area at the boundary
+  if (assign.some((a) => a >= 0)) {
+    overlays.push({
+      kind: "voronoi", id: "km:voronoi",
+      x: PLOT_X0, y: PLOT_Y0,
+      width: PLOT_X1 - PLOT_X0 + 1, height: PLOT_Y1 - PLOT_Y0 + 1,
+      centroids: scaledCentroids.map((sc, j) => ({
+        x: sc.x, y: sc.y, tone: clusterTone(j),
+      })),
+    });
+  }
+
+  // Data points as digit captions on scatter plot (Voronoi bg provides cluster color)
   for (let i = 0; i < n; i++) {
-    const a = assign[i];
-    const tone: TraceTone = a >= 0 ? clusterTone(a) : "neutral";
     const isHl = i === highlightIdx;
     overlays.push({
       kind: "caption", id: ptId(i),
@@ -102,23 +114,25 @@ export function buildScene(opts: SceneOpts): TraceScene {
       text: String(i),
       emphasis: isHl ? "active" : "soft",
       align: "center",
-      color: a >= 0 ? `rgb(var(--tn-${tone}))` : undefined,
     });
   }
 
-  // Centroids
+  // Centroids as caption labels (no cell boxes)
   for (let j = 0; j < centroids.length; j++) {
     const sc = scaledCentroids[j];
     const isHl = j === highlightCentroid;
-    nodes.push({
-      id: centId(j), kind: "cell",
-      pos: { x: sc.x, y: sc.y },
-      meta: { value: `C${j}`, tone: clusterTone(j), weight: 1 as 0 | 1, opacity: 0.35 },
+    overlays.push({
+      kind: "caption", id: centId(j),
+      x: sc.x + 0.5, y: sc.y + 0.5,
+      text: `C${j}`,
+      emphasis: isHl ? "active" : "soft",
+      align: "center",
+      color: `rgb(var(--tn-${clusterTone(j)}))`,
     });
     if (isHl) {
       overlays.push({
         kind: "caption", id: `km:chl:${j}`,
-        x: sc.x + 0.5, y: sc.y - 0.4,
+        x: sc.x + 0.5, y: sc.y - 0.1,
         text: `(${fmt(centroids[j].x, 1)}, ${fmt(centroids[j].y, 1)})`,
         emphasis: "active", align: "center",
       });

@@ -8,6 +8,7 @@ import type {
   TracePointer,
 } from "../../../../types/trace-types";
 import { applyPointerMasking } from "../../../../lib/trace-utils";
+import { createOpsChart, veRef } from "../../../../lib/ops-chart";
 import {
   decodeWeightedGrid,
   DEFAULT_DIJKSTRA_GRID,
@@ -59,6 +60,24 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
   );
 
   dist[startRow][startCol] = 0;
+
+  // Count vertices and edges for reference curve
+  let vertexCount = 0;
+  let edgeCount = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (weights[r][c] === 0) continue;
+      vertexCount++;
+      for (const [dr, dc] of DIRECTIONS) {
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && weights[nr][nc] !== 0) {
+          edgeCount++;
+        }
+      }
+    }
+  }
+  const opsChart = createOpsChart(veRef(vertexCount, edgeCount));
 
   let curCell: [number, number] | null = null;
   let activeNb: { r: number; c: number; w: number } | null = null;
@@ -238,6 +257,9 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
       }
     }
 
+    const chart = opsChart.overlay();
+    if (chart) overlays.push(chart);
+
     return {
       nodes,
       edges: [],
@@ -403,6 +425,7 @@ export function dijkstraGridTrace(input: number[]): TraceFrame[] {
       const tentative = dist[uR][uC] + w;
 
       // dj.relax
+      opsChart.record();
       push({
         kind: "relax",
         codeToken: "dj.relax",

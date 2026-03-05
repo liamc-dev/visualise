@@ -10,6 +10,7 @@ import type {
   TraceEmphasis,
 } from "../../../../types/trace-types";
 import { applyPointerMasking } from "../../../../lib/trace-utils";
+import { createOpsChart, veRef } from "../../../../lib/ops-chart";
 import {
   buildAdj,
   buildGraphFromInput,
@@ -127,6 +128,8 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
 
   const frames: TraceFrame[] = [];
   let stepNo = 0;
+
+  const opsChart = createOpsChart(veRef(labels.length, graph.edges.length * 2));
 
   /* ---- scene builder ---- */
 
@@ -277,10 +280,14 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
       };
     });
 
+    const overlays: TraceOverlay[] = [...labelOverlays, ...weightOverlays, distCaption, ...distLabelOverlays];
+    const chart = opsChart.overlay();
+    if (chart) overlays.push(chart);
+
     return {
       nodes: [...nodes, ...distNodes],
       edges,
-      overlays: [...labelOverlays, ...weightOverlays, distCaption, ...distLabelOverlays],
+      overlays,
       bounds: BOUNDS,
     };
   }
@@ -441,6 +448,7 @@ export function dijkstraTrace(input: number[]): TraceFrame[] {
       const tentative = dist[u] + w;
 
       // --- dj.relax --- Compute tentative and compare
+      opsChart.record();
       push({
         kind: "relax",
         codeToken: "dj.relax",

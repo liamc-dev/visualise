@@ -1,10 +1,12 @@
 import type {
   TraceFrame,
   TraceNode,
+  TraceOverlay,
   TracePointer,
   TraceScene,
   TraceTone,
 } from "../../../../types/trace-types";
+import { createOpsChart, quadraticRef } from "../../../../lib/ops-chart";
 import { makeInsertionSortLayout } from "./insertion-sort-layout";
 
 const KEY_NODE_ID = "is:key";
@@ -18,6 +20,7 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
   const n = arr.length;
   const frames: TraceFrame[] = [];
   const layout = makeInsertionSortLayout();
+  const opsChart = createOpsChart(quadraticRef(n));
   let stepNo = 0;
 
   // Track which iteration we're on so we can dim the unsorted tail.
@@ -57,7 +60,11 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
       });
     }
 
-    return { nodes };
+    const overlays: TraceOverlay[] = [];
+    const chart = opsChart.overlay();
+    if (chart) overlays.push(chart);
+
+    return { nodes, overlays: overlays.length ? overlays : undefined };
   }
 
   function push(args: {
@@ -161,6 +168,7 @@ export function insertionSortTrace(input: number[]): TraceFrame[] {
       const valJ = arr[j];
 
       // --- is.compare — key hovers above a[j] for face-off ---
+      opsChart.record();
       push({
         kind: "compare",
         codeToken: "is.compare",

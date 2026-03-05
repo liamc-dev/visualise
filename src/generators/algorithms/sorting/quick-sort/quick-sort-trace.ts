@@ -1,5 +1,6 @@
 // src/algorithms/sorting/trace/quick/quick-sort-trace.ts
 import type { TraceFrame, TracePointer, TraceScene, TraceTone } from "../../../../types/trace-types";
+import { createOpsChart, nLogNRef } from "../../../../lib/ops-chart";
 import { makeQuickSortLayout } from "./quick-sort-layout";
 
 type QuickSortStackNode = {
@@ -33,6 +34,7 @@ export function quickSortTrace(input: number[]): TraceFrame[] {
   const stack: QuickSortStackNode[] = [];
 
   const layout = makeQuickSortLayout();
+  const opsChart = createOpsChart(nLogNRef(arr.length));
   let stepNo = 0;
 
   const push = (args: {
@@ -44,7 +46,7 @@ export function quickSortTrace(input: number[]): TraceFrame[] {
     pointers?: TracePointer[];
     meta?: Record<string, unknown>;
   }) => {
-    const scene = buildScene({ arr, stack, layout });
+    const scene = buildScene({ arr, stack, layout, opsChart });
     const focusNodes = buildFocusNodes({ stack, highlight: args.highlight ?? [] });
 
     // pointers also imply focus
@@ -68,7 +70,7 @@ export function quickSortTrace(input: number[]): TraceFrame[] {
     });
   };
 
-  quickSort(arr, 0, arr.length - 1, 0, stack, push, true);
+  quickSort(arr, 0, arr.length - 1, 0, stack, push, opsChart, true);
 
   return frames;
 }
@@ -98,8 +100,9 @@ function buildScene(args: {
   arr: number[];
   stack: QuickSortStackNode[];
   layout: ReturnType<typeof makeQuickSortLayout>;
+  opsChart: ReturnType<typeof createOpsChart>;
 }): TraceScene {
-  const { arr, stack, layout } = args;
+  const { arr, stack, layout, opsChart } = args;
 
   const nodes: TraceScene["nodes"] = [];
 
@@ -178,6 +181,9 @@ function buildScene(args: {
       emphasis: d === activeDepth ? "active" : "soft",
     });
   }
+
+  const chart = opsChart.overlay();
+  if (chart) overlays.push(chart);
 
   return {
     nodes,
@@ -262,6 +268,7 @@ function quickSort(
     pointers?: TracePointer[];
     meta?: Record<string, unknown>;
   }) => void,
+  opsChart: ReturnType<typeof createOpsChart>,
   isRoot = false
 ) {
   const node: QuickSortStackNode = {
@@ -334,7 +341,7 @@ function quickSort(
     meta: baseMeta(),
   });
 
-  const pivotIndex = partition(arr, left, right, stack, push, node, baseMeta);
+  const pivotIndex = partition(arr, left, right, stack, push, node, baseMeta, opsChart);
 
   node.phase = "pivot-place";
   node.pivotIndex = pivotIndex;
@@ -368,7 +375,7 @@ function quickSort(
     },
   });
 
-  quickSort(arr, left, pivotIndex - 1, depth + 1, stack, push);
+  quickSort(arr, left, pivotIndex - 1, depth + 1, stack, push, opsChart);
 
   node.phase = "partition";
   push({
@@ -394,7 +401,7 @@ function quickSort(
     },
   });
 
-  quickSort(arr, pivotIndex + 1, right, depth + 1, stack, push);
+  quickSort(arr, pivotIndex + 1, right, depth + 1, stack, push, opsChart);
 
   node.phase = "partition";
   push({
@@ -449,7 +456,8 @@ function partition(
     meta?: Record<string, unknown>;
   }) => void,
   node: QuickSortStackNode,
-  baseMeta: () => Record<string, unknown>
+  baseMeta: () => Record<string, unknown>,
+  opsChart: ReturnType<typeof createOpsChart>,
 ): number {
   const pivot = arr[right];
   let i = left;
@@ -486,6 +494,7 @@ function partition(
     node.scanIndex = j;
     node.boundaryIndex = i;
 
+    opsChart.record();
     push({
       kind: "compare",
       codeToken: "qs.compare",

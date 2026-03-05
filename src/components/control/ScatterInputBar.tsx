@@ -121,7 +121,7 @@ export default function ScatterInputBar({ algorithm }: { algorithm: string }) {
       )}
 
       <LabeledSlider
-        label="epochs"
+        label={showK ? "iter" : "epochs"}
         displayValue={String(epochs)}
         min={1}
         max={99}

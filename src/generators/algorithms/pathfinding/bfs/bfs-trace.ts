@@ -8,6 +8,7 @@ import type {
   TracePointer,
 } from "../../../../types/trace-types";
 import { applyPointerMasking } from "../../../../lib/trace-utils";
+import { createOpsChart, veRef } from "../../../../lib/ops-chart";
 import {
   decodeGridInput,
   DEFAULT_BFS_GRID,
@@ -58,6 +59,24 @@ export function bfsTrace(input: number[]): TraceFrame[] {
   const discovered: boolean[][] = Array.from({ length: rows }, () =>
     Array(cols).fill(false),
   );
+
+  // Count vertices and edges for reference curve
+  let vertexCount = 0;
+  let edgeCount = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (walls[r][c]) continue;
+      vertexCount++;
+      for (const [dr, dc] of DIRECTIONS) {
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && !walls[nr][nc]) {
+          edgeCount++;
+        }
+      }
+    }
+  }
+  const opsChart = createOpsChart(veRef(vertexCount, edgeCount));
 
   const queue: [number, number][] = [];
   let curCell: [number, number] | null = null;
@@ -198,6 +217,9 @@ export function bfsTrace(input: number[]): TraceFrame[] {
         emphasis: "soft" as const,
       });
     }
+
+    const chart = opsChart.overlay();
+    if (chart) overlays.push(chart);
 
     return {
       nodes,
@@ -368,6 +390,7 @@ export function bfsTrace(input: number[]): TraceFrame[] {
       if (isWall) continue;
 
       // Visited check — always emit frame
+      opsChart.record();
       const alreadyVisited = discovered[nr][nc];
       push({
         kind: "visited",
