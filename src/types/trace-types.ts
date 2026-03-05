@@ -54,7 +54,8 @@ export type TraceOverlay =
   | { kind: "vline"; id: string; x: number; y1: number; y2: number; emphasis?: TraceEmphasis }
   | { kind: "text"; id: string; x: number; y: number; text: string; emphasis?: TraceEmphasis }
   | { kind: "band"; id: string; y: number; height: number; emphasis?: TraceEmphasis }
-  | { kind: "caption", id: string, x: number, y: number, text: string, emphasis?: TraceEmphasis, align?: "center" | "right" | "below", opacity?: number };
+  | { kind: "caption", id: string, x: number, y: number, text: string, emphasis?: TraceEmphasis, align?: "center" | "right" | "below", opacity?: number, color?: string }
+  | { kind: "linechart"; id: string; x: number; y: number; width: number; height: number; points: { epoch: number; value: number }[]; yLabel?: string };
 
 export type TraceFocus = {
   nodes?: string[];

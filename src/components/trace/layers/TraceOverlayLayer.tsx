@@ -2,6 +2,7 @@
 import React from "react";
 import type { TraceOverlay } from "../../../types/trace-types";
 import { useSettingsStore } from "../../../stores/useSettingsStore";
+import { LineChartOverlay } from "./LineChartOverlay";
 
 export function TraceOverlayLayer({
   overlays,
@@ -70,6 +71,7 @@ export function TraceOverlayLayer({
                   : "translateY(-50%)",
                 maxWidth: 720,
                 opacity: o.opacity,
+                color: o.color,
               }}
               className={[
                 "whitespace-nowrap",
@@ -108,6 +110,22 @@ export function TraceOverlayLayer({
             >
               {o.text}
             </div>
+          );
+        }
+
+        if (o.kind === "linechart") {
+          return (
+            <LineChartOverlay
+              key={o.id}
+              x={o.x}
+              y={o.y}
+              width={o.width}
+              height={o.height}
+              points={o.points}
+              yLabel={o.yLabel}
+              cellSize={cellSize}
+              colOffset={colOffset}
+            />
           );
         }
 

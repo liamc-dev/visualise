@@ -31,9 +31,12 @@ function pickInitialCentroids(pairs: DataPoint[], k: number): DataPoint[] {
 }
 
 export function kmeansTrace(input: number[]): TraceFrame[] {
+  const maxIter = input.length > 0 ? Math.max(1, Math.round(input[0])) : MAX_ITERATIONS;
+  // input[1] is learning rate (ignored by k-means — no gradient descent)
+  const data = input.slice(2);
   const pairs: DataPoint[] = [];
-  for (let i = 0; i < input.length; i += 2) {
-    pairs.push({ x: input[i], y: input[i + 1] });
+  for (let i = 0; i < data.length; i += 2) {
+    pairs.push({ x: data[i], y: data[i + 1] });
   }
   const n = pairs.length;
   if (n < K) return [];
@@ -55,6 +58,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
   const assign = new Array<number>(n).fill(-1);
   const frames: TraceFrame[] = [];
   let step = 0;
+  const changesHistory: { epoch: number; value: number }[] = [];
 
   function scaleCentroids(c: DataPoint[]): { x: number; y: number }[] {
     return c.map((p) => ({
@@ -73,7 +77,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
     });
   }
 
-  const base = { pairs, scaled, axis };
+  const base = { pairs, scaled, axis, changesHistory };
   let scaledCentroids = scaleCentroids(centroids);
 
   push("data", "km.data",
@@ -86,7 +90,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
   );
 
   let totalChanges = 0;
-  for (let iter = 1; iter <= MAX_ITERATIONS; iter++) {
+  for (let iter = 1; iter <= maxIter; iter++) {
     const isDetailed = iter <= DETAILED_ITERATIONS;
 
     push("iteration", "km.iteration",
@@ -98,6 +102,8 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
     );
 
     // --- assign phase ---
+    changesHistory.push({ epoch: iter, value: 0 });
+
     push("assign", "km.assign",
       buildScene({
         ...base, centroids, scaledCentroids, assign,
@@ -110,6 +116,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
       ? assignDetailed(iter)
       : assignSummary();
     totalChanges = changes;
+    changesHistory[changesHistory.length - 1].value = changes;
 
     // --- update phase ---
     const prevScaled = scaleCentroids(centroids.map((c) => ({ ...c })));
@@ -142,7 +149,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
 
   const finalIter = Math.min(
     frames.filter((f) => f.kind === "iteration").length,
-    MAX_ITERATIONS,
+    maxIter,
   );
   push("done", "km.done",
     buildScene({
@@ -197,7 +204,11 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
 
       const prev = assign[i];
       const changed = assign[i] !== nearest;
-      if (changed) { assign[i] = nearest; changes++; }
+      if (changed) {
+        assign[i] = nearest;
+        changes++;
+        changesHistory[changesHistory.length - 1].value = changes;
+      }
 
       push("assign.update", "km.assign.update",
         buildScene({

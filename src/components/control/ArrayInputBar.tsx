@@ -3,6 +3,7 @@
 import { useCallback, useRef, useLayoutEffect } from "react";
 import { Shuffle, Dices, RotateCcw, ChevronUp } from "lucide-react";
 import { IconBtn } from "../ui/IconBtn";
+import { LabeledSlider } from "../ui/LabeledSlider";
 import { useArrayInputStore } from "../../stores/useArrayInputStore";
 import { useLayoutStore } from "../../stores/useLayoutStore";
 
@@ -83,17 +84,14 @@ export default function ArrayInputBar() {
         <RotateCcw className="w-3.5 h-3.5 text-tn-muted" />
       </IconBtn>
 
-      {/* Size slider */}
-      <input
-        type="range"
+      <LabeledSlider
+        label="n"
+        displayValue={String(size)}
         min={3}
         max={24}
         value={size}
-        onChange={(e) => generateRandom(Number(e.target.value))}
-        className="tn-range-modern min-w-14 w-16 shrink cursor-pointer"
-        style={{ ["--p" as string]: `${((size - 3) / 21) * 100}%` }}
+        onChange={(e) => generateRandom(Number(e.currentTarget.value))}
       />
-      <span className="text-xs font-mono text-tn-muted w-5 text-right">{size}</span>
 
       {/* Collapse */}
       <IconBtn onClick={toggleArrayInput} title="Collapse input" className="w-7 h-7">

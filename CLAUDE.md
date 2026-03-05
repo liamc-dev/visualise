@@ -43,6 +43,7 @@ The `.def.tsx` suffix triggers auto-registration. No manual imports.
 - Never create raw HTML elements when a UI primitive exists
 - Never add dependencies without checking if existing ones cover the need
 - Never create files over 300 lines — split by concern
+- Never hardcode font sizes (e.g. `text-[10px]`) — use project tokens (`text-micro`, `text-label`, `text-button`, `text-ui`, `text-body`, `text-title`) defined in `tokens.css`
 - Each code marker token should highlight at most 3 lines (prefer 1–2)
 - Helper functions in code bundles are not wrapped in markers — only mark the call site
 

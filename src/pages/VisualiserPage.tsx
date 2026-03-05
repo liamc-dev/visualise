@@ -84,7 +84,10 @@ export default function VisualiserPage() {
   const lsArray = useLinearSearchInputStore((s) => s.array);
   const lsTarget = useLinearSearchInputStore((s) => s.target);
   const linearSearchInput = useMemo(() => [lsTarget, ...lsArray], [lsTarget, lsArray]);
-  const scatterInput = useScatterInputStore((s) => s.points);
+  const scatterPoints = useScatterInputStore((s) => s.points);
+  const scatterEpochs = useScatterInputStore((s) => s.epochs);
+  const scatterLR = useScatterInputStore((s) => s.learningRate);
+  const scatterInput = useMemo(() => [scatterEpochs, scatterLR, ...scatterPoints], [scatterEpochs, scatterLR, scatterPoints]);
   const inputArray = isML
     ? scatterInput
     : isLinearSearch
@@ -175,7 +178,7 @@ export default function VisualiserPage() {
         <LinearSearchInputBar />
       </CollapsibleInput>
       <CollapsibleInput show={isML} collapsed={scatterInputCollapsed} toggle={toggleScatterInput} title="Show scatter input">
-        <ScatterInputBar />
+        <ScatterInputBar algorithm={algoKey} />
       </CollapsibleInput>
 
       {visualNode}

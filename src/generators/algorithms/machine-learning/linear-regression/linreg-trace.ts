@@ -1,198 +1,95 @@
 // src/generators/algorithms/machine-learning/linear-regression/linreg-trace.ts
 
-import type {
-  TraceFrame,
-  TraceNode,
-  TraceEdge,
-  TraceOverlay,
-  TraceScene,
-  TraceTone,
-} from "../../../../types/trace-types";
-import {
-  PLOT_X0, PLOT_X1, PLOT_Y0, PLOT_Y1,
-  BOUNDS, PARAM_X, PARAM_Y, PARAM_Y_LABEL, PARAM_LABELS,
-  YHAT_Y, YHAT_LABEL_Y, YACT_Y,
-  scalePoints, dataYToGrid, dataXToGrid,
-} from "./linreg-layout";
+import type { TraceFrame, TraceScene } from "../../../../types/trace-types";
+import { PLOT_X0, PLOT_X1, PLOT_Y0, PLOT_Y1, scalePoints } from "./linreg-layout";
 import { buildAxisOverlays } from "../../../../lib/axis-utils";
+import { buildScene, calc, fmt } from "./linreg-scene";
+import type { DataPoint, SceneCtx } from "./linreg-scene";
 
-const NUM_EPOCHS = 20;
-const LEARNING_RATE = 0.01;
+const DEFAULT_EPOCHS = 20;
+const DEFAULT_LR = 0.1;
+const MIN_LR = 0.01;
+const MAX_LR = 0.5;
 /** Epochs with per-point prediction detail. */
 const DETAILED_EPOCHS = 3;
 
-function ptId(i: number) { return `lr:d:${i}`; }
-function paramId(k: string) { return `lr:p:${k}`; }
-
-function fmt(v: number, d = 2): string {
-  return Number.isFinite(v) ? v.toFixed(d) : "\u2013";
+/** Denormalize slope and intercept from normalized space to original. */
+function denorm(mn: number, bn: number, xMin: number, xRange: number, yMin: number, yRange: number) {
+  const m = mn * yRange / xRange;
+  const b = bn * yRange + yMin - m * xMin;
+  return { m, b };
 }
 
-type DataPoint = { x: number; y: number };
-
-type SceneOpts = {
-  m: number;
-  b: number;
-  epoch: number;
-  loss: number;
-  showLine?: boolean;
-  highlightIdx?: number;
-  /** Show residuals for points [0..residualUpTo]. -1 = none. */
-  residualUpTo?: number;
-  /** Tone overrides for parameter cells by label. */
-  paramTones?: Partial<Record<string, TraceTone>>;
-  /** Prediction values for ŷ[] row. null = not yet computed. */
-  yHat?: (number | null)[];
-};
-
 export function linearRegressionTrace(input: number[]): TraceFrame[] {
+  const numEpochs = input.length > 0 ? Math.max(1, Math.round(input[0])) : DEFAULT_EPOCHS;
+  const lr = input.length > 1
+    ? Math.max(MIN_LR, Math.min(MAX_LR, input[1]))
+    : DEFAULT_LR;
+  const data = input.slice(2);
   const pairs: DataPoint[] = [];
-  for (let i = 0; i < input.length; i += 2) {
-    pairs.push({ x: input[i], y: input[i + 1] });
+  for (let i = 0; i < data.length; i += 2) {
+    pairs.push({ x: data[i], y: data[i + 1] });
   }
   const n = pairs.length;
   if (n < 2) return [];
 
   const scaled = scalePoints(pairs);
   const xs = pairs.map((p) => p.x);
-  const ys = pairs.map((p) => p.y);
   const xMin = Math.min(...xs);
   const xMax = Math.max(...xs);
+  const ys = pairs.map((p) => p.y);
   const yMin = Math.min(...ys);
   const yMax = Math.max(...ys);
-  // Array display: 1 unit per value, min width 8, expand bounds symmetrically
+  const xRange = xMax - xMin || 1;
+  const yRange = yMax - yMin || 1;
+
+  // Normalize features to [0,1] for stable gradient descent
+  const normX = pairs.map((p) => (p.x - xMin) / xRange);
+  const normY = pairs.map((p) => (p.y - yMin) / yRange);
+
   const arrWidth = Math.max((n - 1) * 1.2, 8);
-  const arrCenter = (BOUNDS.minX + BOUNDS.maxX) / 2;
+  const arrCenter = (-1 + 13) / 2;
   const arrL = arrCenter - arrWidth / 2;
   const arrR = arrCenter + arrWidth / 2;
-  const bounds = {
-    ...BOUNDS,
-    minX: Math.min(BOUNDS.minX, arrL - 1.5),
-    maxX: Math.max(BOUNDS.maxX, arrR + 1.5),
-  };
 
   const axis = buildAxisOverlays({
     plotX0: PLOT_X0, plotX1: PLOT_X1, plotY0: PLOT_Y0, plotY1: PLOT_Y1,
     xMin, xMax, yMin, yMax, prefix: "lr:ax",
   });
 
-  let m = 0;
-  let b = 0;
+  const ctx: SceneCtx = {
+    n, pairs, scaled, xMin, xMax, yMin, yMax, arrL, arrR,
+    axisEdges: axis.edges, axisOverlays: axis.overlays,
+  };
+
+  const scene = (o: Parameters<typeof buildScene>[1]) => buildScene(ctx, o);
+
+  // mn, bn are params in normalized space; denormalize for display
+  let mn = 0;
+  let bn = 0;
   let prevLoss = 0;
   const frames: TraceFrame[] = [];
   let step = 0;
+  const lossHistory: { epoch: number; value: number }[] = [];
 
-  function buildScene(opts: SceneOpts): TraceScene {
-    const nodes: TraceNode[] = [];
-
-    // Parameter cells
-    const pv = [fmt(opts.m, 3), fmt(opts.b, 3), fmt(opts.loss, 2), String(opts.epoch)];
-    for (let i = 0; i < 4; i++) {
-      const label = PARAM_LABELS[i];
-      const pt = opts.paramTones?.[label];
-      nodes.push({ id: paramId(label), kind: "cell",
-        pos: { x: PARAM_X[i], y: PARAM_Y },
-        meta: { value: pv[i], tone: (pt ?? "neutral") as TraceTone,
-          weight: (pt ? 1 : 0) as 0 | 1 } });
-    }
-
-    const overlays: TraceOverlay[] = PARAM_LABELS.map((label, i) => (
-      { kind: "caption" as const, id: `lr:lbl:${label}`, x: PARAM_X[i],
-        y: PARAM_Y_LABEL, text: label, emphasis: "faint" as const }
-    ));
-
-    // Axis tick labels
-    overlays.push(...axis.overlays);
-
-    // Scatter data points as index labels
-    for (let i = 0; i < n; i++) {
-      const hl = i === opts.highlightIdx;
-      overlays.push({ kind: "caption" as const, id: ptId(i),
-        x: scaled[i].x + 0.5, y: scaled[i].y + 0.5, text: String(i),
-        emphasis: hl ? "active" as const : "soft" as const,
-        align: "center" as const });
-    }
-
-    // ŷ[] and y[] comparison rows (captions only, no cells)
-    if (opts.yHat) {
-      const step = n > 1 ? (arrR - arrL) / (n - 1) : 0;
-      const arrX = (i: number) => arrL + i * step;
-      overlays.push({ kind: "caption" as const, id: "lr:yh-lbl",
-        x: arrL - 1.5, y: YHAT_Y, text: "\u0177[]", emphasis: "soft" as const });
-      for (let i = 0; i < n; i++) {
-        const v = opts.yHat[i];
-        const hl = i === opts.highlightIdx;
-        overlays.push(
-          { kind: "caption" as const, id: `lr:yh:${i}`, x: arrX(i), y: YHAT_Y,
-            text: v != null ? fmt(v, 2) : "\u2013",
-            emphasis: hl ? "active" as const : "soft" as const,
-            align: "center" as const },
-          { kind: "caption" as const, id: `lr:yhlbl:${i}`,
-            x: arrX(i), y: YHAT_LABEL_Y, text: String(i), emphasis: "faint" as const,
-            opacity: 0.4, align: "center" as const },
-        );
-      }
-      // Dimmed actual y[] below ŷ[] for comparison
-      overlays.push({ kind: "caption" as const, id: "lr:ya-lbl",
-        x: arrL - 1.5, y: YACT_Y, text: "y[]", emphasis: "faint" as const });
-      for (let i = 0; i < n; i++) {
-        overlays.push({ kind: "caption" as const, id: `lr:ya:${i}`,
-          x: arrX(i), y: YACT_Y, text: fmt(pairs[i].y, 1), emphasis: "faint" as const,
-          align: "center" as const });
-      }
-    }
-
-    const edges: TraceEdge[] = [...axis.edges];
-
-    // Regression line
-    if (opts.showLine !== false) {
-      const gx0 = dataXToGrid(xMin, xMin, xMax);
-      const gx1 = dataXToGrid(xMax, xMin, xMax);
-      const gy0 = dataYToGrid(opts.m * xMin + opts.b, yMin, yMax);
-      const gy1 = dataYToGrid(opts.m * xMax + opts.b, yMin, yMax);
-      edges.push({ id: "lr:line", from: ptId(0), to: ptId(n - 1), kind: "regression",
-        meta: { fromPt: { x: gx0, y: gy0 }, toPt: { x: gx1, y: gy1 },
-          color: "rgb(var(--tn-accent))", opacity: 0.8, arrow: false,
-          tone: "accent", weight: 1 } });
-
-      // Line equation caption above the calc overlay
-      overlays.push({ kind: "caption" as const, id: "lr:eq",
-        x: 6, y: 1,
-        text: `\u0177 = ${fmt(opts.m, 3)}x + ${fmt(opts.b, 3)}`,
-        emphasis: "soft" as const, align: "center" as const });
-    }
-
-    // Residual lines
-    const resUp = opts.residualUpTo ?? -1;
-    for (let i = 0; i <= resUp && i < n; i++) {
-      const gy = dataYToGrid(opts.m * pairs[i].x + opts.b, yMin, yMax);
-      edges.push({ id: `lr:res:${i}`, from: ptId(i), to: ptId(i), kind: "residual",
-        meta: { fromPt: { x: scaled[i].x, y: scaled[i].y },
-          toPt: { x: scaled[i].x, y: gy }, tone: "danger", weight: 0, dashed: true } });
-    }
-
-    return { nodes, edges, overlays, bounds };
-  }
-
-  function push(kind: string, token: string, scene: TraceScene, meta?: Record<string, unknown>) {
+  function push(kind: string, token: string, s: TraceScene, meta?: Record<string, unknown>) {
     frames.push({ id: `lr.${kind}.${step++}`, kind, codeToken: token,
-      narrationToken: token, scene, meta });
-  }
-
-  function calc(scene: TraceScene, text: string): TraceScene {
-    return { ...scene, overlays: [...(scene.overlays ?? []), { kind: "caption" as const, id: "lr:calc",
-      x: 6, y: 0.5, text, emphasis: "active" as const, align: "center" as const }] };
+      narrationToken: token, scene: s, meta });
   }
 
   const emptyYHat: null[] = Array(n).fill(null) as null[];
 
-  push("data", "reg.data", buildScene({ m: 0, b: 0, epoch: 0, loss: 0, showLine: false }), { n });
-  push("init", "reg.init", buildScene({ m: 0, b: 0, epoch: 0, loss: 0, yHat: emptyYHat }), { m: 0, b: 0 });
+  push("data", "reg.data", scene({ m: 0, b: 0, epoch: 0, loss: 0, showLine: false }), { n });
+  push("init", "reg.init", scene({ m: 0, b: 0, epoch: 0, loss: 0, yHat: emptyYHat }), { m: 0, b: 0 });
 
   // --- epochs ---
-  for (let epoch = 1; epoch <= NUM_EPOCHS; epoch++) {
-    push("epoch", "reg.epoch", buildScene({ m, b, epoch, loss: prevLoss, yHat: emptyYHat }), { epoch });
+  for (let epoch = 1; epoch <= numEpochs; epoch++) {
+    const { m, b } = denorm(mn, bn, xMin, xRange, yMin, yRange);
 
+    push("epoch", "reg.epoch", scene({ m, b, epoch, loss: prevLoss, yHat: emptyYHat,
+      lossHistory }), { epoch });
+
+    // Predictions in original space (for display and loss)
     const yHat = pairs.map((p) => m * p.x + b);
     const isDetailed = epoch <= DETAILED_EPOCHS;
 
@@ -202,8 +99,8 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
         const err = pairs[i].y - yHat[i];
         const partYH: (number | null)[] = yHat.map((v, j) => j <= i ? v : null);
         push("predict", "reg.predict.step",
-          calc(buildScene({ m, b, epoch, loss: prevLoss, highlightIdx: i, residualUpTo: i,
-            yHat: partYH }),
+          calc(scene({ m, b, epoch, loss: prevLoss, highlightIdx: i, residualUpTo: i,
+            yHat: partYH, lossHistory }),
             `\u0177 = ${fmt(m, 3)}\u00b7${fmt(pairs[i].x, 1)} + ${fmt(b, 3)} = ${fmt(yHat[i], 2)}`),
           { epoch, pointIdx: i, pointX: pairs[i].x, pointY: pairs[i].y,
             yHat: Math.round(yHat[i] * 100) / 100,
@@ -213,81 +110,88 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
       }
     } else {
       push("predict", "reg.predict",
-        calc(buildScene({ m, b, epoch, loss: prevLoss, residualUpTo: n - 1, yHat }),
+        calc(scene({ m, b, epoch, loss: prevLoss, residualUpTo: n - 1, yHat,
+          lossHistory }),
           `\u0177\u1d62 = ${fmt(m, 3)}\u00b7x\u1d62 + ${fmt(b, 3)}`),
         { epoch },
       );
     }
 
-    // --- loss (before gradients — standard order) ---
+    // --- loss (MSE in original space) ---
     let mse = 0;
     if (isDetailed) {
       for (let i = 0; i < n; i++) {
         const sq = (pairs[i].y - yHat[i]) ** 2;
         mse += sq;
         push("loss", "reg.loss.step",
-          calc(buildScene({ m, b, epoch, loss: prevLoss, highlightIdx: i, yHat }),
+          calc(scene({ m, b, epoch, loss: prevLoss, highlightIdx: i, yHat,
+            lossHistory }),
             `(${fmt(pairs[i].y, 1)} \u2212 ${fmt(yHat[i], 2)})\u00b2 = ${fmt(sq, 3)}   sum = ${fmt(mse, 3)}`),
           { epoch, pointIdx: i, sq: Math.round(sq * 1000) / 1000,
             sum: Math.round(mse * 1000) / 1000, n });
       }
     } else {
       for (let i = 0; i < n; i++) mse += (pairs[i].y - yHat[i]) ** 2;
-      push("loss", "reg.loss.step", buildScene({ m, b, epoch, loss: prevLoss, yHat }), { epoch, n });
+      push("loss", "reg.loss.step", scene({ m, b, epoch, loss: prevLoss, yHat,
+        lossHistory }), { epoch, n });
     }
     mse /= n;
+    lossHistory.push({ epoch, value: mse });
     push("loss", "reg.loss.avg",
-      calc(buildScene({ m, b, epoch, loss: mse, yHat,
-        paramTones: { loss: "warning" } }),
+      calc(scene({ m, b, epoch, loss: mse, yHat,
+        paramTones: { loss: "warning" }, lossHistory }),
         `MSE = ${fmt(mse, 4)}  (sum / ${n})`),
       { epoch, loss: Math.round(mse * 100) / 100, n },
     );
     prevLoss = mse;
 
-    // --- gradient ---
+    // --- gradient (in normalized space for stability) ---
+    const yHatNorm = normX.map((nx) => mn * nx + bn);
     let dm = 0;
     let db = 0;
     for (let i = 0; i < n; i++) {
-      dm += pairs[i].x * (pairs[i].y - yHat[i]);
-      db += (pairs[i].y - yHat[i]);
+      dm += normX[i] * (normY[i] - yHatNorm[i]);
+      db += (normY[i] - yHatNorm[i]);
     }
     push("grad", "reg.grad.step",
-      calc(buildScene({ m, b, epoch, loss: mse, residualUpTo: n - 1, yHat }),
+      calc(scene({ m, b, epoch, loss: mse, residualUpTo: n - 1, yHat, lossHistory }),
         `\u03a3 x\u1d62(y\u1d62\u2212\u0177\u1d62) = ${fmt(dm, 3)}   \u03a3 (y\u1d62\u2212\u0177\u1d62) = ${fmt(db, 3)}`),
       { epoch },
     );
     dm = (-2 / n) * dm;
     db = (-2 / n) * db;
     push("grad", "reg.grad.scale",
-      calc(buildScene({ m, b, epoch, loss: mse, residualUpTo: n - 1, yHat,
-        paramTones: { m: "cyan", b: "cyan" } }),
+      calc(scene({ m, b, epoch, loss: mse, residualUpTo: n - 1, yHat,
+        paramTones: { m: "cyan", b: "cyan" }, lossHistory }),
         `\u2202L/\u2202m = ${fmt(dm, 3)}   \u2202L/\u2202b = ${fmt(db, 3)}`),
       { epoch, dm: Math.round(dm * 1000) / 1000, db: Math.round(db * 1000) / 1000 },
     );
 
-    // --- update ---
-    const oldM = m;
-    const oldB = b;
-    m -= LEARNING_RATE * dm;
-    b -= LEARNING_RATE * db;
+    // --- update (in normalized space) ---
+    const oldDenorm = denorm(mn, bn, xMin, xRange, yMin, yRange);
+    mn -= lr * dm;
+    bn -= lr * db;
+    const newDenorm = denorm(mn, bn, xMin, xRange, yMin, yRange);
     push("update", "reg.update",
-      calc(buildScene({ m, b, epoch, loss: mse, yHat,
-        paramTones: { m: "accent", b: "accent" } }),
-        `m: ${fmt(oldM, 3)} \u2192 ${fmt(m, 3)}   b: ${fmt(oldB, 3)} \u2192 ${fmt(b, 3)}`),
-      { epoch, oldM: Math.round(oldM * 1000) / 1000, oldB: Math.round(oldB * 1000) / 1000,
-        m: Math.round(m * 1000) / 1000, b: Math.round(b * 1000) / 1000 },
+      calc(scene({ m: newDenorm.m, b: newDenorm.b, epoch, loss: mse, yHat,
+        paramTones: { m: "accent", b: "accent" }, lossHistory }),
+        `m: ${fmt(oldDenorm.m, 3)} \u2192 ${fmt(newDenorm.m, 3)}   b: ${fmt(oldDenorm.b, 3)} \u2192 ${fmt(newDenorm.b, 3)}`),
+      { epoch,
+        oldM: Math.round(oldDenorm.m * 1000) / 1000, oldB: Math.round(oldDenorm.b * 1000) / 1000,
+        m: Math.round(newDenorm.m * 1000) / 1000, b: Math.round(newDenorm.b * 1000) / 1000 },
     );
   }
 
   // --- reg.done ---
-  const finalLoss = pairs.reduce((s, p) => s + (p.y - (m * p.x + b)) ** 2, 0) / n;
-  const finalYHat = pairs.map((p) => m * p.x + b);
+  const { m: finalM, b: finalB } = denorm(mn, bn, xMin, xRange, yMin, yRange);
+  const finalLoss = pairs.reduce((s, p) => s + (p.y - (finalM * p.x + finalB)) ** 2, 0) / n;
+  const finalYHat = pairs.map((p) => finalM * p.x + finalB);
   push("done", "reg.done",
-    calc(buildScene({ m, b, epoch: NUM_EPOCHS, loss: finalLoss, yHat: finalYHat }),
-      `\u0177 = ${fmt(m, 3)}x + ${fmt(b, 3)}   MSE = ${fmt(finalLoss, 4)}`),
+    calc(scene({ m: finalM, b: finalB, epoch: numEpochs, loss: finalLoss, yHat: finalYHat, lossHistory }),
+      `\u0177 = ${fmt(finalM, 3)}x + ${fmt(finalB, 3)}   MSE = ${fmt(finalLoss, 4)}`),
     {
-      m: Math.round(m * 1000) / 1000,
-      b: Math.round(b * 1000) / 1000,
+      m: Math.round(finalM * 1000) / 1000,
+      b: Math.round(finalB * 1000) / 1000,
       loss: Math.round(finalLoss * 100) / 100,
     },
   );

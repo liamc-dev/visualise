@@ -251,5 +251,17 @@ const mockData = [
                 "name": "Machine Learning"
             }
         ]
+    },
+    {
+        "id": "a7b8c9d0-e1f2-3456-cdef-logreg000001",
+        "key": "logistic-regression",
+        "name": "Logistic Regression",
+        "categories": [
+            {
+                "id": "a1b2c3d4-e5f6-7890-abcd-ml0000000001",
+                "key": "machine-learning",
+                "name": "Machine Learning"
+            }
+        ]
     }
 ]

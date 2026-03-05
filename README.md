@@ -26,8 +26,8 @@
 | Sorting | Search | Pathfinding | Machine Learning |
 |---------|--------|-------------|-----------------|
 | Bubble Sort | Linear Search | BFS (grid) | Linear Regression |
-| Insertion Sort | Binary Search | DFS (grid) | K-Means Clustering |
-| Selection Sort | | Dijkstra (graph + grid) | |
+| Insertion Sort | Binary Search | DFS (grid) | Logistic Regression |
+| Selection Sort | | Dijkstra (graph + grid) | K-Means Clustering |
 | Merge Sort | | Bellman-Ford (graph) | |
 | Quick Sort | | Prim's MST (graph) | |
 | | | Kruskal's MST (graph) | |

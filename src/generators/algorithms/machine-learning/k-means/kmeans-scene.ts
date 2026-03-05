@@ -12,6 +12,8 @@ import {
   BOUNDS, PARAM_X, PARAM_Y, PARAM_Y_LABEL, PARAM_LABELS,
   CENTROID_ROW_LABEL_Y, CENTROID_ROW_Y,
   DIST_ROW_LABEL_Y, DIST_ROW_Y,
+  LOSS_CHART_X, LOSS_CHART_Y,
+  LOSS_CHART_WIDTH, LOSS_CHART_HEIGHT,
   K, clusterTone,
 } from "./kmeans-layout";
 
@@ -46,6 +48,7 @@ export type SceneOpts = {
   dists?: (number | null)[];
   /** Index of nearest centroid so far (highlights dist row cell). */
   bestDistIdx?: number;
+  changesHistory?: { epoch: number; value: number }[];
 };
 
 export function buildScene(opts: SceneOpts): TraceScene {
@@ -79,7 +82,7 @@ export function buildScene(opts: SceneOpts): TraceScene {
     });
   }
 
-  // Data points as captions on scatter plot
+  // Data points as colored digit captions on scatter plot (no cell nodes)
   for (let i = 0; i < n; i++) {
     const a = assign[i];
     const tone: TraceTone = a >= 0 ? clusterTone(a) : "neutral";
@@ -90,18 +93,8 @@ export function buildScene(opts: SceneOpts): TraceScene {
       text: String(i),
       emphasis: isHl ? "active" : "soft",
       align: "center",
+      color: a >= 0 ? `rgb(var(--tn-${tone}))` : undefined,
     });
-    if (a >= 0) {
-      nodes.push({
-        id: `km:dot:${i}`, kind: "cell",
-        pos: { x: scaled[i].x, y: scaled[i].y },
-        meta: {
-          value: "", tone,
-          weight: (isHl ? 1 : 0) as 0 | 1,
-          emphasis: isHl ? undefined : "faint",
-        },
-      });
-    }
   }
 
   // Centroids
@@ -111,7 +104,7 @@ export function buildScene(opts: SceneOpts): TraceScene {
     nodes.push({
       id: centId(j), kind: "cell",
       pos: { x: sc.x, y: sc.y },
-      meta: { value: `C${j}`, tone: clusterTone(j), weight: 1 as 0 | 1 },
+      meta: { value: `C${j}`, tone: clusterTone(j), weight: 1 as 0 | 1, opacity: 0.35 },
     });
     if (isHl) {
       overlays.push({
@@ -219,6 +212,16 @@ export function buildScene(opts: SceneOpts): TraceScene {
       kind: "caption", id: "km:calc",
       x: 6, y: 0.5, text: calcText,
       emphasis: "active", align: "center",
+    });
+  }
+
+  // Changes history chart
+  if (opts.changesHistory && opts.changesHistory.length > 0) {
+    overlays.push({
+      kind: "linechart", id: "km:loss-chart",
+      x: LOSS_CHART_X, y: LOSS_CHART_Y,
+      width: LOSS_CHART_WIDTH, height: LOSS_CHART_HEIGHT,
+      points: opts.changesHistory.map((p) => ({ ...p })), yLabel: "changes",
     });
   }
 

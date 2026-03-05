@@ -1,4 +1,4 @@
-// src/generators/algorithms/machine-learning/linear-regression/linreg-layout.ts
+// src/generators/algorithms/machine-learning/logistic-regression/logreg-layout.ts
 
 /** Grid coordinates for the scatter plot + parameter display. */
 
@@ -20,13 +20,13 @@ export {
 export type { ScaledPoint } from "../scatter-layout";
 
 export const PARAM_X = [2, 5, 8, 11] as const;
-export const PARAM_LABELS = ["m", "b", "loss", "epoch"] as const;
+export const PARAM_LABELS = ["w\u2081", "w\u2082", "b", "loss"] as const;
 
-/** ŷ[] prediction row below params. */
+/** \u0177[] probability row below params. */
 export const YHAT_LABEL_Y = 15.9;
 export const YHAT_Y = 16.5;
 
-/** Dimmed y[] comparison row below ŷ[]. */
+/** Dimmed y[] actual label row below \u0177[]. */
 export const YACT_Y = 17.4;
 
 export const BOUNDS = { minX: -1, minY: 0, maxX: 13, maxY: 16 };

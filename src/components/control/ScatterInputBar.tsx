@@ -3,15 +3,27 @@
 import { useCallback, useRef, useLayoutEffect } from "react";
 import { Dices, RotateCcw, ChevronUp } from "lucide-react";
 import { IconBtn } from "../ui/IconBtn";
+import { LabeledSlider } from "../ui/LabeledSlider";
 import { TextArea } from "../ui/TextArea";
 import { useScatterInputStore } from "../../stores/useScatterInputStore";
 import { useLayoutStore } from "../../stores/useLayoutStore";
 
-export default function ScatterInputBar() {
+type LRConfig = { min: number; max: number; step: number; precision: number };
+
+const LR_CONFIGS: Record<string, LRConfig> = {
+  "linear-regression": { min: 0.01, max: 0.5, step: 0.01, precision: 2 },
+  "logistic-regression": { min: 0.1, max: 10, step: 0.1, precision: 1 },
+};
+
+export default function ScatterInputBar({ algorithm }: { algorithm: string }) {
   const rawInput = useScatterInputStore((s) => s.rawInput);
   const error = useScatterInputStore((s) => s.error);
   const points = useScatterInputStore((s) => s.points);
+  const epochs = useScatterInputStore((s) => s.epochs);
+  const learningRate = useScatterInputStore((s) => s.learningRate);
   const setRawInput = useScatterInputStore((s) => s.setRawInput);
+  const setEpochs = useScatterInputStore((s) => s.setEpochs);
+  const setLearningRate = useScatterInputStore((s) => s.setLearningRate);
   const commitInput = useScatterInputStore((s) => s.commitInput);
   const randomize = useScatterInputStore((s) => s.randomize);
   const generateRandom = useScatterInputStore((s) => s.generateRandom);
@@ -42,6 +54,8 @@ export default function ScatterInputBar() {
 
   const size = points.length / 2;
   const toggleScatterInput = useLayoutStore((s) => s.toggleScatterInput);
+  const lrConfig = LR_CONFIGS[algorithm];
+  const showLR = !!lrConfig;
 
   return (
     <div className="flex items-center gap-1.5 px-1 overflow-x-auto min-w-0">
@@ -71,16 +85,35 @@ export default function ScatterInputBar() {
         <RotateCcw className="w-3.5 h-3.5 text-tn-muted" />
       </IconBtn>
 
-      <input
-        type="range"
+      <LabeledSlider
+        label="n"
+        displayValue={String(size)}
         min={3}
         max={20}
         value={size}
-        onChange={(e) => generateRandom(Number(e.target.value))}
-        className="tn-range-modern min-w-14 w-16 shrink cursor-pointer"
-        style={{ ["--p" as string]: `${((size - 3) / 17) * 100}%` }}
+        onChange={(e) => generateRandom(Number(e.currentTarget.value))}
       />
-      <span className="text-xs font-mono text-tn-muted w-5 text-right">{size}</span>
+
+      <LabeledSlider
+        label="epochs"
+        displayValue={String(epochs)}
+        min={1}
+        max={99}
+        value={epochs}
+        onChange={(e) => setEpochs(Number(e.currentTarget.value))}
+      />
+
+      {showLR && (
+        <LabeledSlider
+          label="lr"
+          displayValue={learningRate.toFixed(lrConfig.precision)}
+          min={lrConfig.min}
+          max={lrConfig.max}
+          step={lrConfig.step}
+          value={learningRate}
+          onChange={(e) => setLearningRate(Number(e.currentTarget.value))}
+        />
+      )}
 
       <IconBtn onClick={toggleScatterInput} title="Collapse input" className="w-7 h-7">
         <ChevronUp className="w-3.5 h-3.5 text-tn-muted" />

@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { Dices, RotateCcw, ChevronUp } from "lucide-react";
 import { IconBtn } from "../ui/IconBtn";
+import { LabeledSlider } from "../ui/LabeledSlider";
 import PortalSelect from "../ui/portal-select/PortalSelect";
 import type { PortalSelectOption } from "../ui/portal-select/PortalSelectBase";
 import { useAstarGridStore } from "../../stores/useAstarGridStore";
@@ -98,20 +99,14 @@ export default function AstarInputBar() {
         onChange={(v) => setGoal(goalRow, Number(v))}
       />
 
-      {/* Wall density slider */}
-      <input
-        type="range"
+      <LabeledSlider
+        label="walls"
+        displayValue={`${densityPct}%`}
         min={0}
         max={40}
         value={densityPct}
-        onChange={(e) => setWallDensity(Number(e.target.value) / 100)}
-        className="tn-range-modern min-w-16 w-20 shrink cursor-pointer"
-        style={{ ["--p" as string]: `${(densityPct / 40) * 100}%` }}
-        title={`Wall density: ${densityPct}%`}
+        onChange={(e) => setWallDensity(Number(e.currentTarget.value) / 100)}
       />
-      <span className="text-xs font-mono text-tn-muted w-7 text-right">
-        {densityPct}%
-      </span>
 
       {/* Action icons */}
       <IconBtn onClick={randomize} title="Random grid" className="w-7 h-7">
