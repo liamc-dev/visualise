@@ -47,6 +47,21 @@ The `.def.tsx` suffix triggers auto-registration. No manual imports.
 - Each code marker token should highlight at most 3 lines (prefer 1–2)
 - Helper functions in code bundles are not wrapped in markers — only mark the call site
 
+## Ops chart system (`src/lib/ops-chart.ts`)
+- Reusable operation counter + reference curve overlay for algorithm complexity visualization
+- `createOpsChart(ref, yOffset?)` returns `{ record(), overlay() }` — call `record()` at each operation, `overlay()` in `buildScene` to get the linechart
+- Reference curve presets: `quadraticRef(n)` O(n²), `nLogNRef(n)` O(n log n), `veRef(V,E)` O(V+E), `veProductRef(V,E)` O(V·E)
+- Chart uses `anchorRight: true` on linechart overlay — positions via CSS `right` instead of `left`, independent of centering/colOffset
+- Chart constants: `CHART_MARGIN = -0.5`, `CHART_Y = -0.5`, `CHART_WIDTH = 4`, `CHART_HEIGHT = 2.5`
+- All comparison-based sorting algorithms have ops charts (not counting/radix sort — non-comparison-based)
+- All pathfinding algorithms have ops charts tracking edge relaxations/explorations
+
+## Algorithms
+- **Sorting:** Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, Quick Sort, Heap Sort, Counting Sort, Radix Sort
+- **Pathfinding:** BFS (grid), Dijkstra (graph + grid modes), Bellman-Ford
+- **Search:** Binary Search, Linear Search
+- **Machine Learning:** Linear Regression, Logistic Regression, K-Means Clustering, KNN Classification
+
 ## Known issues
 - Auth and memorise features exist in code but are disabled in routing
 - API layer (`src/api/http.ts`) has bearer token + 401 refresh logic for a backend that isn't active

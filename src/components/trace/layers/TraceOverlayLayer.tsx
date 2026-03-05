@@ -6,6 +6,7 @@ import { LineChartOverlay } from "./LineChartOverlay";
 import { ResidualChartOverlay } from "./ResidualChartOverlay";
 import { SigmoidChartOverlay } from "./SigmoidChartOverlay";
 import { VoronoiOverlay } from "./VoronoiOverlay";
+import { KnnRegionOverlay } from "./KnnRegionOverlay";
 
 export function TraceOverlayLayer({
   overlays,
@@ -61,6 +62,9 @@ export function TraceOverlayLayer({
           const soft = o.emphasis === "soft";
           const active = o.emphasis === "active";
 
+          // Scale font with cell size (matches cell/pointer scaling)
+          const capFontSize = Math.max(6, Math.min(14, Math.round(cellSize * 0.32)));
+
           return (
             <div
               key={o.id}
@@ -68,6 +72,7 @@ export function TraceOverlayLayer({
                 position: "absolute",
                 left: x,
                 top: y,
+                fontSize: capFontSize,
                 transform: o.align === "center" ? "translate(-50%, -50%)"
                   : o.align === "right" ? "translate(-100%, -50%)"
                   : o.align === "below" ? "translateX(-50%)"
@@ -78,7 +83,6 @@ export function TraceOverlayLayer({
               }}
               className={[
                 "whitespace-nowrap",
-                "text-xs",
                 "select-none",
                 "font-mono",
                 soft ? "text-tn-muted/80" : active ? "text-tn-text" : "text-tn-muted",
@@ -129,6 +133,7 @@ export function TraceOverlayLayer({
               refPoints={o.refPoints}
               refLabel={o.refLabel}
               anchorRight={o.anchorRight}
+              anchorLeft={o.anchorLeft}
               cellSize={cellSize}
               colOffset={colOffset}
             />
@@ -176,6 +181,22 @@ export function TraceOverlayLayer({
               width={o.width}
               height={o.height}
               centroids={o.centroids}
+              cellSize={cellSize}
+              colOffset={colOffset}
+            />
+          );
+        }
+
+        if (o.kind === "knnregion") {
+          return (
+            <KnnRegionOverlay
+              key={o.id}
+              x={o.x}
+              y={o.y}
+              width={o.width}
+              height={o.height}
+              points={o.points}
+              k={o.k}
               cellSize={cellSize}
               colOffset={colOffset}
             />

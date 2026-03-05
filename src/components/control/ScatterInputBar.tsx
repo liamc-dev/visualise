@@ -58,7 +58,7 @@ export default function ScatterInputBar({ algorithm }: { algorithm: string }) {
   const toggleScatterInput = useLayoutStore((s) => s.toggleScatterInput);
   const lrConfig = LR_CONFIGS[algorithm];
   const showLR = !!lrConfig;
-  const showK = algorithm === "k-means";
+  const showK = algorithm === "k-means" || algorithm === "knn";
 
   return (
     <div className="flex items-center gap-1.5 px-1 overflow-x-auto min-w-0">
@@ -101,8 +101,8 @@ export default function ScatterInputBar({ algorithm }: { algorithm: string }) {
         <LabeledSlider
           label="k"
           displayValue={String(k)}
-          min={2}
-          max={6}
+          min={algorithm === "k-means" ? 2 : 1}
+          max={algorithm === "k-means" ? 6 : 9}
           value={k}
           onChange={(e) => setK(Number(e.currentTarget.value))}
         />
@@ -120,14 +120,16 @@ export default function ScatterInputBar({ algorithm }: { algorithm: string }) {
         />
       )}
 
-      <LabeledSlider
-        label={showK ? "iter" : "epochs"}
-        displayValue={String(epochs)}
-        min={1}
-        max={99}
-        value={epochs}
-        onChange={(e) => setEpochs(Number(e.currentTarget.value))}
-      />
+      {algorithm !== "knn" && (
+        <LabeledSlider
+          label={showK ? "iter" : "epochs"}
+          displayValue={String(epochs)}
+          min={1}
+          max={99}
+          value={epochs}
+          onChange={(e) => setEpochs(Number(e.currentTarget.value))}
+        />
+      )}
 
       <IconBtn onClick={toggleScatterInput} title="Collapse input" className="w-7 h-7">
         <ChevronUp className="w-3.5 h-3.5 text-tn-muted" />

@@ -2,6 +2,7 @@
 // Canvas-based Voronoi region coloring for K-Means cluster visualization.
 
 import { useRef, useEffect } from "react";
+import { useThemeStore } from "../../../stores/useThemeStore";
 
 type Centroid = { x: number; y: number; tone: string };
 
@@ -41,6 +42,7 @@ export function VoronoiOverlay({
   colOffset: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const theme = useThemeStore((s) => s.theme);
 
   const left = (colOffset + x) * cellSize;
   const top = y * cellSize;
@@ -80,12 +82,12 @@ export function VoronoiOverlay({
         data[off] = r;
         data[off + 1] = g;
         data[off + 2] = b;
-        data[off + 3] = 15; // very low opacity
+        data[off + 3] = theme === "dark" || theme === "tokyo-night" ? 18 : 30;
       }
     }
 
     ctx.putImageData(img, 0, 0);
-  }, [centroids, x, y, width, height]);
+  }, [centroids, x, y, width, height, theme]);
 
   if (centroids.length === 0) return null;
 

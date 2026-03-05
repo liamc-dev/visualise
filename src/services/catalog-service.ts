@@ -263,5 +263,17 @@ const mockData = [
                 "name": "Machine Learning"
             }
         ]
+    },
+    {
+        "id": "b8c9d0e1-f2a3-4567-cdef-knn000000001",
+        "key": "knn",
+        "name": "KNN Classification",
+        "categories": [
+            {
+                "id": "a1b2c3d4-e5f6-7890-abcd-ml0000000001",
+                "key": "machine-learning",
+                "name": "Machine Learning"
+            }
+        ]
     }
 ]

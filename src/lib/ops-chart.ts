@@ -3,7 +3,7 @@
 
 import type { TraceOverlay } from "../types/trace-types";
 
-const CHART_MARGIN = -0.5;
+const CHART_X = 0.25;
 const CHART_Y = -0.5;
 const CHART_WIDTH = 4;
 const CHART_HEIGHT = 2.5;
@@ -44,15 +44,15 @@ export function createOpsChart(ref: RefCurve, yOffset = 0) {
     return {
       kind: "linechart",
       id: "ops-chart",
-      x: CHART_MARGIN,
+      x: CHART_X,
       y: CHART_Y + yOffset,
       width: CHART_WIDTH,
       height: CHART_HEIGHT,
-      anchorRight: true,
       points: [...history],
       yLabel: "ops",
       refPoints: buildRefCurve(),
       refLabel: ref.label,
+      anchorLeft: true,
     };
   }
 

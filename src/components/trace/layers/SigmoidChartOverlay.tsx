@@ -30,6 +30,7 @@ export function SigmoidChartOverlay({
   cellSize: number;
   colOffset: number;
 }) {
+  const fs = Math.max(6, Math.min(10, Math.round(cellSize * 0.26)));
   const left = (colOffset + x) * cellSize;
   const top = y * cellSize;
   const w = width * cellSize;
@@ -101,7 +102,7 @@ export function SigmoidChartOverlay({
             key={`yt-${i}`}
             x={pad.left - 4} y={toSy(v)}
             textAnchor="end" dominantBaseline="middle"
-            fill={mutedColor} fontSize={9} fontFamily="var(--font-mono)"
+            fill={mutedColor} fontSize={fs} fontFamily="var(--font-mono)"
           >
             {v}
           </text>
@@ -113,7 +114,7 @@ export function SigmoidChartOverlay({
             key={`xt-${i}`}
             x={toSx(z)} y={h - pad.bottom + 14}
             textAnchor="middle"
-            fill={mutedColor} fontSize={9} fontFamily="var(--font-mono)"
+            fill={mutedColor} fontSize={fs} fontFamily="var(--font-mono)"
           >
             {fmtTick(z)}
           </text>
@@ -123,7 +124,7 @@ export function SigmoidChartOverlay({
         <text
           x={8} y={pad.top + plotH / 2}
           textAnchor="middle" dominantBaseline="middle"
-          fill={mutedColor} fontSize={9} fontFamily="var(--font-mono)"
+          fill={mutedColor} fontSize={fs} fontFamily="var(--font-mono)"
           transform={`rotate(-90, 8, ${pad.top + plotH / 2})`}
         >
           σ(z)

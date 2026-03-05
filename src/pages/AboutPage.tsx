@@ -69,7 +69,7 @@ const AboutPage = () => {
             <li>Counting Sort</li>
             <li>Linear Search, Binary Search</li>
             <li>BFS, DFS, Dijkstra, Bellman-Ford, Prim&rsquo;s, Kruskal&rsquo;s, A*</li>
-            <li>Linear Regression, Logistic Regression, K-Means Clustering</li>
+            <li>Linear Regression, Logistic Regression, K-Means Clustering, KNN Classification</li>
           </ul>
         </div>
 

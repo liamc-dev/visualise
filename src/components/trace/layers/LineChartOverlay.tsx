@@ -15,6 +15,7 @@ export function LineChartOverlay({
   refPoints,
   refLabel,
   anchorRight,
+  anchorLeft,
   cellSize,
   colOffset,
 }: {
@@ -27,17 +28,26 @@ export function LineChartOverlay({
   refPoints?: Point[];
   refLabel?: string;
   anchorRight?: boolean;
+  anchorLeft?: boolean;
   cellSize: number;
   colOffset: number;
 }) {
   if (points.length === 0) return null;
 
+  const fs = Math.max(6, Math.min(10, Math.round(cellSize * 0.26)));
+  const fsSmall = Math.max(6, Math.min(9, Math.round(cellSize * 0.22)));
   const top = y * cellSize;
   const w = width * cellSize;
   const h = height * cellSize;
 
-  // Padding inside the SVG for labels/ticks
-  const pad = { top: 16, right: refLabel ? 56 : 12, bottom: 20, left: 36 };
+  // Scale padding proportionally to cellSize so chart stays readable at small viewports
+  const s = Math.max(0.4, cellSize / 40);
+  const pad = {
+    top: Math.round(16 * s),
+    right: Math.round((refLabel ? 56 : 12) * s),
+    bottom: Math.round(20 * s),
+    left: Math.round(36 * s),
+  };
   const plotW = w - pad.left - pad.right;
   const plotH = h - pad.top - pad.bottom;
 
@@ -73,6 +83,8 @@ export function LineChartOverlay({
 
   const posStyle = anchorRight
     ? { right: x * cellSize, top }
+    : anchorLeft
+    ? { left: x * cellSize, top }
     : { left: (colOffset + x) * cellSize, top };
 
   return (
@@ -103,12 +115,12 @@ export function LineChartOverlay({
         {yTicks.map((v, i) => (
           <text
             key={`yt-${i}`}
-            x={pad.left - 4}
+            x={pad.left - 3 * s}
             y={toSy(v)}
             textAnchor="end"
             dominantBaseline="middle"
             fill={mutedColor}
-            fontSize={9}
+            fontSize={fs}
             fontFamily="var(--font-mono)"
           >
             {formatTick(v)}
@@ -120,10 +132,10 @@ export function LineChartOverlay({
           <text
             key={`xt-${i}`}
             x={toSx(e)}
-            y={h - pad.bottom + 14}
+            y={h - pad.bottom + 12 * s}
             textAnchor="middle"
             fill={mutedColor}
-            fontSize={9}
+            fontSize={fs}
             fontFamily="var(--font-mono)"
           >
             {e}
@@ -133,14 +145,14 @@ export function LineChartOverlay({
         {/* Y label */}
         {yLabel && (
           <text
-            x={8}
+            x={6 * s}
             y={pad.top + plotH / 2}
             textAnchor="middle"
             dominantBaseline="middle"
             fill={mutedColor}
-            fontSize={9}
+            fontSize={fs}
             fontFamily="var(--font-mono)"
-            transform={`rotate(-90, 8, ${pad.top + plotH / 2})`}
+            transform={`rotate(-90, ${6 * s}, ${pad.top + plotH / 2})`}
           >
             {yLabel}
           </text>
@@ -172,19 +184,19 @@ export function LineChartOverlay({
         <circle
           cx={toSx(last.epoch)}
           cy={toSy(last.value)}
-          r={3}
+          r={Math.max(2, 3 * s)}
           fill={lineColor}
         />
 
         {/* Legend */}
         {refLabel && (
-          <g transform={`translate(${w - pad.right + 6}, ${pad.top + 4})`}>
-            <line x1={0} y1={0} x2={12} y2={0} stroke={lineColor} strokeWidth={1.5} />
-            <text x={15} y={0} dominantBaseline="middle" fill={lineColor} fontSize={8} fontFamily="var(--font-mono)">
+          <g transform={`translate(${w - pad.right + 5 * s}, ${pad.top + 3 * s})`}>
+            <line x1={0} y1={0} x2={10 * s} y2={0} stroke={lineColor} strokeWidth={1.5} />
+            <text x={13 * s} y={0} dominantBaseline="middle" fill={lineColor} fontSize={fsSmall} fontFamily="var(--font-mono)">
               ops
             </text>
-            <line x1={0} y1={14} x2={12} y2={14} stroke={mutedColor} strokeWidth={1} strokeDasharray="4 3" />
-            <text x={15} y={14} dominantBaseline="middle" fill={mutedColor} fontSize={8} fontFamily="var(--font-mono)">
+            <line x1={0} y1={12 * s} x2={10 * s} y2={12 * s} stroke={mutedColor} strokeWidth={1} strokeDasharray="4 3" />
+            <text x={13 * s} y={12 * s} dominantBaseline="middle" fill={mutedColor} fontSize={fsSmall} fontFamily="var(--font-mono)">
               {refLabel}
             </text>
           </g>

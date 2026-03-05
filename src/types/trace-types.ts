@@ -55,10 +55,11 @@ export type TraceOverlay =
   | { kind: "text"; id: string; x: number; y: number; text: string; emphasis?: TraceEmphasis }
   | { kind: "band"; id: string; y: number; height: number; emphasis?: TraceEmphasis }
   | { kind: "caption", id: string, x: number, y: number, text: string, emphasis?: TraceEmphasis, align?: "center" | "right" | "below", opacity?: number, color?: string }
-  | { kind: "linechart"; id: string; x: number; y: number; width: number; height: number; points: { epoch: number; value: number }[]; yLabel?: string; refPoints?: { epoch: number; value: number }[]; refLabel?: string; anchorRight?: boolean }
+  | { kind: "linechart"; id: string; x: number; y: number; width: number; height: number; points: { epoch: number; value: number }[]; yLabel?: string; refPoints?: { epoch: number; value: number }[]; refLabel?: string; anchorRight?: boolean; anchorLeft?: boolean }
   | { kind: "sigmoidchart"; id: string; x: number; y: number; width: number; height: number; w1: number; w2: number; b: number; dataPoints: { z: number; label: number; idx: number }[]; highlightIdx?: number }
   | { kind: "residualchart"; id: string; x: number; y: number; width: number; height: number; residuals: { idx: number; value: number }[]; highlightIdx?: number }
-  | { kind: "voronoi"; id: string; x: number; y: number; width: number; height: number; centroids: { x: number; y: number; tone: string }[] };
+  | { kind: "voronoi"; id: string; x: number; y: number; width: number; height: number; centroids: { x: number; y: number; tone: string }[] }
+  | { kind: "knnregion"; id: string; x: number; y: number; width: number; height: number; points: { x: number; y: number; tone: string }[]; k: number };
 
 export type TraceFocus = {
   nodes?: string[];
