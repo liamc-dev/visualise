@@ -30,7 +30,8 @@ export function logisticRegressionTrace(input: number[]): TraceFrame[] {
   const lr = input.length > 1
     ? Math.max(MIN_LR, Math.min(MAX_LR, input[1]))
     : DEFAULT_LR;
-  const data = input.slice(2);
+  // input[2] is k (used by k-means only)
+  const data = input.slice(3);
   const rawPairs: { x: number; y: number }[] = [];
   for (let i = 0; i < data.length; i += 2) {
     rawPairs.push({ x: data[i], y: data[i + 1] });

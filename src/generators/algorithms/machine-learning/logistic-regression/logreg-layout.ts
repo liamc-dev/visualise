@@ -2,6 +2,13 @@
 
 /** Grid coordinates for the scatter plot + parameter display. */
 
+import {
+  LOSS_CHART_X as _LCX,
+  LOSS_CHART_Y as _LCY,
+  LOSS_CHART_WIDTH as _LCW,
+  LOSS_CHART_HEIGHT as _LCH,
+} from "../scatter-layout";
+
 export {
   PLOT_X0,
   PLOT_X1,
@@ -28,5 +35,11 @@ export const YHAT_Y = 16.5;
 
 /** Dimmed y[] actual label row below \u0177[]. */
 export const YACT_Y = 17.4;
+
+/** Sigmoid chart: below the loss chart. */
+export const SIGMOID_CHART_X = _LCX;
+export const SIGMOID_CHART_Y = _LCY + _LCH + 1;
+export const SIGMOID_CHART_WIDTH = _LCW;
+export const SIGMOID_CHART_HEIGHT = 4;
 
 export const BOUNDS = { minX: -1, minY: 0, maxX: 13, maxY: 16 };

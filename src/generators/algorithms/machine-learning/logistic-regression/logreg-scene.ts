@@ -13,6 +13,8 @@ import {
   YHAT_Y, YHAT_LABEL_Y, YACT_Y,
   LOSS_CHART_X, LOSS_CHART_Y,
   LOSS_CHART_WIDTH, LOSS_CHART_HEIGHT,
+  SIGMOID_CHART_X, SIGMOID_CHART_Y,
+  SIGMOID_CHART_WIDTH, SIGMOID_CHART_HEIGHT,
   dataYToGrid, dataXToGrid,
 } from "./logreg-layout";
 import type { ScaledPoint } from "./logreg-layout";
@@ -194,6 +196,22 @@ export function buildScene(ctx: SceneCtx, opts: SceneOpts): TraceScene {
       x: LOSS_CHART_X, y: LOSS_CHART_Y,
       width: LOSS_CHART_WIDTH, height: LOSS_CHART_HEIGHT,
       points: [...opts.lossHistory], yLabel: "BCE",
+    });
+  }
+
+  // Sigmoid chart overlay
+  if (opts.w1 !== 0 || opts.w2 !== 0 || opts.b !== 0) {
+    const sigPts = points.map((_, i) => ({
+      z: opts.w1 * normX1[i] + opts.w2 * normX2[i] + opts.b,
+      label: points[i].label,
+      idx: i,
+    }));
+    overlays.push({
+      kind: "sigmoidchart", id: "lg:sigmoid-chart",
+      x: SIGMOID_CHART_X, y: SIGMOID_CHART_Y,
+      width: SIGMOID_CHART_WIDTH, height: SIGMOID_CHART_HEIGHT,
+      w1: opts.w1, w2: opts.w2, b: opts.b,
+      dataPoints: sigPts, highlightIdx: opts.highlightIdx,
     });
   }
 

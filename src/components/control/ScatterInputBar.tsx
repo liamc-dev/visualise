@@ -21,9 +21,11 @@ export default function ScatterInputBar({ algorithm }: { algorithm: string }) {
   const points = useScatterInputStore((s) => s.points);
   const epochs = useScatterInputStore((s) => s.epochs);
   const learningRate = useScatterInputStore((s) => s.learningRate);
+  const k = useScatterInputStore((s) => s.k);
   const setRawInput = useScatterInputStore((s) => s.setRawInput);
   const setEpochs = useScatterInputStore((s) => s.setEpochs);
   const setLearningRate = useScatterInputStore((s) => s.setLearningRate);
+  const setK = useScatterInputStore((s) => s.setK);
   const commitInput = useScatterInputStore((s) => s.commitInput);
   const randomize = useScatterInputStore((s) => s.randomize);
   const generateRandom = useScatterInputStore((s) => s.generateRandom);
@@ -56,6 +58,7 @@ export default function ScatterInputBar({ algorithm }: { algorithm: string }) {
   const toggleScatterInput = useLayoutStore((s) => s.toggleScatterInput);
   const lrConfig = LR_CONFIGS[algorithm];
   const showLR = !!lrConfig;
+  const showK = algorithm === "k-means";
 
   return (
     <div className="flex items-center gap-1.5 px-1 overflow-x-auto min-w-0">
@@ -94,14 +97,16 @@ export default function ScatterInputBar({ algorithm }: { algorithm: string }) {
         onChange={(e) => generateRandom(Number(e.currentTarget.value))}
       />
 
-      <LabeledSlider
-        label="epochs"
-        displayValue={String(epochs)}
-        min={1}
-        max={99}
-        value={epochs}
-        onChange={(e) => setEpochs(Number(e.currentTarget.value))}
-      />
+      {showK && (
+        <LabeledSlider
+          label="k"
+          displayValue={String(k)}
+          min={2}
+          max={6}
+          value={k}
+          onChange={(e) => setK(Number(e.currentTarget.value))}
+        />
+      )}
 
       {showLR && (
         <LabeledSlider
@@ -114,6 +119,15 @@ export default function ScatterInputBar({ algorithm }: { algorithm: string }) {
           onChange={(e) => setLearningRate(Number(e.currentTarget.value))}
         />
       )}
+
+      <LabeledSlider
+        label="epochs"
+        displayValue={String(epochs)}
+        min={1}
+        max={99}
+        value={epochs}
+        onChange={(e) => setEpochs(Number(e.currentTarget.value))}
+      />
 
       <IconBtn onClick={toggleScatterInput} title="Collapse input" className="w-7 h-7">
         <ChevronUp className="w-3.5 h-3.5 text-tn-muted" />

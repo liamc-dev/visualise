@@ -3,6 +3,8 @@ import React from "react";
 import type { TraceOverlay } from "../../../types/trace-types";
 import { useSettingsStore } from "../../../stores/useSettingsStore";
 import { LineChartOverlay } from "./LineChartOverlay";
+import { ResidualChartOverlay } from "./ResidualChartOverlay";
+import { SigmoidChartOverlay } from "./SigmoidChartOverlay";
 
 export function TraceOverlayLayer({
   overlays,
@@ -123,6 +125,38 @@ export function TraceOverlayLayer({
               height={o.height}
               points={o.points}
               yLabel={o.yLabel}
+              cellSize={cellSize}
+              colOffset={colOffset}
+            />
+          );
+        }
+
+        if (o.kind === "residualchart") {
+          return (
+            <ResidualChartOverlay
+              key={o.id}
+              x={o.x}
+              y={o.y}
+              width={o.width}
+              height={o.height}
+              residuals={o.residuals}
+              highlightIdx={o.highlightIdx}
+              cellSize={cellSize}
+              colOffset={colOffset}
+            />
+          );
+        }
+
+        if (o.kind === "sigmoidchart") {
+          return (
+            <SigmoidChartOverlay
+              key={o.id}
+              x={o.x}
+              y={o.y}
+              width={o.width}
+              height={o.height}
+              dataPoints={o.dataPoints}
+              highlightIdx={o.highlightIdx}
               cellSize={cellSize}
               colOffset={colOffset}
             />

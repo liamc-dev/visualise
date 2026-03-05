@@ -87,7 +87,8 @@ export default function VisualiserPage() {
   const scatterPoints = useScatterInputStore((s) => s.points);
   const scatterEpochs = useScatterInputStore((s) => s.epochs);
   const scatterLR = useScatterInputStore((s) => s.learningRate);
-  const scatterInput = useMemo(() => [scatterEpochs, scatterLR, ...scatterPoints], [scatterEpochs, scatterLR, scatterPoints]);
+  const scatterK = useScatterInputStore((s) => s.k);
+  const scatterInput = useMemo(() => [scatterEpochs, scatterLR, scatterK, ...scatterPoints], [scatterEpochs, scatterLR, scatterK, scatterPoints]);
   const inputArray = isML
     ? scatterInput
     : isLinearSearch

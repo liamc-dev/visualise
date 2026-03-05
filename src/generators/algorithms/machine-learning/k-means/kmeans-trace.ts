@@ -3,7 +3,7 @@
 import type { TraceFrame, TraceScene } from "../../../../types/trace-types";
 import {
   PLOT_X0, PLOT_X1, PLOT_Y0, PLOT_Y1,
-  K, MAX_ITERATIONS, DETAILED_ITERATIONS,
+  MAX_ITERATIONS, DETAILED_ITERATIONS,
   scalePoints,
 } from "./kmeans-layout";
 import { buildAxisOverlays } from "../../../../lib/axis-utils";
@@ -33,13 +33,14 @@ function pickInitialCentroids(pairs: DataPoint[], k: number): DataPoint[] {
 export function kmeansTrace(input: number[]): TraceFrame[] {
   const maxIter = input.length > 0 ? Math.max(1, Math.round(input[0])) : MAX_ITERATIONS;
   // input[1] is learning rate (ignored by k-means — no gradient descent)
-  const data = input.slice(2);
+  const k = input.length > 2 ? Math.max(2, Math.min(6, Math.round(input[2]))) : 3;
+  const data = input.slice(3);
   const pairs: DataPoint[] = [];
   for (let i = 0; i < data.length; i += 2) {
     pairs.push({ x: data[i], y: data[i + 1] });
   }
   const n = pairs.length;
-  if (n < K) return [];
+  if (n < k) return [];
 
   const scaled = scalePoints(pairs);
   const xs = pairs.map((p) => p.x);
@@ -54,7 +55,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
     xMin, xMax, yMin, yMax, prefix: "km:ax",
   });
 
-  const centroids = pickInitialCentroids(pairs, K);
+  const centroids = pickInitialCentroids(pairs, k);
   const assign = new Array<number>(n).fill(-1);
   const frames: TraceFrame[] = [];
   let step = 0;
@@ -77,7 +78,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
     });
   }
 
-  const base = { pairs, scaled, axis, changesHistory };
+  const base = { pairs, scaled, axis, changesHistory, k };
   let scaledCentroids = scaleCentroids(centroids);
 
   push("data", "km.data",
@@ -86,7 +87,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
   );
   push("init", "km.init",
     buildScene({ ...base, centroids, scaledCentroids, assign, iter: 0, changes: 0 }),
-    { k: K },
+    { k },
   );
 
   let totalChanges = 0;
@@ -155,9 +156,9 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
     buildScene({
       ...base, centroids, scaledCentroids, assign,
       iter: finalIter, changes: 0, showAssignEdges: true,
-      calcText: `${K} clusters, ${finalIter} iterations`,
+      calcText: `${k} clusters, ${finalIter} iterations`,
     }),
-    { k: K, iter: finalIter },
+    { k, iter: finalIter },
   );
 
   return frames;
@@ -167,7 +168,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
   function assignDetailed(iter: number): number {
     let changes = 0;
     for (let i = 0; i < n; i++) {
-      const dists: (number | null)[] = new Array<number | null>(K).fill(null);
+      const dists: (number | null)[] = new Array<number | null>(k).fill(null);
 
       push("assign.init", "km.assign.init",
         buildScene({
@@ -181,7 +182,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
 
       let nearest = 0;
       let bestD = Infinity;
-      for (let j = 0; j < K; j++) {
+      for (let j = 0; j < k; j++) {
         const d = euclidean(pairs[i], centroids[j]);
         dists[j] = d;
         const isBest = d < bestD;
@@ -230,7 +231,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
     for (let i = 0; i < n; i++) {
       let nearest = 0;
       let bestD = Infinity;
-      for (let j = 0; j < K; j++) {
+      for (let j = 0; j < k; j++) {
         const d = euclidean(pairs[i], centroids[j]);
         if (d < bestD) { bestD = d; nearest = j; }
       }
@@ -245,7 +246,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
     iter: number, changes: number,
     prevScaled: { x: number; y: number }[],
   ) {
-    for (let j = 0; j < K; j++) {
+    for (let j = 0; j < k; j++) {
       push("update.init", "km.update.init",
         buildScene({
           ...base, centroids, scaledCentroids, assign,
@@ -290,7 +291,7 @@ export function kmeansTrace(input: number[]): TraceFrame[] {
   }
 
   function updateSummary() {
-    for (let j = 0; j < K; j++) {
+    for (let j = 0; j < k; j++) {
       let sx = 0, sy = 0, cnt = 0;
       for (let i = 0; i < n; i++) {
         if (assign[i] === j) { sx += pairs[i].x; sy += pairs[i].y; cnt++; }

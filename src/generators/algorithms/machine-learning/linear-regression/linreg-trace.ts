@@ -25,7 +25,8 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
   const lr = input.length > 1
     ? Math.max(MIN_LR, Math.min(MAX_LR, input[1]))
     : DEFAULT_LR;
-  const data = input.slice(2);
+  // input[2] is k (used by k-means only)
+  const data = input.slice(3);
   const pairs: DataPoint[] = [];
   for (let i = 0; i < data.length; i += 2) {
     pairs.push({ x: data[i], y: data[i + 1] });
@@ -78,6 +79,7 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
   }
 
   const emptyYHat: null[] = Array(n).fill(null) as null[];
+  let lastYHat: (number | null)[] = emptyYHat;
 
   push("data", "reg.data", scene({ m: 0, b: 0, epoch: 0, loss: 0, showLine: false }), { n });
   push("init", "reg.init", scene({ m: 0, b: 0, epoch: 0, loss: 0, yHat: emptyYHat }), { m: 0, b: 0 });
@@ -86,11 +88,12 @@ export function linearRegressionTrace(input: number[]): TraceFrame[] {
   for (let epoch = 1; epoch <= numEpochs; epoch++) {
     const { m, b } = denorm(mn, bn, xMin, xRange, yMin, yRange);
 
-    push("epoch", "reg.epoch", scene({ m, b, epoch, loss: prevLoss, yHat: emptyYHat,
+    push("epoch", "reg.epoch", scene({ m, b, epoch, loss: prevLoss, yHat: lastYHat,
       lossHistory }), { epoch });
 
     // Predictions in original space (for display and loss)
     const yHat = pairs.map((p) => m * p.x + b);
+    lastYHat = yHat;
     const isDetailed = epoch <= DETAILED_EPOCHS;
 
     // --- predict ---

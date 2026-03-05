@@ -13,6 +13,8 @@ import {
   YHAT_Y, YHAT_LABEL_Y, YACT_Y,
   LOSS_CHART_X, LOSS_CHART_Y,
   LOSS_CHART_WIDTH, LOSS_CHART_HEIGHT,
+  RESIDUAL_CHART_X, RESIDUAL_CHART_Y,
+  RESIDUAL_CHART_WIDTH, RESIDUAL_CHART_HEIGHT,
   dataYToGrid, dataXToGrid,
 } from "./linreg-layout";
 import type { ScaledPoint } from "./linreg-layout";
@@ -165,6 +167,21 @@ export function buildScene(ctx: SceneCtx, opts: SceneOpts): TraceScene {
       x: LOSS_CHART_X, y: LOSS_CHART_Y,
       width: LOSS_CHART_WIDTH, height: LOSS_CHART_HEIGHT,
       points: [...opts.lossHistory], yLabel: "MSE",
+    });
+  }
+
+  // Residual chart overlay
+  if (opts.yHat && opts.yHat.some((v) => v != null)) {
+    const residuals: { idx: number; value: number }[] = [];
+    for (let i = 0; i < n; i++) {
+      const yh = opts.yHat[i];
+      if (yh != null) residuals.push({ idx: i, value: pairs[i].y - yh });
+    }
+    overlays.push({
+      kind: "residualchart", id: "lr:residual-chart",
+      x: RESIDUAL_CHART_X, y: RESIDUAL_CHART_Y,
+      width: RESIDUAL_CHART_WIDTH, height: RESIDUAL_CHART_HEIGHT,
+      residuals, highlightIdx: opts.highlightIdx,
     });
   }
 

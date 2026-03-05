@@ -6,6 +6,9 @@ import { persist } from "zustand/middleware";
 const DEFAULT_SCATTER_DATA = [1, 2.1, 2, 3.9, 3, 6.2, 4, 7.8, 5, 10.1, 6, 12.3, 7, 13.8, 8, 16.1];
 const DEFAULT_EPOCHS = 20;
 const DEFAULT_LEARNING_RATE = 0.1;
+const DEFAULT_K = 3;
+const MIN_K = 2;
+const MAX_K = 6;
 
 const MIN_POINTS = 3;
 const MAX_POINTS = 20;
@@ -160,12 +163,14 @@ type ScatterInputState = {
   points: number[];
   epochs: number;
   learningRate: number;
+  k: number;
   rawInput: string;
   error: string | null;
 
   setRawInput: (raw: string) => void;
   setEpochs: (n: number) => void;
   setLearningRate: (lr: number) => void;
+  setK: (k: number) => void;
   commitInput: () => void;
   randomize: () => void;
   generateRandom: (size: number) => void;
@@ -178,11 +183,16 @@ export const useScatterInputStore = create<ScatterInputState>()(
       points: DEFAULT_SCATTER_DATA,
       epochs: DEFAULT_EPOCHS,
       learningRate: DEFAULT_LEARNING_RATE,
+      k: DEFAULT_K,
       rawInput: pointsToRaw(DEFAULT_SCATTER_DATA),
       error: null,
 
       setLearningRate(lr: number) {
         set({ learningRate: lr });
+      },
+
+      setK(k: number) {
+        set({ k: Math.max(MIN_K, Math.min(MAX_K, k)) });
       },
 
       setEpochs(n: number) {
@@ -221,6 +231,7 @@ export const useScatterInputStore = create<ScatterInputState>()(
           points: DEFAULT_SCATTER_DATA,
           epochs: DEFAULT_EPOCHS,
           learningRate: DEFAULT_LEARNING_RATE,
+          k: DEFAULT_K,
           rawInput: pointsToRaw(DEFAULT_SCATTER_DATA),
           error: null,
         });
@@ -228,7 +239,7 @@ export const useScatterInputStore = create<ScatterInputState>()(
     }),
     {
       name: "tn-scatter-input",
-      partialize: (s) => ({ points: s.points, epochs: s.epochs, learningRate: s.learningRate }),
+      partialize: (s) => ({ points: s.points, epochs: s.epochs, learningRate: s.learningRate, k: s.k }),
       onRehydrateStorage: () => (state) => {
         if (state) {
           state.rawInput = pointsToRaw(state.points);

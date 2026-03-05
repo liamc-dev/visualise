@@ -14,7 +14,7 @@ import {
   DIST_ROW_LABEL_Y, DIST_ROW_Y,
   LOSS_CHART_X, LOSS_CHART_Y,
   LOSS_CHART_WIDTH, LOSS_CHART_HEIGHT,
-  K, clusterTone,
+  clusterTone,
 } from "./kmeans-layout";
 
 export type DataPoint = { x: number; y: number };
@@ -36,6 +36,7 @@ export type SceneOpts = {
   assign: number[];
   iter: number;
   changes: number;
+  k: number;
   axis: { edges: TraceEdge[]; overlays: TraceOverlay[] };
   highlightIdx?: number;
   highlightCentroid?: number;
@@ -51,10 +52,18 @@ export type SceneOpts = {
   changesHistory?: { epoch: number; value: number }[];
 };
 
+/** Evenly spaced x positions for k items across the param row width. */
+function clusterX(j: number, k: number): number {
+  const x0 = PARAM_X[0];
+  const x1 = PARAM_X[2];
+  if (k <= 1) return (x0 + x1) / 2;
+  return x0 + (j / (k - 1)) * (x1 - x0);
+}
+
 export function buildScene(opts: SceneOpts): TraceScene {
   const {
     pairs, scaled, centroids, scaledCentroids, assign,
-    iter, changes, axis, highlightIdx, highlightCentroid, compareCentroid,
+    iter, changes, k, axis, highlightIdx, highlightCentroid, compareCentroid,
     prevScaledCentroids, calcText, showAssignEdges, dists, bestDistIdx,
   } = opts;
   const n = pairs.length;
@@ -63,7 +72,7 @@ export function buildScene(opts: SceneOpts): TraceScene {
   const overlays: TraceOverlay[] = [...axis.overlays];
 
   // Parameter cells
-  const pv = [String(K), String(iter), String(changes)];
+  const pv = [String(k), String(iter), String(changes)];
   for (let i = 0; i < 3; i++) {
     const label = PARAM_LABELS[i];
     nodes.push({
@@ -174,14 +183,15 @@ export function buildScene(opts: SceneOpts): TraceScene {
 
   // Centroid coordinate row (captions only)
   for (let j = 0; j < centroids.length; j++) {
+    const cx = clusterX(j, k);
     overlays.push({
       kind: "caption", id: `km:crlbl:${j}`,
-      x: PARAM_X[j], y: CENTROID_ROW_LABEL_Y,
+      x: cx, y: CENTROID_ROW_LABEL_Y,
       text: `C${j}`, emphasis: "soft",
     });
     overlays.push({
       kind: "caption", id: `km:cr:${j}`,
-      x: PARAM_X[j], y: CENTROID_ROW_Y,
+      x: cx, y: CENTROID_ROW_Y,
       text: `(${fmt(centroids[j].x, 1)}, ${fmt(centroids[j].y, 1)})`,
       emphasis: j === highlightCentroid ? "active" : "soft",
     });
@@ -189,17 +199,18 @@ export function buildScene(opts: SceneOpts): TraceScene {
 
   // Distance row (captions, during assignment)
   if (dists) {
-    for (let j = 0; j < K; j++) {
+    for (let j = 0; j < k; j++) {
+      const dx = clusterX(j, k);
       overlays.push({
         kind: "caption", id: `km:drlbl:${j}`,
-        x: PARAM_X[j], y: DIST_ROW_LABEL_Y,
+        x: dx, y: DIST_ROW_LABEL_Y,
         text: `d${j}`, emphasis: "soft",
       });
       const d = dists[j];
       const isBest = j === bestDistIdx;
       overlays.push({
         kind: "caption", id: `km:dr:${j}`,
-        x: PARAM_X[j], y: DIST_ROW_Y,
+        x: dx, y: DIST_ROW_Y,
         text: d != null ? fmt(d) : "\u2013",
         emphasis: d != null ? (isBest ? "active" : "soft") : "faint",
       });
