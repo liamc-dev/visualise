@@ -32,7 +32,7 @@ export const NEIGHBOR_LABEL_Y = 17.15;
 export const NEIGHBOR_ROW_Y = 17.5;
 export const DIST_ROW_Y = 18;
 
-export const BOUNDS = { minX: -1, minY: 0, maxX: 13, maxY: 19 };
+export const BOUNDS = { minX: -1, minY: 0, maxX: 13, maxY: 17 };
 
 /** Full per-distance detail for first N queries. */
 export const DETAILED_QUERIES = 3;

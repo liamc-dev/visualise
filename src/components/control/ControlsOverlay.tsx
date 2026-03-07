@@ -61,14 +61,6 @@ export default function ControlsOverlay({ visible }: Props) {
         {/* Speed slider */}
         <div className="w-full md:w-[180px] md:min-w-[60px] md:shrink">
           <div className="w-full">
-            <div className="mb-1 flex items-center justify-between md:hidden">
-              <span className="text-label tracking-[0.18em] uppercase text-tn-subtle/70">
-                Speed
-              </span>
-              <span className="text-xs font-mono text-tn-muted">
-                {(1000 / speedMs).toFixed(1)}x
-              </span>
-            </div>
             <SpeedSlider value={speedMs} min={100} max={1050} onChange={setSpeed} />
           </div>
         </div>

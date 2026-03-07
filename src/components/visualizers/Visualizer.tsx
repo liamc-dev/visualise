@@ -124,7 +124,7 @@ export default function Visualizer({
       <div className="w-full max-w-full" style={{ opacity: measured ? 1 : 0 }}>
         <section
           className={`
-            relative block w-full max-w-full rounded-st-xl
+            relative block w-full max-w-full rounded-st-xl overflow-hidden
             border-[length:var(--st-border-w)] [border-style:var(--st-border-style)] border-tn-border bg-tn-grid
             shadow-st-card
             ${effectsEnabled ? "backdrop-blur-[var(--st-blur-sm)]" : ""}
